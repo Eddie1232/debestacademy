@@ -1,0 +1,284 @@
+  /* Reset */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fff8f0; /* Cream */
+            color: #4b3b4f; /* Deep mauve */
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        a {
+            color: #7e628f;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        a:hover, a:focus {
+            color: #5a3e72;
+            outline: none;
+        }
+        header {
+            background-color: #bfa5c7; /* Light mauve */
+            color: #341f4d;
+            padding: 15px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(83, 61, 122, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .crest-container {
+            max-width: 60px;
+            max-height: 60px;
+            margin-right: 15px;
+        }
+        .crest-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            border: 2px solid #341f4d;
+            background: white;
+        }
+        header h1 {
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            margin: 0;
+            font-weight: 900;
+            font-family: 'Segoe UI Black', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #341f4d;
+            flex-grow: 1;
+        }
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 25px;
+        }
+        nav ul li {
+            font-weight: 600;
+        }
+        nav ul li a {
+            font-size: 1rem;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+        }
+        nav ul li a:hover,
+        nav ul li a.active {
+            border-bottom: 2px solid #5a3e72;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f1e9f6, #bfa5c7);
+            color: #4b3b4f;
+            text-align: center;
+            padding: 100px 20px 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-family: 'Trebuchet MS', sans-serif;
+        }
+        .hero h2 {
+            font-size: 3rem;
+            margin: 0;
+            font-weight: 900;
+            text-shadow: 1px 1px 3px rgba(79, 64, 89, 0.25);
+        }
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 600px;
+            font-weight: 500;
+            color: #6d587a;
+        }
+        .btn-primary {
+            background: #5a3e72;
+            color: #fff8f0;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(90, 62, 114, 0.4);
+            transition: background 0.3s ease, color 0.3s ease;
+            text-transform: uppercase;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            letter-spacing: 1.5px;
+        }
+        .btn-primary:hover {
+            background: #7e628f;
+        }
+
+        /* Main container & sections */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 50px auto 80px;
+        }
+
+        section {
+            margin-bottom: 60px;
+        }
+
+        section h3 {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            color: #341f4d;
+            font-weight: 900;
+            border-bottom: 3px solid #bfa5c7;
+            display: inline-block;
+            padding-bottom: 8px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            letter-spacing: 1.2px;
+        }
+        /* About Us */
+        #about p {
+            max-width: 850px;
+            font-size: 1.15rem;
+            color: #4b3b4f;
+            font-weight: 500;
+            line-height: 1.7;
+        }
+        /* Admission */
+        #admission p {
+            max-width: 700px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+            color: #4b3b4f;
+        }
+        #admission ul {
+            max-width: 700px;
+            list-style: disc inside;
+            color: #6d587a;
+            font-size: 1.05rem;
+            margin-bottom: 35px;
+            font-weight: 500;
+        }
+        /* News & Updates */
+        #news .news-item {
+            background: #fff8f0;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgb(83 61 122 / 0.12);
+            padding: 20px 30px;
+            margin-bottom: 18px;
+            font-weight: 600;
+            color: #5a3e72;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: default;
+        }
+        #news .news-item small {
+            color: #9a7fb0;
+        }
+        /* FAQ */
+        #faq dt {
+            font-weight: 700;
+            color: #7e628f;
+            cursor: pointer;
+            margin: 12px 0 6px;
+            font-size: 1.1rem;
+        }
+        #faq dd {
+            margin-left: 1em;
+            margin-bottom: 15px;
+            color: #5a3e72;
+            font-weight: 500;
+        }
+        #faq dd:not(:first-of-type) {
+            display: none;
+        }
+
+        /* Contact */
+        #contact form {
+            max-width: 600px;
+            background: #fff8f0;
+            padding: 30px 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(124, 101, 144, 0.12);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #4b3b4f;
+            font-weight: 600;
+        }
+        #contact label {
+            color: #5a3e72;
+        }
+        #contact input[type="text"],
+        #contact input[type="email"],
+        #contact textarea {
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #d9cde6;
+            border-radius: 8px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+            font-weight: 400;
+            color: #4b3b4f;
+            background: #fdf9fb;
+        }
+        #contact input[type="text"]:focus,
+        #contact input[type="email"]:focus,
+        #contact textarea:focus {
+            border-color: #7e628f;
+            outline: none;
+            background: #f7f2fa;
+        }
+        #contact button {
+            align-self: flex-start;
+            background-color: #5a3e72;
+            color: #fff8f0;
+            border: none;
+            padding: 14px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 5px 25px rgba(90, 62, 114, 0.5);
+            transition: background-color 0.3s ease;
+            text-transform: uppercase;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #contact button:hover {
+            background-color: #7e628f;
+        }
+        #form-response {
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #bfa5c7;
+            color: #341f4d;
+            text-align: center;
+            padding: 20px 30px;
+            font-size: 0.9rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            font-weight: 600;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        footer .social-icons a {
+            color: #341f4d;
+            margin: 0 10px;
+            font-size: 1.7rem;
+            transition: color 0.3s ease;
+        }
+        footer .social-icons a:hover,
+        footer .social-icons a:focus {
+            color: #5a3e72;
+            outline: none;
+        }
