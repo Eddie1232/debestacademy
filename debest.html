@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DEBEST ACADEMY</title>
+    <link rel="stylesheet" href="./debest.css">
+</head>
+<body>
+    <header>
+        <div class="crest-container" aria-label="School Crest">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/School_icon.svg/120px-School_icon.svg.png" alt="DEBEST Academy Crest" />
+        </div>
+        <h1>DEBEST ACADEMY</h1>
+        <nav role="navigation" aria-label="Primary Navigation">
+            <ul id="nav-menu">
+                <li><a href="#about" class="active">About Us</a></li>
+                <li><a href="#admission">Admission</a></li>
+                <li><a href="#news">News & Updates</a></li>
+                <li><a href="#platforms">Platforms</a></li>
+                <li><a href="#faq">FAQs</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero" aria-label="Welcome Section">
+        <h2>Welcome to DEBEST ACADEMY</h2>
+        <p>Providing quality education from Creche to Junior High School in a nurturing environment.</p>
+        <button class="btn-primary" onclick="document.getElementById('admission').scrollIntoView({behavior:'smooth'});">Apply Now</button>
+    </section>
+
+    <main class="container" role="main">
+        <section id="about" aria-labelledby="about-title">
+            <h3 id="about-title">About Us</h3>
+            <p>
+                DEBEST ACADEMY is dedicated to nurturing growth and excellence in children from their early years (Creche) through Junior High School (JHS). Our mission is to provide holistic education, balancing academics with character building, arts, and sports, ensuring each student’s full potential is realized.
+            </p>
+        </section>
+
+        <section id="admission" aria-labelledby="admission-title">
+            <h3 id="admission-title">Admission</h3>
+            <p>We welcome prospective students and parents to join our community. The admission process is simple and transparent:</p>
+            <ul>
+                <li>Complete the online application form.</li>
+                <li>Attend a school tour and interview.</li>
+                <li>Submit previous academic and health records.</li>
+            </ul>
+            <p>Apply early to secure your child's place at DEBEST ACADEMY.</p>
+            <button class="btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'});">Contact Admissions</button>
+        </section>
+
+        <section id="news" aria-labelledby="news-title">
+            <h3 id="news-title">News & Updates</h3>
+            <article class="news-item" tabindex="0">
+                <strong>Annual Sports Day Scheduled</strong><br />
+                <small>Published: April 15, 2024</small>
+                <p>Join us on May 30th for our exciting Annual Sports Day, fostering sportsmanship and teamwork.</p>
+            </article>
+            <article class="news-item" tabindex="0">
+                <strong>New Library Opens</strong><br />
+                <small>Published: March 20, 2024</small>
+                <p>We are delighted to announce the opening of our new state-of-the-art library facility to support learning.</p>
+            </article>
+            <article class="news-item" tabindex="0">
+                <strong>Scholarship Applications Now Open</strong><br />
+                <small>Published: March 10, 2024</small>
+                <p>Apply today for scholarships for exceptional students spanning from Creche to JHS levels.</p>
+            </article>
+        </section>
+
+        <section id="platforms" aria-labelledby="platforms-title">
+            <h3 id="platforms-title">Platforms</h3>
+            <p>Access our dedicated platforms for students and parents.</p>
+            <button class="btn-primary" onclick="window.location.href='platforms.html';">Students/Parents Platform</button>
+            <button class="btn-primary" onclick="window.location.href='pta.html';">PTA Platform</button>
+        </section>
+
+        <section id="faq" aria-labelledby="faq-title">
+            <h3 id="faq-title">Frequently Asked Questions (FAQs)</h3>
+            <dl id="faq">
+                <dt tabindex="0" aria-expanded="false" aria-controls="faq1">What are the school hours?</dt>
+                <dd id="faq1">Our school hours are from 8:00 AM to 3:00 PM, Monday through Friday.</dd>
+
+                <dt tabindex="0" aria-expanded="false" aria-controls="faq2">What is the student-teacher ratio?</dt>
+                <dd id="faq2">We maintain a student-teacher ratio of approximately 20:1 to ensure personalized attention.</dd>
+
+                <dt tabindex="0" aria-expanded="false" aria-controls="faq3">Are meals provided?</dt>
+                <dd id="faq3">Yes, we provide nutritious meals prepared daily on campus, with options for special dietary needs.</dd>
+
+                <dt tabindex="0" aria-expanded="false" aria-controls="faq4">How can I communicate with teachers?</dt>
+                <dd id="faq4">You can communicate via our Students/Parents Platform or contact teachers during scheduled meetings.</dd>
+            </dl>
+        </section>
+
+        <section id="contact" aria-labelledby="contact-title">
+            <h3 id="contact-title">Contact Us</h3>
+            <form id="contact-form" aria-label="Contact form">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required placeholder="Your full name" />
+
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required placeholder="you@example.com" />
+
+                <label for="social-x">X (Twitter) Handle</label>
+                <input type="text" id="social-x" name="social-x" placeholder="@yourhandle" />
+
+                <label for="social-whatsapp">WhatsApp Number</label>
+                <input type="text" id="social-whatsapp" name="social-whatsapp" placeholder="+1234567890" />
+
+                <label for="social-telegram">Telegram Username</label>
+                <input type="text" id="social-telegram" name="social-telegram" placeholder="@telegramuser" />
+
+                <label for="social-instagram">Instagram Handle</label>
+                <input type="text" id="social-instagram" name="social-instagram" placeholder="@instagramhandle" />
+
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="5" placeholder="Your message here"></textarea>
+
+                <button type="submit">Send Message</button>
+            </form>
+            <p id="form-response" aria-live="polite"></p>
+        </section>
+    </main>
+
+    <footer>
+        <div>© 2024 DEBEST ACADEMY. All rights reserved.</div>
+        <div class="social-icons" aria-label="Social Media Links">
+            <a href="#" aria-label="X (Twitter)" title="X" target="_blank" rel="noopener noreferrer"></a>
+            <a href="#" aria-label="WhatsApp" title="WhatsApp" target="_blank" rel="noopener noreferrer">💬</a>
+            <a href="#" aria-label="Telegram" title="Telegram" target="_blank" rel="noopener noreferrer">📨</a>
+            <a href="#" aria-label="Instagram" title="Instagram" target="_blank" rel="noopener noreferrer">📸</a>
+        </div>
+    </footer>
+     <script src="./debest.js"></script>
+</body>
