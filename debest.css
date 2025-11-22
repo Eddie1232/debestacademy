@@ -1,4 +1,4 @@
-  /* Reset */
+/* Reset */
         *, *::before, *::after {
             box-sizing: border-box;
         }
@@ -30,6 +30,13 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+        }
+        header nav {
+          position: sticky;
+          top: 0;
+          background: #bfa5c7; /* Match header background */
+          z-index: 1000;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         .crest-container {
             max-width: 60px;
@@ -148,6 +155,13 @@
             font-weight: 500;
             line-height: 1.7;
         }
+        #about-title {
+          position: sticky;
+          top: 80px; 
+          background: inherit; 
+          z-index: 10;
+          padding: 10px 0;
+        }
         /* Admission */
         #admission p {
             max-width: 700px;
@@ -155,6 +169,13 @@
             margin-bottom: 20px;
             font-weight: 500;
             color: #4b3b4f;
+        }
+        #admission-title {
+          position: sticky;
+          top: 80px; 
+          background: inherit; 
+          z-index: 10;
+          padding: 10px 0;
         }
         #admission ul {
             max-width: 700px;
@@ -176,6 +197,13 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             cursor: default;
         }
+        #news-title {
+          position: sticky;
+          top: 80px; 
+          background: inherit; 
+          z-index: 10;
+          padding: 10px 0;
+        }
         #news .news-item small {
             color: #9a7fb0;
         }
@@ -187,16 +215,32 @@
             margin: 12px 0 6px;
             font-size: 1.1rem;
         }
+        #faq-title {
+          position: sticky;
+          top: 80px; 
+          background: inherit; 
+          z-index: 10;
+          padding: 10px 0;
+        }
         #faq dd {
             margin-left: 1em;
             margin-bottom: 15px;
             color: #5a3e72;
             font-weight: 500;
         }
-        #faq dd:not(:first-of-type) {
-            display: none;
+        #faq dd.faq-answer {
+      display: none;
+    }
+    #faq dd.faq-answer.active {
+      display: block;
+    }
+        #platforms-title {
+          position: sticky;
+          top: 80px; 
+          background: inherit; 
+          z-index: 10;
+          padding: 10px 0;
         }
-
         /* Contact */
         #contact form {
             max-width: 600px;
@@ -210,6 +254,13 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #4b3b4f;
             font-weight: 600;
+        }
+        #contact-title {
+          position: sticky;
+          top: 80px; 
+          background: inherit; 
+          z-index: 10;
+          padding: 10px 0;
         }
         #contact label {
             color: #5a3e72;
@@ -282,3 +333,5 @@
             color: #5a3e72;
             outline: none;
         }
+
+       
