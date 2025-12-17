@@ -1,6 +1,12 @@
+:root {
+  --header-height: 88px;      /* adjust to match your header height */
+}
+
 /* Reset */
         *, *::before, *::after {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         body {
             margin: 0;
@@ -23,7 +29,8 @@
             background-color: #bfa5c7; /* Light mauve */
             color: #341f4d;
             padding: 15px 40px;
-            position: sticky;
+            position: relative; /* keep header positioned for layout */
+            height: var(--header-height);
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 8px rgba(83, 61, 122, 0.2);
@@ -334,4 +341,163 @@
             outline: none;
         }
 
-       
+        /* Photo gallery (tweaked sizes and caption layout) */
+        .gallery {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 16px;
+          align-items: start;
+          margin: 16px 0;
+        }
+
+        .gallery figure {
+          margin: 0;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 6px 18px rgba(83, 61, 122, 0.06);
+          transition: transform 0.18s ease, box-shadow 0.18s ease;
+          display: flex;
+          flex-direction: column;
+          background: transparent; /* keep same look as before */
+        }
+
+        .gallery figure:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 12px 30px rgba(83, 61, 122, 0.12);
+        }
+
+        /* smaller images to fit better under the caption */
+        .gallery img {
+          display: inline-block;
+          width: 100%;
+          height: 160px;          /* reduced height */
+          object-fit: cover;
+          vertical-align: middle;
+        }
+
+        /* caption directly below image, centered and compact */
+        .gallery figcaption {
+          padding: 8px 10px;
+          font-size: 0.9rem;
+          color: #333;
+          text-align: center;
+          background: rgba(255, 255, 255, 0.95); /* optional subtle panel */
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 1200px) {
+          .gallery img {
+            height: 180px;       /* slightly bigger on large screens */
+          }
+        }
+
+        @media (max-width: 480px) {
+          .gallery img {
+            height: 140px;       /* slightly smaller on narrow screens */
+          }
+          .gallery figcaption {
+            font-size: 0.88rem;
+            padding: 6px 8px;
+          }
+        }
+
+        /* Lightbox / full image preview */
+        .lightbox {
+        position: fixed;
+        inset: 0;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background: rgba(12,12,12,0.8);
+        z-index: 9999;
+        padding: 20px;
+        }
+
+        .lightbox.open { display: flex; }
+
+        .lightbox__content {
+        max-width: 95%;
+        max-height: 95%;
+        text-align: center;
+        }
+
+        .lightbox__image {
+        max-width: 100%;
+        max-height: 80vh;
+        height: auto;
+        width: auto;
+        display: block;
+        margin: 0 auto;
+        border-radius: 6px;
+        object-fit: contain;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        .lightbox__caption {
+        color: #fff;
+        margin-top: 8px;
+        font-size: 14px;
+        }
+
+        .lightbox__close,
+        .lightbox__next,
+        .lightbox__prev {
+        position: absolute;
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 28px;
+        cursor: pointer;
+        padding: 10px;
+        }
+
+        .lightbox__close { top: 12px; right: 12px; }
+        .lightbox__prev { left: 12px; top: 50%; transform: translateY(-50%); }
+        .lightbox__next { right: 12px; top: 50%; transform: translateY(-50%); }
+
+        @media (max-width: 480px) {
+        .lightbox__prev, .lightbox__next { display: none; }
+        .lightbox__close { font-size: 22px; top: 8px; right: 8px; }
+        }
+
+        /* Floating Home button (always visible, under the header crest) */
+        .home-btn {
+  position: fixed;
+  left: var(--home-btn-left);
+  top: calc(var(--header-height) + 8px); /* 8px below header */
+  width: var(--home-btn-size);
+  height: var(--home-btn-size);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: rgba(255,255,255,0.95); /* keep original look */
+  color: #53287a;
+  border-radius: 8px;
+  border: 1px solid rgba(83,61,122,0.12);
+  text-decoration: none;
+  z-index: 1100; /* sit above page content */
+  box-shadow: 0 6px 18px rgba(83,61,122,0.08);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+/* hover & focus */
+.home-btn:hover,
+.home-btn:focus {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(83,61,122,0.12);
+  outline: none;
+}
+
+/* small screens */
+@media (max-width: 600px) {
+  :root { --home-btn-left: 12px; --home-btn-size: 36px; }
+  .home-btn { top: calc(var(--header-height) + 6px); font-size: 16px; }
+}
+
+/* ensure no overlap with sticky nav if nav is fixed/sticky */
+@media (min-width: 760px) {
+  /* if nav is sticky and takes more vertical space, increase top offset */
+  .home-btn { top: calc(var(--header-height) + 16px); }
+}
+
