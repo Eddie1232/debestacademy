@@ -1,3 +1,34 @@
+(function () {
+  function makeCrestLink() {
+    const crestContainers = document.querySelectorAll('.crest-container');
+    if (!crestContainers.length) return;
+
+    const isNestedPage = window.location.pathname.includes('/student/') || window.location.pathname.includes('/admin/');
+    const adminHref = isNestedPage
+      ? new URL('../admin/login.html', window.location.href).toString()
+      : new URL('./admin/login.html', window.location.href).toString();
+
+    crestContainers.forEach((container) => {
+      if (container.closest('a.crest-link')) return;
+
+      const link = document.createElement('a');
+      link.className = 'crest-link';
+      link.href = adminHref;
+      link.setAttribute('aria-label', 'Staff login');
+      link.setAttribute('title', 'Staff login');
+
+      container.replaceWith(link);
+      link.appendChild(container);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', makeCrestLink, { once: true });
+  } else {
+    makeCrestLink();
+  }
+})();
+
 // Smooth scrolling and active link highlighting
         var navLinks = document.querySelectorAll('nav ul li a');
         for (var i = 0; i < navLinks.length; i++) {
@@ -15,7 +46,7 @@
                 // Get target section ID
                 var targetId = this.getAttribute('href').substring(1);// Smooth scroll to section
                 document.getElementById(targetId).scrollIntoView({ 
-                    behavior: 'smooth' 
+                    behavior: 'smooth'
                 });
                 
                 // Update URL hash without page jump

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>News & Updates - DEBEST ACADEMY</title>
+  <link rel="stylesheet" href="../debest.css" />
+  <script src="../debest.js"></script>
+  <style>
+    .news-meta{color:#9a7fb0;font-weight:700;display:block;margin-top:6px}
+    .news-empty{background:#fff8f0;border-radius:12px;box-shadow:0 4px 20px rgb(83 61 122 / 0.12);padding:18px 22px;color:#5a3e72;font-weight:700}
+    #newsList article{outline:none}
+    .loading{font-weight:800;color:#5a3e72}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="crest-container" aria-label="School Crest">
+      <img src="../debestcrest.jpg" alt="DEBEST Crest" />
+    </div>
+    <h1>DEBEST ACADEMY</h1>
+    <a class="home-btn" href="../debest.html" aria-label="Go to Home page" title="Home">🏠</a>
+    <nav role="navigation" aria-label="Primary Navigation">
+      <ul id="nav-menu">
+        <li><a href="../debest.html#about">About Us</a></li>
+        <li><a href="../debest.html#admission">Admission</a></li>
+        <li><a href="../debest.html#news" class="active">News & Updates</a></li>
+        <li><a href="parent_platform.html">Platforms</a></li>
+        <li><a href="../debest.html#faq">FAQs</a></li>
+        <li><a href="../debest.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container" role="main">
+    <section aria-labelledby="news-title">
+      <h3 id="news-title">More News & Updates</h3>
+      <p style="font-weight:700;color:#4b3b4f;max-width:780px;">
+        Stay informed. Here are the latest school announcements.
+      </p>
+
+      <div id="newsBox" class="loading" aria-live="polite">Loading news...</div>
+      <section id="newsList" aria-label="News list"></section>
+    </section>
+
+    <section style="margin-top:30px;" aria-labelledby="term-title">
+      <h3 id="term-title">Term Calendar (Read-only)</h3>
+      <p style="font-weight:700;color:#6d587a;max-width:780px;">
+        This calendar is view-only for students and parents. Updates are done by admins.
+      </p>
+      <div style="margin-top:10px;">
+        <iframe
+          title="Terms Calendar"
+          src="./terms-calendar-readonly.html"
+          style="width:100%;height:860px;border:0;border-radius:15px;box-shadow:0 5px 25px rgba(124,101,144,.12);background:#fff8f0;"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>© 2024 DEBEST ACADEMY. All rights reserved.</div>
+    <div class="social-icons" aria-label="Social Media Links">
+      <a href="#" aria-label="X (Twitter)" title="X" target="_blank" rel="noopener noreferrer"></a>
+      <a href="#" aria-label="WhatsApp" title="WhatsApp" target="_blank" rel="noopener noreferrer"></a>
+      <a href="#" aria-label="Telegram" title="Telegram" target="_blank" rel="noopener noreferrer"></a>
+      <a href="#" aria-label="Instagram" title="Instagram" target="_blank" rel="noopener noreferrer"></a>
+    </div>
+  </footer>
+
+  <script>
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, function(m){
+        if(m === '&') return '&amp;';
+        if(m === '<') return '<';
+        if(m === '>') return '>';
+        if(m === '"') return '"';
+        if(m === "'") return '&#39;';
+        return m;
+      });
+    }
+
+    async function loadNews(){
+      const box = document.getElementById('newsBox');
+      const list = document.getElementById('newsList');
+      try{
+        box.textContent = 'Loading news...';
+        const res = await fetch('/api/news', { credentials: 'include' });
+        if(!res.ok) throw new Error('Failed to load news');
+        const data = await res.json();
+        const items = data.items || [];
+        list.innerHTML = '';
+
+        if(!items.length){
+          list.innerHTML = '<div class="news-empty">No news items yet. Check back later.</div>';
+          box.style.display = 'none';
+          return;
+        }
+
+        items.forEach(function(it){
+          const title = it.title || 'News';
+          const date = it.date || '';
+          const body = it.body || '';
+
+          const article = document.createElement('article');
+          article.className = 'news-item';
+          article.tabIndex = 0;
+          article.innerHTML =
+            '<strong>' + escapeHtml(title) + '</strong>' +
+            (date ? '<span class="news-meta">Published: ' + escapeHtml(date) + '</span>' : '') +
+            (body ? '<p>' + escapeHtml(body) + '</p>' : '');
+
+
+          list.appendChild(article);
+        });
+
+        box.style.display = 'none';
+      }catch(e){
+        box.textContent = 'Could not load news. Ensure the backend server is running.';
+      }
+    }
+
+    loadNews();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,1174 @@
+ <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>DEBEST ACADEMY - Terms Calendar (Admins)</title>
+    <link rel="stylesheet" href="../debest.css" />
+    <style>
+      .admin-home-btn{position:fixed;top:16px;right:16px;z-index:9999;}
+
+      .calendar-wrap{background:#fff8f0;border-radius:15px;box-shadow:0 5px 25px rgba(124,101,144,.12);padding:24px 18px;margin:0 auto;max-width:1100px}
+      .calendar-header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+      .calendar-header h2{margin:0;font-size:1.6rem;color:#341f4d}
+      .calendar-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+      .cal-btn{background:#5a3e72;color:#fff8f0;border:none;padding:10px 16px;font-weight:800;border-radius:10px;cursor:pointer}
+      .cal-btn:hover{background:#7e628f}
+      #monthYear{font-weight:900;color:#5a3e72;letter-spacing:.5px}
+      .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:12px}
+      .dow{font-weight:800;color:#7e628f;text-align:center;padding:6px 0}
+      .day{border:1px solid #eadff3;background:#fdf9fb;border-radius:12px;min-height:86px;padding:10px;display:flex;flex-direction:column;gap:8px;position:relative}
+      .day.off{opacity:.35}
+      .day-num{font-weight:900;color:#4b3b4f}
+      .events{display:flex;flex-direction:column;gap:4px}
+      .event{background:rgba(191,165,199,.35);border:1px solid rgba(90,62,114,.18);color:#341f4d;border-radius:8px;padding:4px 6px;font-size:.78rem;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .add-event{margin-top:14px;max-width:720px}
+      form .row{display:flex;gap:12px;flex-wrap:wrap}
+      label{font-weight:800;color:#5a3e72}
+      input,select,textarea{width:100%;padding:10px 12px;border:2px solid #d9cde6;border-radius:10px;background:#fdf9fb;font-weight:600}
+      textarea{min-height:70px;resize:vertical}
+      .field{flex:1;min-width:180px}
+      .muted{color:#6d587a;font-weight:600}
+      .save-note{font-weight:700;color:#7e628f;margin-top:10px}
+      .admin-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+      .proposal-panel{margin-top:18px;padding:16px;border:1px solid #eadff3;border-radius:14px;background:#fcf7fd}
+      .proposal-list{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+      .proposal-item{border:1px solid #eadff3;border-radius:12px;padding:10px;background:#fffdfd}
+      .proposal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+      .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:14px 0 18px}
+      .dash-card{background:#fffdfd;border:1px solid #eadff3;border-radius:14px;padding:14px;box-shadow:0 4px 16px rgba(90,62,114,.06)}
+      .dash-card h4{margin:0 0 6px;color:#341f4d;font-size:1rem}
+      .dash-value{font-size:1.4rem;font-weight:900;color:#5a3e72}
+      .inbox-list,.activity-list{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+      .inbox-item,.activity-item{border:1px solid #eadff3;border-radius:10px;padding:10px;background:#fffdfd}
+      .inbox-item strong,.activity-item strong{color:#341f4d}
+      .status-badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.74rem;font-weight:900;background:#f2e8f8;color:#5a3e72;margin-top:6px}
+      .status-badge.draft{background:#f9e8d8;color:#8a4b12}
+      .status-badge.review{background:#e8f4ff;color:#1c5aa6}
+      .status-badge.approved{background:#e6f7ec;color:#1f7a3d}
+      .status-badge.rejected{background:#fde8e8;color:#a42323}
+      .today-box{background:#fcf7fd;border:1px solid #eadff3;border-radius:14px;padding:12px 14px;margin-top:12px}
+      .comment-box{margin-top:8px;display:flex;flex-direction:column;gap:8px}
+      .comment-box textarea{min-height:58px}
+      .comment-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+      .timeline-list{border-top:1px solid #eadff3;padding-top:10px;margin-top:10px}
+      .timeline-entry{color:#6d587a;font-weight:600;margin-top:4px}
+      .status-pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.78rem;font-weight:900;background:#f2e8f8;color:#5a3e72}
+      .pill{background:#341f4d;color:#fff8f0;padding:8px 12px;border-radius:999px;font-weight:900;letter-spacing:.4px}
+      .danger{color:#b11f2e;font-weight:900}
+      .success{color:#5a3e72;font-weight:900}
+      .auth-card{background:#fff8f0;border-radius:15px;box-shadow:0 5px 25px rgba(124,101,144,.12);padding:22px 18px;margin:0 auto;max-width:720px}
+      .auth-card input{margin-top:6px}
+    </style>
+  </head>
+  <body>
+    <main class="container" role="main">
+
+      <div id="authView" class="auth-card" aria-live="polite">
+        <div class="admin-bar">
+          <div class="pill">ADMINS ONLY</div>
+        </div>
+        <h2 style="margin:0 0 10px;color:#341f4d;">Session required</h2>
+        <p class="muted" style="margin:0 0 14px;">
+          Please sign in at the staff login page. Role dashboards open after authentication.
+        </p>
+        <p id="authMsg" style="margin-top:12px; font-weight:900;"></p>
+        <button id="retryBtn" class="cal-btn" style="margin-top:8px; display:none;">Retry Connection</button>
+        <p style="margin-top:14px;">
+          <a class="cal-btn" style="display:inline-block;text-decoration:none;text-align:center;" href="./login.html" target="_top">Go to staff login</a>
+        </p>
+      </div>
+
+      <div id="adminView" style="display:none;">
+        <div class="calendar-wrap">
+          <div class="calendar-header">
+            <h2 id="pageTitle">Edit Terms Calendar</h2>
+            <div class="calendar-controls">
+              <span class="pill" id="rolePill" style="background:#5a3e72;">Role dashboard</span>
+            </div>
+            <div id="signedInUser" style="margin-left:12px;font-weight:700;color:#5a3e72;"></div>
+          </div>
+
+          <div style="margin-top:-6px;margin-bottom:14px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+            <p class="muted" style="margin:0; font-weight:900; color:#5a3e72;">Active role: <span id="activeRole">—</span></p>
+            <button class="cal-btn" id="logoutBtnTop" type="button">Logout</button>
+          </div>
+
+          <div class="calendar-header">
+            <div class="calendar-controls">
+              <button class="cal-btn" id="prevBtn" type="button" aria-label="Previous month">◀</button>
+              <div id="monthYear">Month Year</div>
+              <button class="cal-btn" id="nextBtn" type="button" aria-label="Next month">▶</button>
+            </div>
+          </div>
+
+          <section class="proposal-panel" aria-label="Shared dashboard">
+            <h3 style="margin:0 0 8px;color:#341f4d;">Shared dashboard</h3>
+            <p class="muted" style="margin:0 0 10px;">A simple overview of work in progress for the secretary, manager, and headmaster.</p>
+            <div class="dashboard-grid">
+              <div class="dash-card"><h4>Pending proposals</h4><div id="dashPending" class="dash-value">0</div></div>
+              <div class="dash-card"><h4>Items needing review</h4><div id="dashReview" class="dash-value">0</div></div>
+              <div class="dash-card"><h4>Recent approvals</h4><div id="dashApprovals" class="dash-value">0</div></div>
+              <div class="dash-card"><h4>New applications</h4><div id="dashApplications" class="dash-value">0</div></div>
+            </div>
+            <div class="row" style="gap:16px;align-items:flex-start;flex-wrap:wrap;">
+              <div style="flex:1;min-width:260px;">
+                <h4 style="margin:0 0 6px;color:#341f4d;">Inbox</h4>
+                <div id="inboxList" class="inbox-list"></div>
+              </div>
+              <div style="flex:1;min-width:260px;">
+                <h4 style="margin:0 0 6px;color:#341f4d;">Recent activity</h4>
+                <div id="activityList" class="activity-list"></div>
+              </div>
+            </div>
+            <div class="today-box" id="todayActionsBox">
+              <div style="font-weight:900;color:#5a3e72;">Today’s actions</div>
+              <div id="todayActionsText" class="muted" style="margin-top:6px;">No action required right now.</div>
+            </div>
+          </section>
+
+          <section class="proposal-panel" id="applicationsPanel" aria-label="Submitted student applications">
+            <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;">
+              <div>
+                <h3 style="margin:0 0 6px;color:#341f4d;">Submitted applications (Secretary inbox)</h3>
+                <p class="muted" style="margin:0;">Online student application forms land here for the secretary to review.</p>
+              </div>
+              <button class="cal-btn" type="button" id="refreshApplicationsBtn" style="background:#7e628f;">Refresh</button>
+            </div>
+            <div id="applicationsList" class="proposal-list" style="margin-top:12px;"></div>
+          </section>
+
+          <div class="calendar-grid" aria-hidden="true" style="margin-bottom:8px;">
+            <div class="dow">Sun</div><div class="dow">Mon</div><div class="dow">Tue</div><div class="dow">Wed</div><div class="dow">Thu</div><div class="dow">Fri</div><div class="dow">Sat</div>
+          </div>
+
+          <div id="calendarGrid" class="calendar-grid"></div>
+
+          <section class="add-event" aria-label="Add event">
+            <p class="muted" style="margin:0 0 10px;font-weight:900;color:#5a3e72;">
+              Submit a proposal for calendar changes or school news. Secretaries draft, Managers review, and the Headmaster gives final approval.
+            </p>
+
+            <div class="proposal-panel">
+              <h3 style="margin:0 0 8px;color:#341f4d;">Proposal workflow</h3>
+              <p class="muted" style="margin:0 0 10px;">
+                Secretary creates an item, Manager checks it, then Headmaster publishes it when approved.
+              </p>
+              <div class="row" style="margin-top:8px;align-items:center;">
+                <button class="cal-btn" type="button" id="saveProposalBtn" style="background:#7e628f;">Save Draft</button>
+                <button class="cal-btn" type="button" id="submitProposalBtn">Submit to Manager</button>
+                <div id="proposalRoleHint" class="muted" style="margin-left:8px;"></div>
+              </div>
+              <div id="proposalStatus" class="save-note" aria-live="polite"></div>
+              <div id="proposalList" class="proposal-list"></div>
+            </div>
+            <form id="eventForm">
+              <div class="row">
+                <div class="field">
+                  <label for="proposalCategory">What are you proposing?</label>
+                  <select id="proposalCategory">
+                    <option value="calendar">Calendar event</option>
+                    <option value="news">News announcement</option>
+                    <option value="policy">Meeting minutes / policy</option>
+                    <option value="communication">Student/parent communication</option>
+                    <option value="resource">Resource / facility request</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="eventDate">Date</label>
+                  <input type="date" id="eventDate" required />
+                </div>
+                <div class="field">
+                  <label for="eventTitle">Title</label>
+                  <input type="text" id="eventTitle" placeholder="e.g., Term begins / New announcement" required />
+                </div>
+                <div class="field">
+                  <label for="proposalPriority">Priority</label>
+                  <select id="proposalPriority">
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                    <option value="Low">Low</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="proposalAssignedTo">Assigned to</label>
+                  <select id="proposalAssignedTo">
+                    <option value="Manager">Manager</option>
+                    <option value="Headmaster">Headmaster</option>
+                    <option value="Secretary">Secretary</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row" style="margin-top:12px;">
+                <div class="field">
+                  <label for="eventType" id="eventTypeLabel">Type</label>
+                  <select id="eventType">
+                    <option value="General">General</option>
+                    <option value="Holiday">Holiday</option>
+                    <option value="Exams">Exams</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Assembly">Assembly</option>
+                  </select>
+                </div>
+                <div class="field" style="min-width:220px;">
+                  <label for="eventNotes" id="eventNotesLabel">Notes (optional)</label>
+                  <textarea id="eventNotes" placeholder="Add details for students/parents..."></textarea>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:12px;align-items:center;">
+                <button class="cal-btn" type="submit">Create Proposal</button>
+                <button class="cal-btn" type="button" id="clearMonthBtn" title="Clears ALL events for the currently displayed month (in backend)" style="background:#7e628f;">Clear Month</button>
+              </div>
+
+              <p class="save-note" id="formStatus" aria-live="polite"></p>
+
+              <button class="cal-btn" type="button" id="logoutBtn" style="background:#bfa5c7; color:#341f4d; width:100%; margin-top:10px;">
+                Logout
+              </button>
+            </form>
+          </section>
+        </div>
+      </div>
+
+    </main>
+
+    <script>
+      const JWT_STORAGE_KEY = 'debest_admin_token_v1';
+
+      const DEFAULT_EVENTS = {
+        "2026-01-06": [{ title: "Term 1 Begins", type: "General", notes: "Students resume." }],
+        "2026-02-14": [{ title: "Mid-Term Tests", type: "Exams", notes: "Normal timetable." }],
+        "2026-03-27": [{ title: "Sports Day", type: "Sports", notes: "Inter-house competition." }],
+        "2026-04-10": [{ title: "Good Friday", type: "Holiday", notes: "Public holiday." }],
+        "2026-04-17": [{ title: "End of Term 1 / Begin Term 2", type: "General", notes: "Term transition." }]
+      };
+
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+      const authView = document.getElementById('authView');
+      const adminView = document.getElementById('adminView');
+      const authMsg = document.getElementById('authMsg');
+
+      let token = localStorage.getItem(JWT_STORAGE_KEY) || '';
+      let activeRole = '';
+
+      const pageParams = new URLSearchParams(window.location.search);
+      const urlRoleHint = pageParams.get('role') || '';
+      const isEmbedded = pageParams.get('embedded') === '1';
+
+      const state = {
+        currentYear: new Date().getFullYear(),
+        currentMonth: new Date().getMonth(),
+        events: structuredClone(DEFAULT_EVENTS),
+        proposals: [],
+        applications: []
+      };
+
+      // Same-origin by default so all three admin PCs talk to the host server.
+      const API_BASE = (() => {
+        try {
+          const o = localStorage.getItem('debest_admin_api_base');
+          if(o && (o.startsWith('http://') || o.startsWith('https://'))) return o;
+        } catch(e){/* ignore */}
+        if (location.protocol.startsWith('http') && location.host) return location.origin;
+        return 'http://127.0.0.1:5500';
+      })();
+
+      function goToLogin(){
+        try {
+          if (window.top && window.top !== window) {
+            window.top.location.href = './login.html';
+            return;
+          }
+        } catch(e){/* ignore cross-origin */}
+        window.location.href = './login.html';
+      }
+
+      // Check whether the admin API server is available.
+      async function checkServer(timeout = 2000){
+        try{
+          const ctl = new AbortController();
+          const id = setTimeout(()=>ctl.abort(), timeout);
+          const res = await fetch(`${API_BASE}/health`, { method:'GET', signal: ctl.signal });
+          clearTimeout(id);
+          return res && res.ok;
+        }catch(e){
+          return false;
+        }
+      }
+
+      function disableAdminUI(){
+        try{
+          document.querySelectorAll('#eventForm input, #eventForm button, #eventForm select, #eventForm textarea').forEach(el=>{
+            el.disabled = true;
+          });
+        }catch(e){/* ignore */}
+      }
+
+      function enableAdminUI(){
+        try{
+          document.querySelectorAll('#eventForm input, #eventForm button, #eventForm select, #eventForm textarea').forEach(el=>{
+            el.disabled = false;
+          });
+        }catch(e){/* ignore */}
+      }
+
+      // Retry flow for manual reconnection attempts
+      async function retryConnection(){
+        const btn = document.getElementById('retryBtn');
+        const msg = document.getElementById('authMsg');
+        if(btn) btn.disabled = true;
+        if(msg){ msg.textContent = 'Checking server...'; msg.className = ''; }
+        const up = await checkServer(3000);
+        if(up){
+          if(msg){ msg.textContent = 'Connection restored.'; msg.className = 'success'; }
+          enableAdminUI();
+          if(btn) btn.style.display = 'none';
+        }else{
+          if(msg){ msg.textContent = 'Still unreachable. Start the local server and try again.'; msg.className = 'danger'; }
+          if(btn) btn.disabled = false;
+          if(btn) btn.style.display = 'inline-block';
+        }
+      }
+
+      function toISODate(d){
+        const y = d.getFullYear();
+        const m = String(d.getMonth()+1).padStart(2,'0');
+        const day = String(d.getDate()).padStart(2,'0');
+        return `${y}-${m}-${day}`;
+      }
+
+      function render(){
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
+
+        const month = state.currentMonth;
+        const year = state.currentYear;
+        const firstOfMonth = new Date(year, month, 1);
+        const startDay = firstOfMonth.getDay();
+        const daysInMonth = new Date(year, month+1, 0).getDate();
+
+        document.getElementById('monthYear').textContent = `${monthNames[month]} ${year}`;
+
+        const totalCells = 42;
+        for(let i=0;i<totalCells;i++){
+          const cellDayIndex = i - startDay + 1;
+          const dayDate = new Date(year, month, cellDayIndex);
+          const isCurrentMonth = cellDayIndex >= 1 && cellDayIndex <= daysInMonth;
+
+          const cell = document.createElement('div');
+          cell.className = 'day' + (isCurrentMonth ? '' : ' off');
+
+          const dayNum = document.createElement('div');
+          dayNum.className = 'day-num';
+          dayNum.textContent = isCurrentMonth ? String(cellDayIndex) : String(dayDate.getDate());
+          cell.appendChild(dayNum);
+
+          const iso = toISODate(dayDate);
+          const events = (state.events[iso] || []);
+
+          const eventsWrap = document.createElement('div');
+          eventsWrap.className = 'events';
+
+          if(events.length){
+            events.slice(0,3).forEach(ev=>{
+              const el = document.createElement('div');
+              el.className = 'event';
+              el.title = ev.notes ? `${ev.title} (${ev.type})\\n${ev.notes}` : `${ev.title} (${ev.type})`;
+              el.textContent = ev.title;
+              eventsWrap.appendChild(el);
+            });
+          }
+
+          cell.appendChild(eventsWrap);
+          grid.appendChild(cell);
+        }
+      }
+
+      function setAuthUI(isAuthed){
+        authView.style.display = isAuthed ? 'none' : 'block';
+        adminView.style.display = isAuthed ? 'block' : 'none';
+      }
+
+      async function fetchEventsFromBackend(){
+        const res = await fetch(`${API_BASE}/api/terms-calendar`, { method:'GET', credentials:'include' });
+        if(!res.ok) throw new Error('Could not load calendar');
+        const data = await res.json();
+        if(data && data.events && typeof data.events === 'object'){
+          state.events = { ...structuredClone(DEFAULT_EVENTS), ...data.events };
+        }
+      }
+
+      async function saveEventsToBackend(){
+        const res = await fetch(`${API_BASE}/api/terms-calendar`, {
+          method:'PUT',
+          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
+          body: JSON.stringify({ events: state.events })
+        });
+        if(!res.ok){
+          const t = await res.text().catch(()=>null);
+          throw new Error('Save failed' + (t ? ': ' + t : ''));
+        }
+
+        try{
+          localStorage.setItem('debest_terms_calendar_events_v1', JSON.stringify(state.events));
+        }catch(e){/* ignore */}
+      }
+
+      function syncCalendarToClients(){
+        try{
+          localStorage.setItem('debest_terms_calendar_events_v1', JSON.stringify(state.events));
+        }catch(e){/* ignore */}
+      }
+
+      function syncActiveRoleUI(){
+        const el = document.getElementById('activeRole');
+        if(!el) return;
+        el.textContent = activeRole || '—';
+
+        const title = document.getElementById('pageTitle');
+        if(title) title.textContent = `Edit Terms Calendar - ${activeRole || ''}`.trim();
+      }
+
+      function syncProposalToolbar(){
+        const saveBtn = document.getElementById('saveProposalBtn');
+        const submitBtn = document.getElementById('submitProposalBtn');
+        const roleHint = document.getElementById('proposalRoleHint');
+        if(!saveBtn || !submitBtn || !roleHint) return;
+
+        if(activeRole === 'Secretary'){
+          saveBtn.style.display = 'inline-block';
+          submitBtn.style.display = 'inline-block';
+          saveBtn.textContent = 'Save Draft';
+          submitBtn.textContent = 'Submit to Manager';
+          roleHint.textContent = 'Create a draft and submit it for review.';
+          return;
+        }
+
+        if(activeRole === 'Manager'){
+          saveBtn.style.display = 'none';
+          submitBtn.style.display = 'none';
+          roleHint.textContent = 'Review the proposals below with the action buttons that appear for each item.';
+          return;
+        }
+
+        if(activeRole === 'Headmaster'){
+          saveBtn.style.display = 'none';
+          submitBtn.style.display = 'none';
+          roleHint.textContent = 'Use the final approval buttons below each proposal.';
+          return;
+        }
+
+        saveBtn.style.display = 'inline-block';
+        submitBtn.style.display = 'inline-block';
+        roleHint.textContent = 'Choose a role to begin.';
+      }
+
+      function renderProposalList(){
+        const listEl = document.getElementById('proposalList');
+        if(!listEl) return;
+        listEl.innerHTML = '';
+
+        if(!state.proposals.length){
+          listEl.innerHTML = '<p class="muted">No proposals yet.</p>';
+          return;
+        }
+
+        state.proposals.forEach((proposal) => {
+          const item = document.createElement('div');
+          item.className = 'proposal-item';
+          const actionButtons = [];
+
+          if(activeRole === 'Secretary' && proposal.status === 'draft') {
+            actionButtons.push(`<button class="cal-btn" type="button" data-action="submit" data-id="${proposal.id}">Submit</button>`);
+          }
+
+          if(activeRole === 'Manager' && proposal.status === 'pending_manager_review') {
+            actionButtons.push(`<button class="cal-btn" type="button" data-action="approve" data-id="${proposal.id}">Approve</button>`);
+            actionButtons.push(`<button class="cal-btn" type="button" data-action="reject" data-id="${proposal.id}" style="background:#b11f2e;">Reject</button>`);
+            actionButtons.push(`<button class="cal-btn" type="button" data-action="request-revisions" data-id="${proposal.id}" style="background:#7e628f;">Request revisions</button>`);
+          }
+
+          if(activeRole === 'Headmaster' && proposal.status === 'awaiting_headmaster_approval') {
+            actionButtons.push(`<button class="cal-btn" type="button" data-action="approve" data-id="${proposal.id}">Final Approve</button>`);
+            actionButtons.push(`<button class="cal-btn" type="button" data-action="reject" data-id="${proposal.id}" style="background:#b11f2e;">Reject</button>`);
+            actionButtons.push(`<button class="cal-btn" type="button" data-action="request-revisions" data-id="${proposal.id}" style="background:#7e628f;">Request revisions</button>`);
+          }
+
+          const history = Array.isArray(proposal.history) ? proposal.history : [];
+          const comments = Array.isArray(proposal.comments) ? proposal.comments : [];
+          const categoryLabel = proposal.category === 'news' ? 'News' : proposal.category === 'policy' ? 'Policy' : proposal.category === 'communication' ? 'Communication' : proposal.category === 'resource' ? 'Resource' : 'Calendar';
+
+          item.innerHTML = `
+            <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center;">
+              <strong>${proposal.event?.title || 'Untitled proposal'}</strong>
+              <span class="status-pill">${proposal.status === 'final_approved' ? 'Approved' : proposal.status.replace(/_/g, ' ')}</span>
+            </div>
+            <div class="muted" style="margin-top:6px;">Category: ${categoryLabel} • Priority: ${escapeHtml(proposal.priority || 'Medium')} • Assigned to: ${escapeHtml(proposal.assignedTo || 'Manager')}</div>
+            <div class="muted" style="margin-top:4px;">${proposal.notes || 'No notes.'}</div>
+            <div class="proposal-actions">${actionButtons.join('')}</div>
+            <div class="timeline-list">
+              <div style="font-weight:900;color:#5a3e72;">Approval timeline</div>
+              ${history.length ? history.slice().reverse().map((entry)=>`<div class="timeline-entry">• ${escapeHtml(new Date(entry.at).toLocaleString())}: ${escapeHtml(entry.message || entry.action || 'Updated')} (${escapeHtml(entry.actor || 'System')})</div>`).join('') : '<div class="timeline-entry">No timeline entries yet.</div>'}
+            </div>
+            <div class="comment-list">
+              <div style="font-weight:900;color:#5a3e72;">Comments</div>
+              ${comments.length ? comments.slice().reverse().map((comment)=>`<div class="timeline-entry">• ${escapeHtml(comment.message || 'Comment')} — ${escapeHtml(comment.author || 'Admin')}</div>`).join('') : '<div class="timeline-entry">No comments yet.</div>'}
+            </div>
+            <div class="comment-box">
+              <textarea data-comment-input placeholder="Add a note for the manager or headmaster"></textarea>
+              <button class="cal-btn" type="button" data-comment-submit data-id="${proposal.id}">Add note</button>
+            </div>
+          `;
+          listEl.appendChild(item);
+        });
+      }
+
+      async function fetchProposalsFromBackend(){
+        if(!token) return;
+        const res = await fetch(`${API_BASE}/api/proposals`, {
+          method:'GET',
+          headers: { 'Authorization':'Bearer ' + token }
+        });
+        if(!res.ok) throw new Error('Could not load proposals');
+        const data = await res.json();
+        state.proposals = Array.isArray(data.proposals) ? data.proposals : [];
+        renderProposalList();
+      }
+
+      function formatApplicationDetail(app){
+        const student = app.forms?.student || {};
+        const health = app.forms?.health || {};
+        const parent = app.forms?.parent || {};
+        const rows = [
+          ['Student name', student.fullName],
+          ['Date of birth', student.dateOfBirth],
+          ['Current grade', student.currentGrade],
+          ['Gender', student.gender],
+          ['Nationality', student.nationality],
+          ['Home address', student.homeAddress],
+          ['Health — student name', health.studentFullName],
+          ['Blood group', health.bloodGroup],
+          ['Allergies', health.allergies],
+          ['Chronic illness', health.chronicIllness],
+          ['Immunization', health.immunization],
+          ['Doctor notes', health.doctorNotes],
+          ['Parent/guardian', parent.fullName],
+          ['Relationship', parent.relationship],
+          ['Phone', parent.phone],
+          ['Email', parent.email],
+          ['Parent address', parent.address],
+          ['Consent / notes', parent.consent]
+        ];
+        return rows
+          .filter(([, value]) => value)
+          .map(([label, value]) => `<div style="margin-top:4px;"><span class="muted">${escapeHtml(label)}:</span> <strong>${escapeHtml(value)}</strong></div>`)
+          .join('');
+      }
+
+      function renderApplicationsList(){
+        const listEl = document.getElementById('applicationsList');
+        const dashEl = document.getElementById('dashApplications');
+        if(!listEl) return;
+
+        const apps = Array.isArray(state.applications) ? state.applications : [];
+        const newCount = apps.filter((a) => (a.status || 'new') === 'new').length;
+        if(dashEl) dashEl.textContent = String(newCount);
+
+        if(!apps.length){
+          listEl.innerHTML = '<div class="proposal-item">No submitted applications yet.</div>';
+          return;
+        }
+
+        listEl.innerHTML = apps.map((app) => {
+          const student = app.forms?.student || {};
+          const parent = app.forms?.parent || {};
+          const status = app.status || 'new';
+          const statusClass = status === 'reviewed' ? 'approved' : status === 'archived' ? 'draft' : 'review';
+          const when = app.submittedAt ? new Date(app.submittedAt).toLocaleString() : 'recently';
+          const title = student.fullName || 'Unknown student';
+          return `
+            <div class="proposal-item" data-application-id="${escapeHtml(app.id)}">
+              <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;align-items:flex-start;">
+                <div>
+                  <strong>${escapeHtml(title)}</strong>
+                  <div class="status-badge ${statusClass}">${escapeHtml(status)}</div>
+                  <div class="muted" style="margin-top:4px;">Submitted ${escapeHtml(when)}${parent.fullName ? ' • Parent: ' + escapeHtml(parent.fullName) : ''}${parent.phone ? ' • ' + escapeHtml(parent.phone) : ''}</div>
+                </div>
+                <div class="proposal-actions">
+                  ${status === 'new' ? `<button class="cal-btn" type="button" data-app-action="reviewed" data-app-id="${escapeHtml(app.id)}">Mark reviewed</button>` : ''}
+                  ${status !== 'archived' ? `<button class="cal-btn" type="button" data-app-action="archived" data-app-id="${escapeHtml(app.id)}" style="background:#7e628f;">Archive</button>` : ''}
+                </div>
+              </div>
+              <div style="margin-top:10px;padding-top:8px;border-top:1px solid #eadff3;">
+                ${formatApplicationDetail(app)}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      async function fetchApplicationsFromBackend(){
+        if(!token) return;
+        const res = await fetch(`${API_BASE}/api/applications`, {
+          method:'GET',
+          headers: { 'Authorization':'Bearer ' + token }
+        });
+        if(!res.ok){
+          // Non-secretaries or older servers may not expose this; keep UI quiet.
+          state.applications = [];
+          renderApplicationsList();
+          return;
+        }
+        const data = await res.json();
+        state.applications = Array.isArray(data.applications) ? data.applications : [];
+        renderApplicationsList();
+      }
+
+      async function updateApplicationStatus(id, status){
+        if(!token || !id || !status) return;
+        const res = await fetch(`${API_BASE}/api/applications/${encodeURIComponent(id)}`, {
+          method:'PUT',
+          headers: {
+            'Content-Type':'application/json',
+            'Authorization':'Bearer ' + token
+          },
+          body: JSON.stringify({ status })
+        });
+        if(!res.ok){
+          const data = await res.json().catch(()=>({}));
+          throw new Error(data.error || 'Could not update application');
+        }
+        await fetchApplicationsFromBackend();
+      }
+
+      async function fetchDashboardFromBackend(){
+        if(!token) return;
+        const res = await fetch(`${API_BASE}/api/dashboard`, {
+          method:'GET',
+          headers: { 'Authorization':'Bearer ' + token }
+        });
+        if(!res.ok) return;
+        const data = await res.json();
+        const pendingEl = document.getElementById('dashPending');
+        const reviewEl = document.getElementById('dashReview');
+        const approvalsEl = document.getElementById('dashApprovals');
+        const inboxEl = document.getElementById('inboxList');
+        const activityEl = document.getElementById('activityList');
+        const todayActionsEl = document.getElementById('todayActionsText');
+
+        if(pendingEl) pendingEl.textContent = data.summary?.pendingProposals ?? 0;
+        if(reviewEl) reviewEl.textContent = data.summary?.itemsNeedingReview ?? 0;
+        if(approvalsEl) approvalsEl.textContent = data.summary?.recentApprovals ?? 0;
+        const appsDashEl = document.getElementById('dashApplications');
+        // Prefer live applications list count when available; fall back to dashboard summary.
+        if(appsDashEl && !(Array.isArray(state.applications) && state.applications.length)){
+          appsDashEl.textContent = data.summary?.newApplications ?? 0;
+        }
+
+        if(inboxEl){
+          const inbox = Array.isArray(data.inbox) ? data.inbox : [];
+          if(!inbox.length){
+            inboxEl.innerHTML = '<div class="inbox-item">No pending items.</div>';
+          } else {
+            inboxEl.innerHTML = inbox.map((item) => {
+              const statusClass = item.status === 'pending_manager_review' || item.status === 'awaiting_headmaster_approval' ? 'review' : item.status === 'final_approved' || item.status === 'approved' ? 'approved' : item.status === 'rejected' ? 'rejected' : 'draft';
+              return `<div class="inbox-item"><strong>${escapeHtml(item.title || 'Untitled item')}</strong><div class="status-badge ${statusClass}">${escapeHtml((item.status || 'updated').replace(/_/g,' '))}</div><div class="muted" style="margin-top:4px;">${escapeHtml(item.category || 'proposal')} • ${escapeHtml(item.priority || 'Medium')} • ${escapeHtml(item.assignedTo || 'Manager')}</div></div>`;
+            }).join('');
+          }
+        }
+
+        if(activityEl){
+          const activity = Array.isArray(data.recentActivity) ? data.recentActivity : [];
+          if(!activity.length){
+            activityEl.innerHTML = '<div class="activity-item">No recent activity.</div>';
+          } else {
+            activityEl.innerHTML = activity.map((item) => {
+              const statusClass = item.status === 'pending_manager_review' || item.status === 'awaiting_headmaster_approval' ? 'review' : item.status === 'final_approved' || item.status === 'approved' ? 'approved' : item.status === 'rejected' ? 'rejected' : 'draft';
+              return `<div class="activity-item"><strong>${escapeHtml(item.title || 'Untitled item')}</strong><div class="status-badge ${statusClass}">${escapeHtml((item.status || 'updated').replace(/_/g,' '))}</div><div class="muted" style="margin-top:4px;">${escapeHtml(item.category || 'proposal')} • ${escapeHtml(item.priority || 'Medium')} • ${escapeHtml(item.assignedTo || 'Manager')} • ${escapeHtml(item.updatedAt ? new Date(item.updatedAt).toLocaleString() : 'recently updated')}</div></div>`;
+            }).join('');
+          }
+        }
+
+        if(todayActionsEl){
+          const inbox = Array.isArray(data.inbox) ? data.inbox : [];
+          if(!inbox.length){
+            todayActionsEl.textContent = 'No action required right now.';
+          } else {
+            const first = inbox[0];
+            todayActionsEl.textContent = `${first.title || 'An item'} is waiting for ${first.status === 'pending_manager_review' ? 'manager review' : first.status === 'awaiting_headmaster_approval' ? 'headmaster approval' : 'attention'}.`;
+          }
+        }
+      }
+
+      function escapeHtml(value){
+        return String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      }
+
+      async function saveProposal(action = 'save'){
+        if(!token) return;
+        const categoryInput = document.getElementById('proposalCategory');
+        const dateInput = document.getElementById('eventDate');
+        const titleInput = document.getElementById('eventTitle');
+        const typeInput = document.getElementById('eventType');
+        const notesInput = document.getElementById('eventNotes');
+
+        if(!dateInput.value || !titleInput.value.trim()){
+          const statusEl = document.getElementById('proposalStatus');
+          statusEl.textContent = 'Select a date and title before saving a proposal.';
+          statusEl.style.color = '#b11f2e';
+          return;
+        }
+
+        const priorityInput = document.getElementById('proposalPriority');
+        const assignedToInput = document.getElementById('proposalAssignedTo');
+        const proposalPayload = {
+          category: categoryInput.value,
+          priority: priorityInput.value,
+          assignedTo: assignedToInput.value,
+          event: {
+            date: dateInput.value,
+            title: titleInput.value.trim(),
+            type: typeInput.value,
+            notes: notesInput.value.trim()
+          },
+          notes: `Submitted by ${activeRole || 'Secretary'}`
+        };
+
+        const method = action === 'save' ? 'POST' : 'POST';
+        const res = await fetch(`${API_BASE}/api/proposals`, {
+          method,
+          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
+          body: JSON.stringify(proposalPayload)
+        });
+
+        if(!res.ok){
+          const t = await res.text().catch(()=>null);
+          throw new Error('Proposal save failed' + (t ? ': ' + t : ''));
+        }
+
+        const data = await res.json();
+        const proposal = data.proposal;
+        if(action === 'submit') {
+          const submitRes = await fetch(`${API_BASE}/api/proposals/${proposal.id}`, {
+            method:'PUT',
+            headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
+            body: JSON.stringify({ action: 'submit' })
+          });
+          if(!submitRes.ok) throw new Error('Proposal submission failed');
+        }
+
+        await fetchProposalsFromBackend();
+        return data;
+      }
+
+      async function handleProposalAction(id, action){
+        const res = await fetch(`${API_BASE}/api/proposals/${id}`, {
+          method:'PUT',
+          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
+          body: JSON.stringify({ action })
+        });
+        if(!res.ok) throw new Error('Proposal action failed');
+        const data = await res.json().catch(() => ({}));
+        if(action === 'approve' && data.termCalendar && data.termCalendar.events){
+          state.events = { ...structuredClone(DEFAULT_EVENTS), ...data.termCalendar.events };
+          syncCalendarToClients();
+          render();
+        } else if(action === 'approve' && data.news) {
+          // No calendar update needed for news, but preserve the request flow.
+        } else if(action === 'approve') {
+          await fetchEventsFromBackend();
+          syncCalendarToClients();
+          render();
+        }
+        await fetchProposalsFromBackend();
+        await fetchDashboardFromBackend();
+      }
+
+      function setRole(role){
+        activeRole = role;
+        syncActiveRoleUI();
+        syncProposalToolbar();
+        if(token) {
+          renderProposalList();
+        }
+      }
+
+      async function init(){
+        const serverUp = await checkServer();
+        if(!serverUp){
+          setAuthUI(false);
+          syncActiveRoleUI();
+          if(authMsg){
+            authMsg.textContent = 'Admin server is not reachable. Start the host server (npm start) to continue.';
+            authMsg.className = 'danger';
+          }
+          disableAdminUI();
+          return;
+        }
+
+        if(!token){
+          setAuthUI(false);
+          syncActiveRoleUI();
+          if (isEmbedded || urlRoleHint) {
+            goToLogin();
+            return;
+          }
+          if(authMsg){
+            authMsg.textContent = 'Not signed in.';
+            authMsg.className = 'danger';
+          }
+          return;
+        }
+
+        // Lock UI role to JWT claim (never trust URL alone for actions)
+        try{ setSignedInUserFromToken(token); }catch(e){/* ignore */}
+        if (urlRoleHint && activeRole && urlRoleHint !== activeRole) {
+          const dest = './' + String(activeRole).toLowerCase() + '.html';
+          try {
+            if (window.top && window.top !== window) {
+              window.top.location.href = dest;
+              return;
+            }
+          } catch(e){/* ignore */}
+          window.location.href = dest;
+          return;
+        }
+
+        setAuthUI(true);
+        try{
+          await fetchEventsFromBackend();
+          render();
+          await fetchProposalsFromBackend();
+          await fetchApplicationsFromBackend();
+          await fetchDashboardFromBackend();
+          syncProposalToolbar();
+          syncActiveRoleUI();
+          applyRoleVisibility();
+        }catch(e){
+          token = '';
+          localStorage.removeItem(JWT_STORAGE_KEY);
+          setAuthUI(false);
+          if(authMsg){
+            authMsg.textContent = 'Session expired. Please login again.';
+            authMsg.className = 'danger';
+          }
+        }
+      }
+
+      function applyRoleVisibility(){
+        const appsPanel = document.getElementById('applicationsPanel');
+        const addEvent = document.querySelector('.add-event');
+        const clearMonth = document.getElementById('clearMonthBtn');
+        const rolePill = document.getElementById('rolePill');
+        if(rolePill && activeRole) rolePill.textContent = activeRole + ' dashboard';
+
+        // Applications inbox is primary for Secretary; others may view.
+        if(appsPanel){
+          appsPanel.style.display = (activeRole === 'Secretary' || activeRole === 'Manager' || activeRole === 'Headmaster') ? '' : 'none';
+        }
+        // Only Secretary creates proposals via the form
+        if(addEvent){
+          addEvent.style.display = activeRole === 'Secretary' ? '' : 'none';
+        }
+        // Direct month clear hits Headmaster-only API
+        if(clearMonth){
+          clearMonth.style.display = activeRole === 'Headmaster' ? '' : 'none';
+        }
+      }
+
+      document.getElementById('refreshApplicationsBtn')?.addEventListener('click', async ()=>{
+        try{
+          await fetchApplicationsFromBackend();
+        }catch(e){/* ignore */}
+      });
+
+      document.getElementById('applicationsList')?.addEventListener('click', async (e)=>{
+        const btn = e.target.closest('[data-app-action]');
+        if(!btn) return;
+        const id = btn.getAttribute('data-app-id');
+        const action = btn.getAttribute('data-app-action');
+        if(!id || !action) return;
+        try{
+          btn.disabled = true;
+          await updateApplicationStatus(id, action);
+        }catch(err){
+          alert(err.message || 'Could not update application');
+        }finally{
+          btn.disabled = false;
+        }
+      });
+
+      function doLogout(){
+        token = '';
+        localStorage.removeItem(JWT_STORAGE_KEY);
+        try{ document.getElementById('signedInUser').textContent = ''; }catch(e){}
+        goToLogin();
+      }
+
+      document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
+      document.getElementById('logoutBtnTop')?.addEventListener('click', doLogout);
+
+      // Wire retry button
+      document.getElementById('retryBtn')?.addEventListener('click', ()=>{
+        retryConnection();
+      });
+
+      function b64UrlDecode(input){
+        // base64url -> base64
+        let s = input.replace(/-/g,'+').replace(/_/g,'/');
+        while(s.length % 4) s += '=';
+        try{
+          return decodeURIComponent(escape(window.atob(s)));
+        }catch(e){
+          return null;
+        }
+      }
+
+      function parseJwt(token){
+        if(!token) return null;
+        const parts = token.split('.');
+        if(parts.length < 2) return null;
+        try{
+          const json = b64UrlDecode(parts[1]);
+          return json ? JSON.parse(json) : null;
+        }catch(e){ return null; }
+      }
+
+      function updateFormFieldsForCategory(){
+        const category = document.getElementById('proposalCategory').value;
+        const typeLabel = document.getElementById('eventTypeLabel');
+        const notesLabel = document.getElementById('eventNotesLabel');
+        const typeInput = document.getElementById('eventType');
+
+        if(category === 'news'){
+          typeLabel.textContent = 'News type';
+          notesLabel.textContent = 'Announcement details';
+          typeInput.innerHTML = '' +
+            '<option value="Announcement">Announcement</option>' +
+            '<option value="Reminder">Reminder</option>' +
+            '<option value="Important">Important</option>' +
+            '<option value="Update">Update</option>';
+          document.getElementById('eventTitle').placeholder = 'e.g., New school policy / Parent meeting';
+        } else if(category === 'policy'){
+          typeLabel.textContent = 'Document type';
+          notesLabel.textContent = 'Summary or policy text';
+          typeInput.innerHTML = '' +
+            '<option value="Policy">Policy</option>' +
+            '<option value="Meeting minutes">Meeting minutes</option>' +
+            '<option value="Guideline">Guideline</option>';
+          document.getElementById('eventTitle').placeholder = 'e.g., New attendance policy / Board meeting notes';
+        } else if(category === 'communication'){
+          typeLabel.textContent = 'Communication type';
+          notesLabel.textContent = 'Message body';
+          typeInput.innerHTML = '' +
+            '<option value="Parent update">Parent update</option>' +
+            '<option value="Student notice">Student notice</option>' +
+            '<option value="Teacher memo">Teacher memo</option>';
+          document.getElementById('eventTitle').placeholder = 'e.g., Parent meeting request / Student note';
+        } else if(category === 'resource'){
+          typeLabel.textContent = 'Request type';
+          notesLabel.textContent = 'Request details';
+          typeInput.innerHTML = '' +
+            '<option value="Facility">Facility</option>' +
+            '<option value="Equipment">Equipment</option>' +
+            '<option value="Support">Support</option>';
+          document.getElementById('eventTitle').placeholder = 'e.g., Projector booking / Classroom request';
+        } else {
+          typeLabel.textContent = 'Type';
+          notesLabel.textContent = 'Notes (optional)';
+          typeInput.innerHTML = '' +
+            '<option value="General">General</option>' +
+            '<option value="Holiday">Holiday</option>' +
+            '<option value="Exams">Exams</option>' +
+            '<option value="Sports">Sports</option>' +
+            '<option value="Assembly">Assembly</option>';
+          document.getElementById('eventTitle').placeholder = 'e.g., Term begins / Sports Day';
+        }
+      }
+
+      document.getElementById('proposalCategory').addEventListener('change', updateFormFieldsForCategory);
+
+      function setSignedInUserFromToken(tok){
+        try{
+          const p = parseJwt(tok);
+          if(!p) return;
+          const el = document.getElementById('signedInUser');
+          if(el) el.textContent = `Signed in: ${p.username || p.user || ''} (${p.role || ''})`;
+          // Always lock active role to JWT claim
+          if(p.role){
+            setRole(p.role);
+          }
+        }catch(e){/* ignore */}
+      }
+
+
+      document.getElementById('saveProposalBtn').addEventListener('click', async ()=>{
+        const statusEl = document.getElementById('proposalStatus');
+        try{
+          statusEl.textContent = 'Saving proposal...';
+          statusEl.style.color = '#5a3e72';
+          await saveProposal('save');
+          statusEl.textContent = 'Proposal saved. It can be submitted when ready.';
+          statusEl.style.color = '#5a3e72';
+        }catch(err){
+          statusEl.textContent = err.message || 'Proposal save failed';
+          statusEl.style.color = '#b11f2e';
+        }
+      });
+
+      document.getElementById('submitProposalBtn').addEventListener('click', async ()=>{
+        const statusEl = document.getElementById('proposalStatus');
+        try{
+          statusEl.textContent = 'Submitting proposal...';
+          statusEl.style.color = '#5a3e72';
+          await saveProposal('submit');
+          statusEl.textContent = 'Proposal submitted to the Manager for review.';
+          statusEl.style.color = '#5a3e72';
+        }catch(err){
+          statusEl.textContent = err.message || 'Proposal submission failed';
+          statusEl.style.color = '#b11f2e';
+        }
+      });
+
+      document.getElementById('proposalList').addEventListener('click', async (event) => {
+        const actionBtn = event.target.closest('button[data-action]');
+        const commentBtn = event.target.closest('button[data-comment-submit]');
+        if(!token) return;
+        const statusEl = document.getElementById('proposalStatus');
+
+        if(actionBtn){
+          try{
+            statusEl.textContent = 'Updating proposal...';
+            statusEl.style.color = '#5a3e72';
+            await handleProposalAction(actionBtn.dataset.id, actionBtn.dataset.action);
+            statusEl.textContent = `Proposal ${actionBtn.dataset.action.replace(/-/g, ' ')}.`;
+            statusEl.style.color = '#5a3e72';
+          }catch(err){
+            statusEl.textContent = err.message || 'Proposal update failed';
+            statusEl.style.color = '#b11f2e';
+          }
+          return;
+        }
+
+        if(commentBtn){
+          const item = commentBtn.closest('.proposal-item');
+          const textarea = item?.querySelector('textarea[data-comment-input]');
+          const message = textarea?.value?.trim() || '';
+          if(!message){
+            statusEl.textContent = 'Please enter a note before sending.';
+            statusEl.style.color = '#b11f2e';
+            return;
+          }
+          try{
+            statusEl.textContent = 'Saving note...';
+            statusEl.style.color = '#5a3e72';
+            const res = await fetch(`${API_BASE}/api/proposals/${commentBtn.dataset.id}/comments`, {
+              method:'POST',
+              headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
+              body: JSON.stringify({ message })
+            });
+            if(!res.ok) throw new Error('Could not save note');
+            await fetchProposalsFromBackend();
+            await fetchDashboardFromBackend();
+            statusEl.textContent = 'Note added.';
+            statusEl.style.color = '#5a3e72';
+          }catch(err){
+            statusEl.textContent = err.message || 'Note save failed';
+            statusEl.style.color = '#b11f2e';
+          }
+        }
+      });
+
+      document.getElementById('prevBtn').addEventListener('click', ()=>{
+        if(state.currentMonth === 0){ state.currentMonth = 11; state.currentYear--; }
+        else state.currentMonth--;
+        render();
+      });
+
+      document.getElementById('nextBtn').addEventListener('click', ()=>{
+        if(state.currentMonth === 11){ state.currentMonth = 0; state.currentYear++; }
+        else state.currentMonth++;
+        render();
+      });
+
+      const form = document.getElementById('eventForm');
+      const statusEl = document.getElementById('formStatus');
+
+      (function setDefaultDate(){
+        const dateInput = document.getElementById('eventDate');
+        dateInput.value = toISODate(new Date());
+      })();
+
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        if(!token) return;
+
+        const date = document.getElementById('eventDate').value;
+        const title = document.getElementById('eventTitle').value.trim();
+        const type = document.getElementById('eventType').value;
+        const notes = document.getElementById('eventNotes').value.trim();
+
+        if(!date || !title){
+          statusEl.textContent = 'Please provide a date and title.';
+          statusEl.style.color = '#b11f2e';
+          return;
+        }
+
+        if(activeRole !== 'Secretary'){
+          statusEl.textContent = 'Only Secretaries can create proposals.';
+          statusEl.style.color = '#b11f2e';
+          return;
+        }
+
+        try{
+          statusEl.textContent = 'Creating proposal...';
+          statusEl.style.color = '#5a3e72';
+          await saveProposal('save');
+          statusEl.textContent = 'Proposal created. It is waiting for Manager review.';
+          statusEl.style.color = '#5a3e72';
+        }catch(err){
+          statusEl.textContent = err.message || 'Proposal creation failed';
+          statusEl.style.color = '#b11f2e';
+        }
+      });
+
+      document.getElementById('clearMonthBtn').addEventListener('click', async ()=>{
+        if(!token) return;
+
+        const year = state.currentYear;
+        const month = state.currentMonth;
+
+        const start = new Date(year, month, 1);
+        const end = new Date(year, month + 1, 0);
+
+        const keep = {};
+        for(const [iso, evs] of Object.entries(state.events)){
+          const d = new Date(iso + 'T00:00:00');
+          if(d >= start && d <= end) continue;
+          keep[iso] = evs;
+        }
+
+        state.events = keep;
+
+        try{
+          await saveEventsToBackend();
+          render();
+          statusEl.textContent = 'Month cleared.';
+          statusEl.style.color = '#7e628f';
+        }catch(err){
+          statusEl.textContent = err.message || 'Clear failed';
+          statusEl.style.color = '#b11f2e';
+        }
+      });
+
+      // Role label hint from URL is only cosmetic until JWT is applied in init().
+      if(urlRoleHint){
+        setRole(urlRoleHint);
+      }
+
+      init();
+    </script>
+  </body>
+</html>

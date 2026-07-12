@@ -1,139 +1,142 @@
 # DEBEST ACADEMY Website
 
-## Description
+DEBEST Academy is a school website project with a public-facing front end and a lightweight admin backend for managing calendar events, news updates, and proposal approvals.
 
-DEBEST ACADEMY is a static educational website designed for a school offering quality education from Creche to Junior High School. The website provides comprehensive information about the institution, including details on admission, news and updates, dedicated platforms for students and parents, PTA information, a photo gallery, and a contact form. Built with HTML, CSS, and JavaScript, it features a responsive design, sticky navigation, and interactive elements like a lightbox gallery and Formspree-powered contact form.
+## Overview
 
-## Features
+The project combines:
 
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices.
-- **Sticky Navigation**: Easy access to different sections of the site.
-- **Photo Gallery**: Includes a responsive gallery with lightbox functionality for viewing images.
-- **Contact Form**: Integrated with Formspree for handling inquiries.
-- **Platforms**: Dedicated sections for students/parents and PTA.
-- **News & Updates**: Latest announcements and events.
-- **FAQ Section**: Common questions and answers.
-- **Accessibility**: Includes ARIA labels and semantic HTML for better accessibility.
+- static school pages such as the home page, admissions, gallery, PTA, parent/student platforms, and contact information
+- an Express server for serving those pages and exposing JSON APIs
+- a simple admin workflow for managing term-calendar updates and proposal review
+
+## Tech Stack
+
+- HTML, CSS, and JavaScript for the website UI
+- Node.js and Express for the local server and APIs
+- JWT, bcrypt, and cookie support for admin authentication
+- lowdb for file-based JSON storage
 
 ## Prerequisites
 
-- Node.js (includes npm & npx) - for running development scripts.
-- VS Code with Live Server extension (recommended for easy local development).
+- Node.js 18+ recommended
+- npm
 
-## Installation
+## Getting Started
 
-1. Clone the repository to your local machine.
-2. Navigate to the project directory.
-3. Install the development dependencies:
+1. Clone the repository.
+2. Install dependencies:
 
    ```bash
    npm install
    ```
 
-## Usage
+3. Start the server:
 
-### Starting the Development Server
+   ```bash
+   npm start
+   ```
 
-- To start a simple HTTP server:
+4. Open the site in your browser at:
 
-  ```bash
-  npm run start
-  ```
+   ```text
+   http://localhost:5500/debest.html
+   ```
 
-  This serves the site at `http://localhost:5500/`.
+You can also run the server in development mode with:
 
-- To start with live reload (automatically refreshes on changes):
-
-  ```bash
-  npm run bs
-  ```
-
-  This opens the site in your browser and watches for file changes.
-
-### Accessing the Site
-
-- Main page: `http://localhost:5500/debest.hmtl/debest.html`
-- Alternatively, right-click `debest.html` in VS Code and select "Open with Live Server".
+```bash
+npm run dev
+```
 
 ## Project Structure
 
-```
-html-website/
-├── debest.hmtl/
-│   ├── debest.html          # Main homepage
-│   ├── apply.html           # Application page
-│   ├── debest.css           # Stylesheet
-│   ├── debest.js            # JavaScript file
-│   ├── photo.html           # Photo gallery page
-│   ├── photolibrary.html    # Photo library page
-│   ├── pta.html             # PTA platform page
-│   ├── students-and-parents-platform.html  # Students/Parents platform page
-├── .vscode/
-│   ├── settings.json        # VS Code settings
-│   ├── launch.json          # VS Code launch configuration
-├── package.json             # NPM configuration and scripts
-├── README.md                # This file
-└── [Other assets like images]
+```text
+.
+├── admin/                  # Admin dashboard pages
+├── student/                # Student and parent-facing pages
+├── tests/                  # Node.js test files
+├── data.json               # File-based app data store
+├── debest.html             # Main public homepage
+├── debest.css              # Main stylesheet
+├── debest.js               # Frontend scripts
+├── proposal-workflow.js    # Proposal status and calendar update logic
+├── server.js               # Express server and REST API
+├── package.json            # npm scripts and dependencies
+└── README.md               # Project documentation
 ```
 
-## Common Tasks
+## Public site + three admin dashboards (school LAN)
 
-- **Renaming Files**: Avoid spaces in filenames to prevent issues.
-- **Image Optimization**: Use relative paths for images (e.g., `src="images/debest.png"`). Add `loading="lazy"` and `decoding="async"` to large images. Specify `width` and `height` to reduce layout shift.
-- **Gallery Setup**: Use `data-full` attribute on gallery thumbnails for lightbox full-size images.
-- **Contact Form**: Ensure the Formspree action URL is correctly set in the form's `action` attribute.
+```text
+                School Website
+                      │
+        ┌─────────────┴─────────────┐
+        │                           │
+   Public Website              Admin Login
+(Home, About, Contact)      (/admin/login)
+                                      │
+                  ┌───────────┬────────────┬────────────┐
+                  │           │            │
+             Secretary     Manager    Headmaster
+              Dashboard    Dashboard   Dashboard
+```
 
-## Git Workflow
+**One host computer** runs the Node server. The other two admin PCs only use a browser. Everyone opens the same host URL so applications, proposals, and calendar data stay shared in `data.json`.
 
-Set up Git (one time):
+### Staff URLs
+
+| Page | Path |
+|------|------|
+| Public site | `/debest.html` |
+| Staff login | `/admin/login.html` |
+| Secretary | `/admin/secretary.html` |
+| Manager | `/admin/manager.html` |
+| Headmaster | `/admin/headmaster.html` |
+
+### Demo login credentials
+
+| Username | Password | Role |
+|----------|----------|------|
+| `Secretary` | `Secretary123` | Secretary |
+| `Manager` | `Manager123` | Manager |
+| `Headmaster` | `Headmaster123` | Headmaster |
+| `admin` | `Admin123` | Headmaster (legacy) |
+
+Passwords are bcrypt-hashed in `data.json` (not stored in the frontend). See [README_ADMIN_LOGIN.md](README_ADMIN_LOGIN.md) for LAN setup and password resets.
+
+### Admin API (summary)
+
+- `POST /api/admin/login` → `{ token, role, username, dashboard }`
+- `GET /api/terms-calendar` and `PUT /api/terms-calendar` (direct PUT: Headmaster)
+- `GET/POST/PUT /api/proposals` — Secretary → Manager → Headmaster workflow
+- `GET/PUT /api/applications` — public submit; admin inbox
+- `GET /api/dashboard` — role summary cards
+
+### School network checklist
+
+1. Host PC: `npm start` (listens on `0.0.0.0:5500` by default).
+2. Note host IP: `hostname -I`.
+3. Open firewall TCP **5500** on the host if needed.
+4. From each admin PC: `http://HOST_IP:5500/admin/login.html`
+5. Optional: set `JWT_SECRET` and `ADMIN_IP_ALLOWLIST` (see `.env.example`).
+
+## Testing
+
+The proposal workflow logic is covered by Node's built-in test runner.
+
+Run the tests with:
 
 ```bash
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
+node --test tests/proposal-workflow.test.js
 ```
 
-Typical workflow:
+## Notes
 
-```bash
-git add -A
-git commit -m "Your commit message"
-git push origin main
-```
-
-If commit fails due to author issues:
-
-```bash
-git commit --amend --author="Your Name <you@example.com>" --no-edit
-git push --force-with-lease origin main
-```
-
-## Debugging & Tips
-
-- Check browser DevTools (F12) for console errors and network issues.
-- Refresh with Ctrl+F5 to clear cache after updates.
-- If `http-server` is not found, use `npx http-server . -p 5500 -c-1` or install globally with `npm i -g http-server`.
-- If port 5500 is in use, change to another port: `npx http-server . -p 8080`.
-
-## Next Steps / Improvements
-
-- Implement `srcset` and WebP images for better performance.
-- Optimize images using tools like Squoosh.
-- Run Lighthouse audits for performance and accessibility.
-- Set up CI/CD or deploy to GitHub Pages / Netlify.
-- Add testing or linting (e.g., ESLint, stylelint) as the project grows.
+- The server serves the project root as static content, so pages such as `debest.html` and `photo.html` are available directly.
+- If port `5500` is already in use, set a different port with `PORT=8080 npm start`.
+- The app uses a JSON file as its data store, so changes made through the UI are stored locally in `data.json`.
 
 ## Contributing
 
-Contributions are welcome! Please fork the repository and submit a pull request with your changes. Ensure that any new features or changes are tested and follow the existing code style.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contact
-
-For questions or support, please use the contact form on the website or reach out via the provided social media links.
-
----
-
-*Built with ❤️ for DEBEST ACADEMY - Education as Good as Gold*
+Contributions are welcome. If you make changes, please keep the documentation updated and make sure any new behavior is covered by tests where possible.

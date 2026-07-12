@@ -45,10 +45,19 @@
           z-index: 1000;
           box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .crest-container {
+.crest-link {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+.crest-container {
             max-width: 60px;
             max-height: 60px;
             margin-right: 15px;
+            display: flex;
+            align-items: center;
+            transform: translateY(6px); /* nudge crest down to center within header */
         }
         .crest-container img {
             max-width: 100%;
@@ -460,7 +469,7 @@
         .lightbox__close { font-size: 22px; top: 8px; right: 8px; }
         }
 
-        /* Floating Home button (always visible, under the header crest) */
+/* Floating Home button (always visible, under the header crest) */
         .home-btn {
   position: fixed;
   left: var(--home-btn-left);
@@ -497,6 +506,28 @@
 
 /* ensure no overlap with sticky nav if nav is fixed/sticky */
 @media (min-width: 760px) {
+
+        /* Small admin button on the top-right header near the crest */
+        .admin-top-btn {
+          position: absolute;
+          left: 420px;
+          top: 18px;
+          padding: 4px 6px;
+          font-size: 0.85rem;
+          font-weight: 900;
+          border-radius: 10px;
+          background: #5a3e72;
+          color: #fff8f0;
+          z-index: 1200;
+          border: 1px solid rgba(83,61,122,0.15);
+          box-shadow: 0 6px 18px rgba(83,61,122,0.08);
+        }
+        .admin-top-btn:hover,
+        .admin-top-btn:focus {
+          background: #7e628f;
+          outline: none;
+        }
+
   /* if nav is sticky and takes more vertical space, increase top offset */
   .home-btn { top: calc(var(--header-height) + 16px); }
 }

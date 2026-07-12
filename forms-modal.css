@@ -1,0 +1,202 @@
+/* Styles for the fillable admission forms page */
+
+.forms-container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.forms-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  font-size: 0.9rem;
+}
+
+.form-card {
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 12px 0;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Crest backdrop inside each printable form card */
+.form-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image: url('../debestcrest.jpg');
+  background-repeat: no-repeat;
+  background-position: center 60px;
+  background-size: 320px 320px;
+
+  opacity: 0.48;
+
+
+  filter: grayscale(0.05) contrast(1.45) brightness(1.12);
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+.print-block {
+  position: relative;
+  z-index: 1;
+}
+
+.form-card > *:not(.print-block) {
+  position: relative;
+  z-index: 1;
+}
+
+.form-card h3 {
+  margin: 0 0 8px;
+}
+
+.form-card p {
+  margin: 0 0 12px;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.small {
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.form-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.form-field-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.95rem;
+  color: rgba(0, 0, 0, 0.8);
+  font-weight: 600;
+}
+
+.form-field-grid input,
+.form-field-grid select,
+.form-field-grid textarea {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.98rem;
+  background: #fff;
+  color: #111;
+}
+
+.form-field-grid textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.signature-row {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 18px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.18);
+}
+
+.signature-row > div {
+  flex: 1;
+  min-width: 180px;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.75);
+  font-size: 0.95rem;
+}
+
+.signature-line {
+  height: 38px;
+  margin-top: 8px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.35);
+}
+
+.sr-only-printable {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@media print {
+  body[data-print-mode] .form-card {
+    display: none;
+  }
+
+  body[data-print-mode="student-application"] .form-card:nth-of-type(1) {
+    display: block;
+  }
+
+  body[data-print-mode="health-records"] .form-card:nth-of-type(2) {
+    display: block;
+  }
+
+  body[data-print-mode="parent-guardian"] .form-card:nth-of-type(3) {
+    display: block;
+  }
+
+  header,
+  nav,
+  .forms-header,
+  .form-actions {
+    display: none !important;
+  }
+
+  .form-card {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .print-block {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 14px;
+    border-radius: 0;
+  }
+
+  .form-field-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-field-grid textarea {
+    min-height: 80px;
+  }
+
+  .signature-row {
+    border-top: 1px dashed rgba(0, 0, 0, 0.25);
+  }
+}
+

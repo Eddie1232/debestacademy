@@ -1,0 +1,398 @@
+{
+  "admins": [
+    {
+      "id": "sec-1",
+      "username": "Secretary",
+      "role": "Secretary",
+      "passwordHash": "$2a$10$331XVzsGDKV0GGQLgnuzquFGBZaDGdH.xRGgOyGoXjNYUTlFxe9rq"
+    },
+    {
+      "id": "mgr-1",
+      "username": "Manager",
+      "role": "Manager",
+      "passwordHash": "$2a$10$CXejZwTv8boXT0JHxrgFbOCU7NH8qto5WKxD1yYR/vVEgjsU6QLL2"
+    },
+    {
+      "id": "hm-1",
+      "username": "Headmaster",
+      "role": "Headmaster",
+      "passwordHash": "$2a$10$UddxK3eal93bZ.db.wamT.OpUWGBKEfJH2JsweTGTVctGsHSTSkRW"
+    },
+    {
+      "id": "admin-1",
+      "username": "admin",
+      "role": "Headmaster",
+      "passwordHash": "$2a$10$clZEr.YAWsU8sJW18haNNOjK0HKZM3cLYjxsuXcvKvl63k5/mfnBe"
+    },
+    {
+      "id": "hm-comma",
+      "username": "Comma",
+      "role": "Headmaster",
+      "passwordHash": "$2a$10$YZPLwBrOeNsoy9NIxbraw.GdZ3Y7K8WocL9wxjvS9tSAR0Wnzq0Z."
+    }
+  ],
+  "termCalendar": {
+    "events": {
+      "2026-01-06": [
+        {
+          "title": "Term 1 Begins",
+          "type": "General",
+          "notes": "Students resume."
+        }
+      ],
+      "2026-02-14": [
+        {
+          "title": "Mid-Term Tests",
+          "type": "Exams",
+          "notes": "Normal timetable."
+        }
+      ],
+      "2026-03-27": [
+        {
+          "title": "Sports Day",
+          "type": "Sports",
+          "notes": "Inter-house competition."
+        }
+      ],
+      "2026-04-10": [
+        {
+          "title": "Good Friday",
+          "type": "Holiday",
+          "notes": "Public holiday."
+        }
+      ],
+      "2026-04-17": [
+        {
+          "title": "End of Term 1 / Begin Term 2",
+          "type": "General",
+          "notes": "Term transition."
+        }
+      ],
+      "2026-12-31": [
+        {
+          "title": "Test Day",
+          "type": "General",
+          "notes": "backend update"
+        }
+      ],
+      "2026-06-26": [
+        {
+          "title": "Sports day",
+          "type": "Sports",
+          "notes": "today we enjoy ourselves"
+        }
+      ]
+    }
+  },
+  "news": {
+    "items": []
+  },
+  "proposals": [
+    {
+      "id": "1782991506628",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "status": "rejected",
+      "event": {
+        "date": "2026-07-02",
+        "title": "sports",
+        "type": "Sports",
+        "notes": "we moving to kasoa on monday"
+      },
+      "notes": "Submitted by Secretary",
+      "createdAt": "2026-07-02T11:25:06.628Z",
+      "updatedAt": "2026-07-02T11:32:52.726Z",
+      "reviewedBy": "Comma",
+      "category": "calendar",
+      "assignedTo": "Manager",
+      "priority": "Medium",
+      "comments": [],
+      "history": []
+    },
+    {
+      "id": "1782991514520",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "status": "rejected",
+      "event": {
+        "date": "2026-07-02",
+        "title": "sports",
+        "type": "Sports",
+        "notes": "we moving to kasoa on monday"
+      },
+      "notes": "Submitted by Secretary",
+      "createdAt": "2026-07-02T11:25:14.520Z",
+      "updatedAt": "2026-07-02T11:32:37.135Z",
+      "reviewedBy": "Comma",
+      "category": "calendar",
+      "assignedTo": "Manager",
+      "priority": "Medium",
+      "comments": [],
+      "history": []
+    },
+    {
+      "id": "1783108911515",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "status": "revisions_requested",
+      "event": {
+        "date": "2026-07-18",
+        "title": "Graduation Day",
+        "type": "General",
+        "notes": "All student are to be present for the graduation of the KG2/JHS3 students"
+      },
+      "notes": "Submitted by Secretary",
+      "createdAt": "2026-07-03T20:01:51.515Z",
+      "updatedAt": "2026-07-05T16:02:57.756Z",
+      "reviewedBy": "Comma",
+      "comments": [
+        {
+          "id": "1783263440300",
+          "author": "Secretary",
+          "role": "Secretary",
+          "message": "this is the date set earlier",
+          "createdAt": "2026-07-05T14:57:20.300Z"
+        },
+        {
+          "id": "1783264903473",
+          "author": "Comma",
+          "role": "Headmaster",
+          "message": "okay then set the proposal again",
+          "createdAt": "2026-07-05T15:21:43.473Z"
+        },
+        {
+          "id": "1783267377756",
+          "author": "Secretary",
+          "role": "Secretary",
+          "message": "Done",
+          "createdAt": "2026-07-05T16:02:57.756Z"
+        }
+      ],
+      "history": [
+        {
+          "action": "comment",
+          "actor": "Secretary",
+          "message": "this is the date set earlier",
+          "at": "2026-07-05T14:57:20.300Z"
+        },
+        {
+          "action": "comment",
+          "actor": "Comma",
+          "message": "okay then set the proposal again",
+          "at": "2026-07-05T15:21:43.473Z"
+        },
+        {
+          "action": "comment",
+          "actor": "Secretary",
+          "message": "Done",
+          "at": "2026-07-05T16:02:57.756Z"
+        }
+      ],
+      "category": "calendar",
+      "assignedTo": "Manager",
+      "priority": "Medium"
+    },
+    {
+      "id": "1783109483290",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "status": "rejected",
+      "event": {
+        "date": "2026-07-03",
+        "title": "Graduation day",
+        "type": "General",
+        "notes": ""
+      },
+      "notes": "Submitted by Secretary",
+      "createdAt": "2026-07-03T20:11:23.291Z",
+      "updatedAt": "2026-07-05T15:21:55.769Z",
+      "reviewedBy": "Comma",
+      "comments": [
+        {
+          "id": "1783264915769",
+          "author": "Comma",
+          "role": "Headmaster",
+          "message": "Nope",
+          "createdAt": "2026-07-05T15:21:55.769Z"
+        }
+      ],
+      "history": [
+        {
+          "action": "comment",
+          "actor": "Comma",
+          "message": "Nope",
+          "at": "2026-07-05T15:21:55.769Z"
+        }
+      ],
+      "category": "calendar",
+      "assignedTo": "Manager",
+      "priority": "Medium"
+    },
+    {
+      "id": "1783266899260",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "category": "calendar",
+      "status": "final_approved",
+      "assignedTo": "Completed",
+      "priority": "High",
+      "event": {
+        "date": "2026-07-05",
+        "title": "Term begins",
+        "type": "Assembly",
+        "notes": ""
+      },
+      "notes": "Submitted by Secretary",
+      "comments": [],
+      "history": [
+        {
+          "action": "created",
+          "actor": "Secretary",
+          "message": "Draft created",
+          "at": "2026-07-05T15:54:59.260Z"
+        },
+        {
+          "action": "submit",
+          "actor": "Secretary",
+          "message": "Submitted for manager review",
+          "at": "2026-07-05T15:55:27.982Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Manager",
+          "message": "Approved and sent to the Headmaster",
+          "at": "2026-07-05T15:55:48.925Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Comma",
+          "message": "Final approval granted",
+          "at": "2026-07-05T15:56:22.840Z"
+        }
+      ],
+      "createdAt": "2026-07-05T15:54:59.260Z",
+      "updatedAt": "2026-07-05T15:56:22.840Z",
+      "reviewedBy": "Comma"
+    },
+    {
+      "id": "1783267199967",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "category": "calendar",
+      "status": "final_approved",
+      "assignedTo": "Completed",
+      "priority": "Medium",
+      "event": {
+        "date": "2026-07-17",
+        "title": "We meet at Kasoa",
+        "type": "Sports",
+        "notes": ""
+      },
+      "notes": "Submitted by Secretary",
+      "comments": [],
+      "history": [
+        {
+          "action": "created",
+          "actor": "Secretary",
+          "message": "Draft created",
+          "at": "2026-07-05T15:59:59.967Z"
+        },
+        {
+          "action": "submit",
+          "actor": "Secretary",
+          "message": "Submitted for manager review",
+          "at": "2026-07-05T16:00:15.424Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Manager",
+          "message": "Approved and sent to the Headmaster",
+          "at": "2026-07-05T16:01:03.217Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Comma",
+          "message": "Final approval granted",
+          "at": "2026-07-05T16:01:33.833Z"
+        }
+      ],
+      "createdAt": "2026-07-05T15:59:59.967Z",
+      "updatedAt": "2026-07-05T16:01:33.833Z",
+      "reviewedBy": "Comma"
+    },
+    {
+      "id": "1783267409261",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "category": "calendar",
+      "status": "final_approved",
+      "assignedTo": "Completed",
+      "priority": "Medium",
+      "event": {
+        "date": "2026-07-19",
+        "title": "Grand opening",
+        "type": "Assembly",
+        "notes": ""
+      },
+      "notes": "Submitted by Secretary",
+      "comments": [],
+      "history": [
+        {
+          "action": "created",
+          "actor": "Secretary",
+          "message": "Draft created",
+          "at": "2026-07-05T16:03:29.261Z"
+        },
+        {
+          "action": "submit",
+          "actor": "Secretary",
+          "message": "Submitted for manager review",
+          "at": "2026-07-05T16:04:13.382Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Manager",
+          "message": "Approved and sent to the Headmaster",
+          "at": "2026-07-05T16:04:52.952Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Comma",
+          "message": "Final approval granted",
+          "at": "2026-07-05T16:05:51.560Z"
+        }
+      ],
+      "createdAt": "2026-07-05T16:03:29.261Z",
+      "updatedAt": "2026-07-05T16:05:51.560Z",
+      "reviewedBy": "Comma"
+    }
+  ],
+  "applications": [
+    {
+      "id": "app-1783640931185",
+      "which": "all-3",
+      "status": "archived",
+      "submittedAt": "2026-07-09T23:48:51.185Z",
+      "forms": {
+        "student": {
+          "fullName": "Test Student",
+          "currentGrade": "KG1",
+          "dateOfBirth": "2018-01-01"
+        },
+        "health": {
+          "bloodGroup": "O+",
+          "allergies": "None"
+        },
+        "parent": {
+          "fullName": "Test Parent",
+          "phone": "+233111",
+          "relationship": "Mother"
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-07-10T04:40:03.900Z"
+    }
+  ]
+}

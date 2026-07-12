@@ -1,0 +1,5 @@
+- [x] Inspect admin/editable calendar page
+- [x] Add Secretary / Manager / Headmaster role buttons to admin editor UI
+- [x] Wire click handlers to set role + show active role in UI
+- [x] Keep single editable calendar logic unchanged
+- [ ] Quick manual verification: login -> roles visible -> click roles updates UI

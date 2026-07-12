@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Student Application Forms - DEBEST Academy</title>
+      <link rel="stylesheet" href="./debest.css" />
+      <link rel="stylesheet" href="./forms-modal.css" />
+
+    </head>
+    <body>
+      <header>
+        <div class="crest-container" aria-label="School Crest">
+          <img src="./debestcrest.jpg" alt="DEBEST Crest" />
+        </div>
+        <h1>DEBEST ACADEMY</h1>
+        <a class="home-btn" href="apply.html" aria-label="Back to Apply page" title="Back">↩️</a>
+      </header>
+
+      <main class="forms-container" role="main">
+
+    <script src="./forms-modal.js"></script>
+
+        <div class="forms-header">
+          <div>
+            <h2 style="margin: 0;">FILL FORM</h2>
+            <div class="small">Fill all sections below, then press <b>Submit</b>, then <b>Print</b>.</div>
+          </div>
+          <div class="pill" aria-label="Important note">Submit first, then print for the school office</div>
+        </div>
+
+
+
+
+        <!-- Fillable forms (printable after students fill them) -->
+        <section class="form-card">
+            <h3>1) Student Application Form</h3>
+          <p>Fill the fields below.</p>
+
+
+
+          <div class="print-block" data-print-block>
+            <div class="form-field-grid">
+              <label>
+                Student Full Name
+                <input type="text" name="student-full-name" placeholder="e.g., John Doe" autocomplete="name" />
+              </label>
+              <label>
+                Date of Birth
+                <input type="date" name="student-dob" />
+              </label>
+              <label>
+                Current Grade / Class
+                <input type="text" name="student-current-grade" placeholder="e.g., KG1" />
+              </label>
+              <label>
+                Gender
+                <select name="student-gender">
+                  <option value="">Select</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                </select>
+              </label>
+              <label>
+                Nationality
+                <input type="text" name="student-nationality" placeholder="e.g., Ghanaian" />
+              </label>
+              <label>
+                Home Address
+                <textarea name="student-home-address" rows="3" placeholder="Write full home address"></textarea>
+              </label>
+            </div>
+
+            <div class="signature-row">
+              <div>
+                Student Signature (optional)
+                <div class="signature-line"></div>
+              </div>
+              <div>
+                Date
+                <div class="signature-line"></div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <div id="student-application" class="sr-only-printable" aria-hidden="true"></div>
+
+        </section>
+
+        <section class="form-card">
+          <h3>2) Health Records Form</h3>
+          <p>Fill health information below, then <b>Submit</b>, then <b>Print</b>.</p>
+
+
+          <div class="print-block" data-print-block>
+            <div class="form-field-grid">
+              <label>
+                Student Full Name
+                <input type="text" name="health-student-full-name" placeholder="e.g., John Doe" />
+              </label>
+              <label>
+                Blood Group
+                <input type="text" name="health-blood-group" placeholder="e.g., O+" />
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Allergies (if any)
+                <textarea name="health-allergies" rows="3" placeholder="List allergies or write 'None'"></textarea>
+              </label>
+              <label>
+                Chronic Illness (if any)
+                <input type="text" name="health-chronic-illness" placeholder="e.g., Asthma" />
+              </label>
+              <label>
+                Immunization Status
+                <select name="health-immunization">
+                  <option value="">Select</option>
+                  <option>Up to date</option>
+                  <option>Partially completed</option>
+                  <option>Not done</option>
+                </select>
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Doctor / Clinic Notes
+                <textarea name="health-doctor-notes" rows="3" placeholder="Add any relevant notes"></textarea>
+              </label>
+            </div>
+
+            <div class="signature-row">
+              <div>
+                Parent/Guardian Signature
+                <div class="signature-line"></div>
+              </div>
+              <div>
+                Date
+                <div class="signature-line"></div>
+              </div>
+            </div>
+          </div>
+
+
+
+
+          <div id="health-records" class="sr-only-printable" aria-hidden="true"></div>
+        </section>
+
+        <section class="form-card">
+          <h3>3) Parent/Guardian Information Form</h3>
+          <p>Fill parent/guardian details below, then <b>Submit</b>, then <b>Print</b>.</p>
+
+
+          <div class="print-block" data-print-block>
+            <div class="form-field-grid">
+              <label>
+                Parent/Guardian Full Name
+                <input type="text" name="parent-full-name" placeholder="e.g., Mary Doe" autocomplete="name" />
+              </label>
+              <label>
+                Relationship to Student
+                <input type="text" name="parent-relationship" placeholder="e.g., Mother/Father" />
+              </label>
+              <label>
+                Phone Number
+                <input type="text" name="parent-phone" placeholder="e.g., +233 xx xxx xxxx" />
+              </label>
+              <label>
+                Email (optional)
+                <input type="email" name="parent-email" placeholder="you@example.com" />
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Address
+                <textarea name="parent-address" rows="3" placeholder="Write full address"></textarea>
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Consent (brief)
+                <textarea name="parent-consent" rows="3" placeholder="Write consent statement or any notes"></textarea>
+              </label>
+            </div>
+
+            <div class="signature-row">
+              <div>
+                Parent/Guardian Signature
+                <div class="signature-line"></div>
+              </div>
+              <div>
+                Date
+                <div class="signature-line"></div>
+              </div>
+            </div>
+          </div>
+
+
+
+
+          <div id="parent-guardian" class="sr-only-printable" aria-hidden="true"></div>
+        </section>
+
+        <div class="form-actions" style="margin-top: 16px; justify-content: center;">
+          <button class="btn" type="button" onclick="return submitAll();">Submit</button>
+          <button class="btn" type="button" onclick="return printAll();">Print</button>
+        </div>
+
+        <p class="small" style="margin-top: 16px;">
+          After filling the form fields, press <b>Submit</b> first. Printing is only available after you submit.
+        </p>
+
+      </main>
+    </body>
+  </html>
+

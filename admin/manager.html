@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>DEBEST ADMIN - Manager Dashboard</title>
+  <script src="./admin-shared.js"></script>
+  <script>
+    window.DEBEST_EXPECTED_ROLE = 'Manager';
+    if (!window.DebestAdmin || !DebestAdmin.requireAuth('Manager')) {
+      /* requireAuth redirects */
+    }
+  </script>
+</head>
+<body style="margin:0;">
+  <iframe
+    id="dashFrame"
+    title="Manager Dashboard"
+    src="./terms-calendar-admin-base.html?role=Manager&embedded=1"
+    style="width:100%;height:100vh;border:0;display:block;background:#fff8f0;"
+  ></iframe>
+</body>
+</html>

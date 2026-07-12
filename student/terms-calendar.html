@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>DEBEST ACADEMY - Terms Calendar</title>
+  <link rel="stylesheet" href="../debest.css" />
+  <style>
+    .calendar-wrap{background:#fff8f0;border-radius:15px;box-shadow:0 5px 25px rgba(124,101,144,.12);padding:24px 18px;margin:0 auto;max-width:1100px}
+    .calendar-header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+    .calendar-header h2{margin:0;font-size:1.6rem;color:#341f4d}
+    .calendar-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .cal-btn{background:#5a3e72;color:#fff8f0;border:none;padding:10px 16px;font-weight:800;border-radius:10px;cursor:pointer}
+    .cal-btn:hover{background:#7e628f}
+    #monthYear{font-weight:900;color:#5a3e72;letter-spacing:.5px}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:12px}
+    .dow{font-weight:800;color:#7e628f;text-align:center;padding:6px 0}
+    .day{border:1px solid #eadff3;background:#fdf9fb;border-radius:12px;min-height:86px;padding:10px;display:flex;flex-direction:column;gap:8px;position:relative}
+    .day.off{opacity:.35}
+    .day-num{font-weight:900;color:#4b3b4f}
+    .events{display:flex;flex-direction:column;gap:4px}
+    .event{background:rgba(191,165,199,.35);border:1px solid rgba(90,62,114,.18);color:#341f4d;border-radius:8px;padding:4px 6px;font-size:.78rem;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .muted{color:#6d587a;font-weight:600}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="crest-container" aria-label="School Crest">
+      <img src="../debestcrest.jpg" alt="DEBEST Crest" />
+    </div>
+    <h1>DEBEST ACADEMY</h1>
+    <a class="home-btn" href="../debest.html" aria-label="Go to Home page" title="Home">🏠</a>
+    <nav role="navigation" aria-label="Primary Navigation">
+      <ul id="nav-menu">
+        <li><a href="../debest.html#about">About Us</a></li>
+        <li><a href="../debest.html#admission">Admission</a></li>
+        <li><a href="../debest.html#news">News & Updates</a></li>
+        <li><a href="parent_platform.html" class="active">Platforms</a></li>
+        <li><a href="../debest.html#faq">FAQs</a></li>
+        <li><a href="../debest.html#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container" role="main">
+    <div class="calendar-wrap">
+      <div class="calendar-header">
+        <h2>Terms Calendar</h2>
+        <div class="calendar-controls">
+          <button class="cal-btn" id="prevBtn" type="button" aria-label="Previous month">◀</button>
+          <div id="monthYear">Month Year</div>
+          <button class="cal-btn" id="nextBtn" type="button" aria-label="Next month">▶</button>
+        </div>
+      </div>
+
+      <p class="muted" style="margin:0 0 14px;">
+        Read-only view. Only admins can edit the term calendar.
+      </p>
+
+      <div class="calendar-grid" aria-hidden="true" style="margin-bottom:8px;">
+        <div class="dow">Sun</div><div class="dow">Mon</div><div class="dow">Tue</div><div class="dow">Wed</div><div class="dow">Thu</div><div class="dow">Fri</div><div class="dow">Sat</div>
+      </div>
+
+      <div id="calendarGrid" class="calendar-grid"></div>
+    </div>
+  </main>
+
+  <script>
+    const DEFAULT_EVENTS = {
+      "2026-01-06": [{ title: "Term 1 Begins", type: "General", notes: "Students resume." }],
+      "2026-02-14": [{ title: "Mid-Term Tests", type: "Exams", notes: "Normal timetable." }],
+      "2026-03-27": [{ title: "Sports Day", type: "Sports", notes: "Inter-house competition." }],
+      "2026-04-10": [{ title: "Good Friday", type: "Holiday", notes: "Public holiday." }],
+      "2026-04-17": [{ title: "End of Term 1 / Begin Term 2", type: "General", notes: "Term transition." }]
+    };
+
+    const monthNames = [
+      'January','February','March','April','May','June',
+      'July','August','September','October','November','December'
+    ];
+
+    const STORAGE_KEY = 'debest_terms_calendar_events_v1';
+
+    const state = {
+      currentYear: new Date().getFullYear(),
+      currentMonth: new Date().getMonth(),
+      events: structuredClone(DEFAULT_EVENTS)
+    };
+
+    function toISODate(d){
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const day = String(d.getDate()).padStart(2,'0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function render(){
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+
+      const month = state.currentMonth;
+      const year = state.currentYear;
+
+      const firstOfMonth = new Date(year, month, 1);
+      const startDay = firstOfMonth.getDay();
+      const daysInMonth = new Date(year, month+1, 0).getDate();
+
+      document.getElementById('monthYear').textContent = `${monthNames[month]} ${year}`;
+
+      const totalCells = 42;
+      for(let i=0;i<totalCells;i++){
+        const cellDayIndex = i - startDay + 1;
+        const dayDate = new Date(year, month, cellDayIndex);
+        const isCurrentMonth = cellDayIndex >= 1 && cellDayIndex <= daysInMonth;
+
+        const cell = document.createElement('div');
+        cell.className = 'day' + (isCurrentMonth ? '' : ' off');
+
+        const dayNum = document.createElement('div');
+        dayNum.className = 'day-num';
+        dayNum.textContent = isCurrentMonth ? String(cellDayIndex) : String(dayDate.getDate());
+        cell.appendChild(dayNum);
+
+        const iso = toISODate(dayDate);
+        const events = (state.events[iso] || []);
+
+        const eventsWrap = document.createElement('div');
+        eventsWrap.className = 'events';
+
+        if(events.length){
+          events.slice(0,3).forEach(ev=>{
+            const el = document.createElement('div');
+            el.className = 'event';
+            el.title = ev.notes ? `${ev.title} (${ev.type})\n${ev.notes}` : `${ev.title} (${ev.type})`;
+            el.textContent = ev.title;
+            eventsWrap.appendChild(el);
+          });
+        }
+
+        cell.appendChild(eventsWrap);
+        grid.appendChild(cell);
+      }
+    }
+
+    async function loadFromBackend(){
+      try{
+        const res = await fetch('/api/terms-calendar', { method:'GET' });
+        if(!res.ok) return;
+        const data = await res.json();
+        if(data && data.events && typeof data.events === 'object'){
+          state.events = { ...structuredClone(DEFAULT_EVENTS), ...data.events };
+          try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.events)); }catch(e){/* ignore */}
+        }
+      }catch(e){
+        // ignore; render defaults
+      }
+    }
+
+    function refreshFromBackend(){
+      return loadFromBackend().finally(()=>render());
+    }
+
+    window.addEventListener('storage', (event) => {
+      if(event.key === STORAGE_KEY && event.newValue){
+        try{
+          const parsed = JSON.parse(event.newValue);
+          if(parsed && typeof parsed === 'object'){
+            state.events = { ...structuredClone(DEFAULT_EVENTS), ...parsed };
+            render();
+          }
+        }catch(e){/* ignore */}
+      }
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', ()=>{
+      if(state.currentMonth === 0){ state.currentMonth = 11; state.currentYear--; }
+      else state.currentMonth--;
+      render();
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', ()=>{
+      if(state.currentMonth === 11){ state.currentMonth = 0; state.currentYear++; }
+      else state.currentMonth++;
+      render();
+    });
+
+    refreshFromBackend();
+    setInterval(refreshFromBackend, 10000);
+  </script>
+</body>
+</html>
+
