@@ -1,48 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Student Application Forms - DEBEST Academy</title>
-      <link rel="stylesheet" href="./debest.css" />
-      <link rel="stylesheet" href="./forms-modal.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application Forms - DEBEST Academy</title>
+    <link rel="stylesheet" href="./debest.css" />
+    <link rel="stylesheet" href="./forms-modal.css" />
+  </head>
+  <body>
+    <header>
+      <div class="crest-container" aria-label="School Crest">
+        <img src="./debestcrest.jpg" alt="DEBEST Crest" />
+      </div>
+      <h1>DEBEST ACADEMY</h1>
+      <a class="home-btn" href="apply.html" aria-label="Back to Apply page" title="Back">↩️</a>
+    </header>
 
-    </head>
-    <body>
-      <header>
-        <div class="crest-container" aria-label="School Crest">
-          <img src="./debestcrest.jpg" alt="DEBEST Crest" />
-        </div>
-        <h1>DEBEST ACADEMY</h1>
-        <a class="home-btn" href="apply.html" aria-label="Back to Apply page" title="Back">↩️</a>
-      </header>
-
-      <main class="forms-container" role="main">
-
-    <script src="./forms-modal.js"></script>
-
-        <div class="forms-header">
-          <div>
-            <h2 style="margin: 0;">FILL FORM</h2>
-            <div class="small">Fill all sections below, then press <b>Submit</b>, then <b>Print</b>.</div>
+    <main class="forms-container" role="main">
+      <div class="forms-header">
+        <div>
+          <h2 class="forms-title">Application Forms</h2>
+          <div class="small">
+            Choose a form set below. Fill every section, press <b>Submit</b>, then <b>Print</b> for the school office.
           </div>
-          <div class="pill" aria-label="Important note">Submit first, then print for the school office</div>
         </div>
+        <div class="pill" aria-label="Important note">Submit first, then print for the school office</div>
+      </div>
 
+      <nav class="form-tabs" role="tablist" aria-label="Form categories">
+        <button
+          type="button"
+          class="form-tab is-active"
+          role="tab"
+          id="tab-student"
+          aria-selected="true"
+          aria-controls="panel-student"
+          data-form-set="student"
+        >
+          Student admission
+        </button>
+        <button
+          type="button"
+          class="form-tab"
+          role="tab"
+          id="tab-teaching"
+          aria-selected="false"
+          aria-controls="panel-teaching"
+          data-form-set="teaching-staff"
+        >
+          Teaching staff
+        </button>
+        <button
+          type="button"
+          class="form-tab"
+          role="tab"
+          id="tab-non-teaching"
+          aria-selected="false"
+          aria-controls="panel-non-teaching"
+          data-form-set="non-teaching-staff"
+        >
+          Non-teaching staff
+        </button>
+      </nav>
 
+      <!-- ========== STUDENT FORMS ========== -->
+      <div
+        id="panel-student"
+        class="form-set-panel is-active"
+        role="tabpanel"
+        aria-labelledby="tab-student"
+        data-form-set="student"
+      >
+        <p class="set-intro">
+          For parents/guardians enrolling a child from Creche through Junior High School.
+        </p>
 
-
-        <!-- Fillable forms (printable after students fill them) -->
-        <section class="form-card">
-            <h3>1) Student Application Form</h3>
-          <p>Fill the fields below.</p>
-
-
+        <section class="form-card" data-print-id="student-application" data-form-set="student">
+          <div class="form-card-banner">
+            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
+            <div>
+              <div class="form-card-school">DEBEST ACADEMY</div>
+              <h3>1) Student Application Form</h3>
+            </div>
+          </div>
+          <p>Fill the student details below. The school crest watermark will appear on the printed copy.</p>
 
           <div class="print-block" data-print-block>
             <div class="form-field-grid">
               <label>
-                Student Full Name
+                Student Full Name *
                 <input type="text" name="student-full-name" placeholder="e.g., John Doe" autocomplete="name" />
               </label>
               <label>
@@ -66,6 +112,15 @@
                 <input type="text" name="student-nationality" placeholder="e.g., Ghanaian" />
               </label>
               <label>
+                Preferred Campus
+                <select name="student-campus">
+                  <option value="">Select</option>
+                  <option>Dansoman</option>
+                  <option>Kasoa</option>
+                  <option>Either / Not sure</option>
+                </select>
+              </label>
+              <label style="grid-column: 1 / -1;">
                 Home Address
                 <textarea name="student-home-address" rows="3" placeholder="Write full home address"></textarea>
               </label>
@@ -82,17 +137,17 @@
               </div>
             </div>
           </div>
-
-
-
-          <div id="student-application" class="sr-only-printable" aria-hidden="true"></div>
-
         </section>
 
-        <section class="form-card">
-          <h3>2) Health Records Form</h3>
+        <section class="form-card" data-print-id="health-records" data-form-set="student">
+          <div class="form-card-banner">
+            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
+            <div>
+              <div class="form-card-school">DEBEST ACADEMY</div>
+              <h3>2) Health Records Form</h3>
+            </div>
+          </div>
           <p>Fill health information below, then <b>Submit</b>, then <b>Print</b>.</p>
-
 
           <div class="print-block" data-print-block>
             <div class="form-field-grid">
@@ -138,17 +193,17 @@
               </div>
             </div>
           </div>
-
-
-
-
-          <div id="health-records" class="sr-only-printable" aria-hidden="true"></div>
         </section>
 
-        <section class="form-card">
-          <h3>3) Parent/Guardian Information Form</h3>
+        <section class="form-card" data-print-id="parent-guardian" data-form-set="student">
+          <div class="form-card-banner">
+            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
+            <div>
+              <div class="form-card-school">DEBEST ACADEMY</div>
+              <h3>3) Parent/Guardian Information Form</h3>
+            </div>
+          </div>
           <p>Fill parent/guardian details below, then <b>Submit</b>, then <b>Print</b>.</p>
-
 
           <div class="print-block" data-print-block>
             <div class="form-field-grid">
@@ -189,23 +244,482 @@
               </div>
             </div>
           </div>
-
-
-
-
-          <div id="parent-guardian" class="sr-only-printable" aria-hidden="true"></div>
         </section>
 
-        <div class="form-actions" style="margin-top: 16px; justify-content: center;">
-          <button class="btn" type="button" onclick="return submitAll();">Submit</button>
-          <button class="btn" type="button" onclick="return printAll();">Print</button>
+        <div class="form-actions">
+          <button class="btn" type="button" data-action="submit" data-form-set="student">Submit student forms</button>
+          <button class="btn btn-outline" type="button" data-action="print" data-form-set="student">Print student forms</button>
         </div>
+      </div>
 
-        <p class="small" style="margin-top: 16px;">
-          After filling the form fields, press <b>Submit</b> first. Printing is only available after you submit.
+      <!-- ========== TEACHING STAFF FORMS ========== -->
+      <div
+        id="panel-teaching"
+        class="form-set-panel"
+        role="tabpanel"
+        aria-labelledby="tab-teaching"
+        data-form-set="teaching-staff"
+        hidden
+      >
+        <p class="set-intro">
+          For applicants seeking teaching positions (Creche through Junior High School). Submit online, then print and deliver signed copies to the office.
         </p>
 
-      </main>
-    </body>
-  </html>
+        <section class="form-card" data-print-id="teaching-application" data-form-set="teaching-staff">
+          <div class="form-card-banner">
+            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
+            <div>
+              <div class="form-card-school">DEBEST ACADEMY</div>
+              <h3>1) Teaching Staff Application Form</h3>
+            </div>
+          </div>
+          <p>Personal details and the teaching role you are applying for.</p>
 
+          <div class="print-block" data-print-block>
+            <div class="form-field-grid">
+              <label>
+                Full Name *
+                <input type="text" name="teach-full-name" placeholder="e.g., Ama Mensah" autocomplete="name" />
+              </label>
+              <label>
+                Date of Birth
+                <input type="date" name="teach-dob" />
+              </label>
+              <label>
+                Gender
+                <select name="teach-gender">
+                  <option value="">Select</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                </select>
+              </label>
+              <label>
+                Nationality
+                <input type="text" name="teach-nationality" placeholder="e.g., Ghanaian" />
+              </label>
+              <label>
+                Phone Number *
+                <input type="tel" name="teach-phone" placeholder="e.g., 0244 000 000" autocomplete="tel" />
+              </label>
+              <label>
+                Email
+                <input type="email" name="teach-email" placeholder="you@example.com" autocomplete="email" />
+              </label>
+              <label>
+                Position Applied For
+                <select name="teach-position">
+                  <option value="">Select</option>
+                  <option>Creche / Nursery Teacher</option>
+                  <option>KG Teacher</option>
+                  <option>Primary Teacher</option>
+                  <option>JHS Teacher</option>
+                  <option>Subject Specialist</option>
+                  <option>Head of Department</option>
+                  <option>Other teaching role</option>
+                </select>
+              </label>
+              <label>
+                Preferred Campus
+                <select name="teach-campus">
+                  <option value="">Select</option>
+                  <option>Dansoman</option>
+                  <option>Kasoa</option>
+                  <option>Either campus</option>
+                </select>
+              </label>
+              <label>
+                Subjects / Classes You Can Teach
+                <input type="text" name="teach-subjects" placeholder="e.g., Mathematics, Science — JHS" />
+              </label>
+              <label>
+                Availability
+                <select name="teach-availability">
+                  <option value="">Select</option>
+                  <option>Full-time</option>
+                  <option>Part-time</option>
+                  <option>Substitute / Relief</option>
+                </select>
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Residential Address
+                <textarea name="teach-address" rows="3" placeholder="Write full residential address"></textarea>
+              </label>
+            </div>
+
+            <div class="signature-row">
+              <div>
+                Applicant Signature
+                <div class="signature-line"></div>
+              </div>
+              <div>
+                Date
+                <div class="signature-line"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card" data-print-id="teaching-qualifications" data-form-set="teaching-staff">
+          <div class="form-card-banner">
+            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
+            <div>
+              <div class="form-card-school">DEBEST ACADEMY</div>
+              <h3>2) Qualifications &amp; Experience Form</h3>
+            </div>
+          </div>
+          <p>Education, professional training, and teaching experience.</p>
+
+          <div class="print-block" data-print-block>
+            <div class="form-field-grid">
+              <label>
+                Highest Academic Qualification
+                <input type="text" name="teach-qualification" placeholder="e.g., B.Ed Basic Education" />
+              </label>
+              <label>
+                Institution Attended
+                <input type="text" name="teach-institution" placeholder="e.g., University of Education, Winneba" />
+              </label>
+              <label>
+                Year Completed
+                <input type="text" name="teach-qual-year" placeholder="e.g., 2019" />
+              </label>
+              <label>
+                Professional Licence / Registration (if any)
+                <input type="text" name="teach-licence" placeholder="e.g., NTC number" />
+              </label>
+              <label>
+                Years of Teaching Experience
+                <input type="text" name="teach-years-experience" placeholder="e.g., 5 years" />
+              </label>
+              <label>
+                Current / Last Employer
+                <input type="text" name="teach-employer" placeholder="School or organisation name" />
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Previous Roles &amp; Responsibilities
+                <textarea name="teach-experience" rows="4" placeholder="Summarise recent teaching roles, classes taught, and achievements"></textarea>
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Why do you want to teach at DEBEST ACADEMY?
+                <textarea name="teach-motivation" rows="3" placeholder="Brief statement of interest"></textarea>
+              </label>
+            </div>
+
+            <div class="signature-row">
+              <div>
+                Applicant Signature
+                <div class="signature-line"></div>
+              </div>
+              <div>
+                Date
+                <div class="signature-line"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card" data-print-id="teaching-referees" data-form-set="teaching-staff">
+          <div class="form-card-banner">
+            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
+            <div>
+              <div class="form-card-school">DEBEST ACADEMY</div>
+              <h3>3) Referees &amp; Declaration Form</h3>
+            </div>
+          </div>
+          <p>Provide two referees and confirm that the information is true.</p>
+
+          <div class="print-block" data-print-block>
+            <div class="form-field-grid">
+              <label>
+                Referee 1 — Full Name
+                <input type="text" name="teach-ref1-name" placeholder="Full name" />
+              </label>
+              <label>
+                Referee 1 — Phone / Email
+                <input type="text" name="teach-ref1-contact" placeholder="Phone or email" />
+              </label>
+              <label>
+                Referee 1 — Relationship
+                <input type="text" name="teach-ref1-relation" placeholder="e.g., Former headteacher" />
+              </label>
+              <label>
+                Referee 2 — Full Name
+                <input type="text" name="teach-ref2-name" placeholder="Full name" />
+              </label>
+              <label>
+                Referee 2 — Phone / Email
+                <input type="text" name="teach-ref2-contact" placeholder="Phone or email" />
+              </label>
+              <label>
+                Referee 2 — Relationship
+                <input type="text" name="teach-ref2-relation" placeholder="e.g., Colleague" />
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Emergency Contact Name &amp; Phone
+                <input type="text" name="teach-emergency" placeholder="e.g., Kofi Mensah — 0244 000 000" />
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Declaration
+                <textarea name="teach-declaration" rows="3" placeholder="I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.">I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea>
+              </label>
+            </div>
+
+            <div class="signature-row">
+              <div>
+                Applicant Signature
+                <div class="signature-line"></div>
+              </div>
+              <div>
+                Date
+                <div class="signature-line"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <button class="btn" type="button" data-action="submit" data-form-set="teaching-staff">Submit teaching forms</button>
+          <button class="btn btn-outline" type="button" data-action="print" data-form-set="teaching-staff">Print teaching forms</button>
+        </div>
+      </div>
+
+      <!-- ========== NON-TEACHING STAFF FORMS ========== -->
+      <div
+        id="panel-non-teaching"
+        class="form-set-panel"
+        role="tabpanel"
+        aria-labelledby="tab-non-teaching"
+        data-form-set="non-teaching-staff"
+        hidden
+      >
+        <p class="set-intro">
+          For applicants seeking non-teaching roles (administration, finance, security, catering, transport, facilities, and other support staff).
+        </p>
+
+        <section class="form-card" data-print-id="nonteach-application" data-form-set="non-teaching-staff">
+          <div class="form-card-banner">
+            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
+            <div>
+              <div class="form-card-school">DEBEST ACADEMY</div>
+              <h3>1) Non-Teaching Staff Application Form</h3>
+            </div>
+          </div>
+          <p>Personal details and the support role you are applying for.</p>
+
+          <div class="print-block" data-print-block>
+            <div class="form-field-grid">
+              <label>
+                Full Name *
+                <input type="text" name="nonteach-full-name" placeholder="e.g., Kwame Asante" autocomplete="name" />
+              </label>
+              <label>
+                Date of Birth
+                <input type="date" name="nonteach-dob" />
+              </label>
+              <label>
+                Gender
+                <select name="nonteach-gender">
+                  <option value="">Select</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                </select>
+              </label>
+              <label>
+                Nationality
+                <input type="text" name="nonteach-nationality" placeholder="e.g., Ghanaian" />
+              </label>
+              <label>
+                Phone Number *
+                <input type="tel" name="nonteach-phone" placeholder="e.g., 0244 000 000" autocomplete="tel" />
+              </label>
+              <label>
+                Email
+                <input type="email" name="nonteach-email" placeholder="you@example.com" autocomplete="email" />
+              </label>
+              <label>
+                Position Applied For
+                <select name="nonteach-position">
+                  <option value="">Select</option>
+                  <option>School Administrator / Clerk</option>
+                  <option>Secretary / Front Desk</option>
+                  <option>Accountant / Bursar</option>
+                  <option>IT Support</option>
+                  <option>Security</option>
+                  <option>Driver</option>
+                  <option>Cleaner / Janitor</option>
+                  <option>Cook / Catering</option>
+                  <option>Maintenance / Facilities</option>
+                  <option>Library Assistant</option>
+                  <option>Other non-teaching role</option>
+                </select>
+              </label>
+              <label>
+                Preferred Campus
+                <select name="nonteach-campus">
+                  <option value="">Select</option>
+                  <option>Dansoman</option>
+                  <option>Kasoa</option>
+                  <option>Either campus</option>
+                </select>
+              </label>
+              <label>
+                Availability
+                <select name="nonteach-availability">
+                  <option value="">Select</option>
+                  <option>Full-time</option>
+                  <option>Part-time</option>
+                  <option>Shift / Rotational</option>
+                </select>
+              </label>
+              <label>
+                Expected Start Date
+                <input type="date" name="nonteach-start-date" />
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Residential Address
+                <textarea name="nonteach-address" rows="3" placeholder="Write full residential address"></textarea>
+              </label>
+            </div>
+
+            <div class="signature-row">
+              <div>
+                Applicant Signature
+                <div class="signature-line"></div>
+              </div>
+              <div>
+                Date
+                <div class="signature-line"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card" data-print-id="nonteach-experience" data-form-set="non-teaching-staff">
+          <div class="form-card-banner">
+            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
+            <div>
+              <div class="form-card-school">DEBEST ACADEMY</div>
+              <h3>2) Skills, Experience &amp; Background Form</h3>
+            </div>
+          </div>
+          <p>Education, work history, and skills relevant to the role.</p>
+
+          <div class="print-block" data-print-block>
+            <div class="form-field-grid">
+              <label>
+                Highest Education Level
+                <input type="text" name="nonteach-education" placeholder="e.g., SHS, Diploma, Degree" />
+              </label>
+              <label>
+                Relevant Certificates / Training
+                <input type="text" name="nonteach-certificates" placeholder="e.g., First aid, driving licence" />
+              </label>
+              <label>
+                Years of Relevant Experience
+                <input type="text" name="nonteach-years-experience" placeholder="e.g., 3 years" />
+              </label>
+              <label>
+                Current / Last Employer
+                <input type="text" name="nonteach-employer" placeholder="Organisation name" />
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Key Skills
+                <textarea name="nonteach-skills" rows="3" placeholder="e.g., Record keeping, customer service, computer skills, driving"></textarea>
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Work Experience Summary
+                <textarea name="nonteach-experience" rows="4" placeholder="Describe recent roles and duties"></textarea>
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Why do you want to work at DEBEST ACADEMY?
+                <textarea name="nonteach-motivation" rows="3" placeholder="Brief statement of interest"></textarea>
+              </label>
+            </div>
+
+            <div class="signature-row">
+              <div>
+                Applicant Signature
+                <div class="signature-line"></div>
+              </div>
+              <div>
+                Date
+                <div class="signature-line"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-card" data-print-id="nonteach-referees" data-form-set="non-teaching-staff">
+          <div class="form-card-banner">
+            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
+            <div>
+              <div class="form-card-school">DEBEST ACADEMY</div>
+              <h3>3) Referees &amp; Declaration Form</h3>
+            </div>
+          </div>
+          <p>Provide referees and confirm the accuracy of your application.</p>
+
+          <div class="print-block" data-print-block>
+            <div class="form-field-grid">
+              <label>
+                Referee 1 — Full Name
+                <input type="text" name="nonteach-ref1-name" placeholder="Full name" />
+              </label>
+              <label>
+                Referee 1 — Phone / Email
+                <input type="text" name="nonteach-ref1-contact" placeholder="Phone or email" />
+              </label>
+              <label>
+                Referee 1 — Relationship
+                <input type="text" name="nonteach-ref1-relation" placeholder="e.g., Former supervisor" />
+              </label>
+              <label>
+                Referee 2 — Full Name
+                <input type="text" name="nonteach-ref2-name" placeholder="Full name" />
+              </label>
+              <label>
+                Referee 2 — Phone / Email
+                <input type="text" name="nonteach-ref2-contact" placeholder="Phone or email" />
+              </label>
+              <label>
+                Referee 2 — Relationship
+                <input type="text" name="nonteach-ref2-relation" placeholder="e.g., Colleague" />
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Emergency Contact Name &amp; Phone
+                <input type="text" name="nonteach-emergency" placeholder="e.g., Ama Boateng — 0244 000 000" />
+              </label>
+              <label style="grid-column: 1 / -1;">
+                Declaration
+                <textarea name="nonteach-declaration" rows="3" placeholder="I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.">I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea>
+              </label>
+            </div>
+
+            <div class="signature-row">
+              <div>
+                Applicant Signature
+                <div class="signature-line"></div>
+              </div>
+              <div>
+                Date
+                <div class="signature-line"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="form-actions">
+          <button class="btn" type="button" data-action="submit" data-form-set="non-teaching-staff">Submit non-teaching forms</button>
+          <button class="btn btn-outline" type="button" data-action="print" data-form-set="non-teaching-staff">Print non-teaching forms</button>
+        </div>
+      </div>
+
+      <p class="small forms-footer-note">
+        After filling the form fields, press <b>Submit</b> first. Printing is only available after you submit.
+        Bring signed printed copies to the school office within one week where required.
+      </p>
+    </main>
+
+    <script src="./forms-modal.js"></script>
+  </body>
+</html>

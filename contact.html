@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Contact Us - DEBEST ACADEMY</title>
+        <meta name="description" content="Contact DEBEST ACADEMY for admissions, school enquiries, PTA matters, and general support. Call us or send a message." />
+        <link rel="stylesheet" href="./debest.css">
+        <script src="./debest.js" defer></script>
+    </head>
+    <body>
+        <header>
+            <div class="crest-container" aria-label="School Crest">
+                <img src="./debestcrest.jpg" alt="DEBEST Crest">
+            </div>
+            <h1>DEBEST ACADEMY</h1>
+            <a class="home-btn" href="debest.html" aria-label="Go to Home page" title="Home">🏠</a>
+            <nav role="navigation" aria-label="Primary Navigation">
+                <ul id="nav-menu">
+                    <li><a href="debest.html#about">About Us</a></li>
+                    <li><a href="debest.html#admission">Admission</a></li>
+                    <li><a href="debest.html#news">News & Updates</a></li>
+                    <li><a href="debest.html#platforms">Platforms</a></li>
+                    <li><a href="debest.html#faq">FAQs</a></li>
+                    <li><a href="contact.html" class="active">Contact</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero contact-hero" aria-label="Contact welcome">
+            <h2>Contact Us</h2>
+            <p>We are here to help with admissions, school life, and parent support. Reach the office by phone or send us a message below.</p>
+        </section>
+
+        <main class="container contact-page" role="main">
+            <section class="contact-intro" aria-labelledby="contact-intro-title">
+                <h3 id="contact-intro-title">How can we help?</h3>
+                <p class="contact-lead">
+                    Whether you are enquiring about admission, following up on an application, or need help with the
+                    student/parent platform, our team will guide you. We typically respond to written messages within
+                    <strong>1–2 working days</strong>. For urgent matters, please call the office.
+                </p>
+            </section>
+
+            <section class="contact-cards" aria-label="Contact details">
+                <article class="contact-card">
+                    <div class="contact-card-icon" aria-hidden="true">📞</div>
+                    <h4>Phone</h4>
+                    <p>Speak with the school office during working hours.</p>
+                    <ul class="contact-list">
+                        <li><a href="tel:+233244669383">0244 669 383</a></li>
+                        <li><a href="tel:+233244802748">0244 802 748</a></li>
+                    </ul>
+                    <div class="contact-card-actions">
+                        <a class="btn-primary btn-small" href="tel:+233244669383">Call first line</a>
+                        <a class="btn-secondary" href="https://wa.me/233244669383" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                </div>
+                </article>
+
+                <article class="contact-card">
+                    <div class="contact-card-icon" aria-hidden="true">🕒</div>
+                    <h4>Office hours</h4>
+                    <p>School day hours for students and main office support.</p>
+                    <ul class="contact-list">
+                        <li><strong>Monday – Friday:</strong> 7:45 AM – 3:00 PM</li>
+                        <li><strong>Weekend:</strong> Closed (except scheduled events)</li>
+                        <li><strong>Holidays:</strong> Office closed; leave a message online</li>
+                    </ul>
+                </article>
+
+                <article class="contact-card">
+                    <div class="contact-card-icon" aria-hidden="true">📍</div>
+                    <h4>Campuses &amp; visits</h4>
+                    <p>We welcome parents for tours and admission interviews.</p>
+                    <ul class="contact-list">
+                        <li><strong>Dansoman campus</strong> — school activities &amp; cultural programmes</li>
+                        <li><strong>Kasoa campus</strong> — school activities &amp; events</li>
+                        <li>Book a visit when you apply or call the office to schedule a tour.</li>
+                    </ul>
+                    <a class="btn-secondary" href="apply.html">Start an application</a>
+                </article>
+
+                <article class="contact-card">
+                    <div class="contact-card-icon" aria-hidden="true">✉️</div>
+                    <h4>Email &amp; PTA</h4>
+                    <p>Use email for non-urgent enquiries and PTA membership.</p>
+                    <ul class="contact-list">
+                        <li>General: use the contact form on this page</li>
+                        <li>PTA: <a href="mailto:pta@debestacademy.com">pta@debestacademy.com</a></li>
+                        <li>Include your child’s name and class when writing about a pupil.</li>
+                    </ul>
+                    <a class="btn-secondary" href="pta.html">Learn about the PTA</a>
+                </article>
+            </section>
+
+            <section id="contact" class="contact-main" aria-labelledby="contact-title">
+                <div class="contact-layout">
+                    <div class="contact-form-panel">
+                        <h3 id="contact-title">Send us a message</h3>
+                        <p class="contact-form-note">
+                            Complete the form and we will get back to you. Required fields are marked with an asterisk (*).
+                        </p>
+
+                <form id="contact-form" action="https://formspree.io/f/xpwypnrz" method="POST" aria-label="Contact form">
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="name">Full name *</label>
+                                    <input type="text" id="name" name="name" required autocomplete="name" placeholder="Your full name" />
+                                </div>
+                                <div class="form-field">
+                                    <label for="phone">Phone number</label>
+                                    <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="e.g. 0244 000 000" />
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label for="email">Email address *</label>
+                                    <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com" />
+                                </div>
+                                <div class="form-field">
+                                    <label for="topic">Topic *</label>
+                                    <select id="topic" name="topic" required>
+                                        <option value="" disabled selected>Select a topic</option>
+                                        <option value="admissions">Admissions &amp; applications</option>
+                                        <option value="fees">Fees &amp; payments</option>
+                                        <option value="platform">Student / parent platform help</option>
+                                        <option value="academic">Academic or class enquiry</option>
+                                        <option value="pta">PTA</option>
+                                        <option value="visit">School tour / visit</option>
+                                        <option value="general">General enquiry</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="student-info">Child’s name &amp; class (if applicable)</label>
+                                <input type="text" id="student-info" name="student_info" placeholder="e.g. Ama Mensah — Basic 4" />
+                            </div>
+
+                            <div class="form-field">
+                                <label for="message">Message *</label>
+                                <textarea id="message" name="message" rows="6" required placeholder="Please share your question or request. Include any useful details so we can help you faster."></textarea>
+                            </div>
+
+                            <button type="submit">Send message</button>
+                    <p id="form-response" aria-live="polite"></p>
+                </form>
+                    </div>
+
+                    <aside class="contact-aside" aria-label="Helpful information">
+                        <div class="aside-card">
+                            <h4>What to include</h4>
+                            <ul>
+                                <li>Your full name and a reachable phone number</li>
+                                <li>Your child’s name and class (for pupil-related matters)</li>
+                                <li>The campus you are writing about, if known</li>
+                                <li>Any application or receipt reference numbers</li>
+                            </ul>
+                        </div>
+
+                        <div class="aside-card">
+                            <h4>Quick links</h4>
+                            <ul class="quick-links">
+                                <li><a href="apply.html">Apply for admission</a></li>
+                                <li><a href="forms-modal.html">Student admission forms</a></li>
+                                <li><a href="forms-modal.html#teaching-staff">Teaching staff forms</a></li>
+                                <li><a href="forms-modal.html#non-teaching-staff">Non-teaching staff forms</a></li>
+                                <li><a href="student/parent_platform.html">Students / parents platform</a></li>
+                                <li><a href="pta.html">PTA platform</a></li>
+                                <li><a href="debest.html#faq">Frequently asked questions</a></li>
+                                <li><a href="photo.html">Photo library</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="aside-card aside-highlight">
+                            <h4>Urgent enquiries</h4>
+                            <p>
+                                For same-day needs (pick-up changes, health concerns, or urgent school-day issues),
+                                please call <a href="tel:+233244669383"><strong>0244 669 383</strong></a> or
+                                <a href="tel:+233244802748"><strong>0244 802 748</strong></a> during office hours.
+                            </p>
+                        </div>
+
+                        <div class="aside-card">
+                            <h4>Education good as gold</h4>
+                            <p>
+                                DEBEST ACADEMY provides quality education from Creche through Junior High School,
+                                with strong moral and academic training in a nurturing environment.
+                </p>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div>© 2024 DEBEST ACADEMY. All rights reserved.</div>
+            <div class="social-icons" aria-label="Social Media Links">
+                <a href="#" aria-label="X (Twitter)" title="X" target="_blank" rel="noopener noreferrer"></a>
+                <a href="#" aria-label="WhatsApp" title="WhatsApp" target="_blank" rel="noopener noreferrer"></a>
+                <a href="#" aria-label="Telegram" title="Telegram" target="_blank" rel="noopener noreferrer"></a>
+                <a href="#" aria-label="Instagram" title="Instagram" target="_blank" rel="noopener noreferrer"></a>
+            </div>
+            <p style="margin-top:10px;font-size:0.85rem;">
+                <a href="./admin/login.html" style="color:inherit;opacity:0.75;">Staff login</a>
+            </p>
+        </footer>
+    </body>
+</html>

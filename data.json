@@ -143,7 +143,7 @@
       },
       "notes": "Submitted by Secretary",
       "createdAt": "2026-07-03T20:01:51.515Z",
-      "updatedAt": "2026-07-05T16:02:57.756Z",
+      "updatedAt": "2026-07-16T01:33:50.728Z",
       "reviewedBy": "Comma",
       "comments": [
         {
@@ -166,6 +166,13 @@
           "role": "Secretary",
           "message": "Done",
           "createdAt": "2026-07-05T16:02:57.756Z"
+        },
+        {
+          "id": "1784165630728",
+          "author": "Manager",
+          "role": "Manager",
+          "message": "Done",
+          "createdAt": "2026-07-16T01:33:50.728Z"
         }
       ],
       "history": [
@@ -186,6 +193,12 @@
           "actor": "Secretary",
           "message": "Done",
           "at": "2026-07-05T16:02:57.756Z"
+        },
+        {
+          "action": "comment",
+          "actor": "Manager",
+          "message": "Done",
+          "at": "2026-07-16T01:33:50.728Z"
         }
       ],
       "category": "calendar",
@@ -371,7 +384,7 @@
     {
       "id": "app-1783640931185",
       "which": "all-3",
-      "status": "archived",
+      "status": "reviewed",
       "submittedAt": "2026-07-09T23:48:51.185Z",
       "forms": {
         "student": {
@@ -391,8 +404,8 @@
       },
       "assignedTo": "Secretary",
       "notes": "",
-      "reviewedBy": "Secretary",
-      "reviewedAt": "2026-07-10T04:40:03.900Z"
+      "reviewedBy": "Comma",
+      "reviewedAt": "2026-07-16T01:31:10.073Z"
     }
   ]
 }

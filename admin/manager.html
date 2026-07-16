@@ -11,13 +11,57 @@
       /* requireAuth redirects */
     }
   </script>
+  <style>
+    html, body { margin: 0; height: 100%; background: #fff8f0; }
+    .shell-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 8px 14px;
+      background: #5a3e72;
+      color: #fff8f0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+    .shell-banner a {
+      color: #fff8f0;
+      text-decoration: none;
+      opacity: 0.9;
+      margin-left: 12px;
+      font-weight: 700;
+    }
+    .shell-banner a:hover { text-decoration: underline; opacity: 1; }
+    #dashFrame {
+      width: 100%;
+      height: calc(100vh - 38px);
+      border: 0;
+      display: block;
+      background: #fff8f0;
+    }
+  </style>
 </head>
-<body style="margin:0;">
+<body>
+  <div class="shell-banner">
+    <span>Manager workspace · review proposals before headmaster approval</span>
+    <span>
+      <a href="../debest.html" target="_blank" rel="noopener">Public site</a>
+      <a href="./login.html" id="shellLogout">Switch account</a>
+    </span>
+  </div>
   <iframe
     id="dashFrame"
     title="Manager Dashboard"
     src="./terms-calendar-admin-base.html?role=Manager&embedded=1"
-    style="width:100%;height:100vh;border:0;display:block;background:#fff8f0;"
   ></iframe>
+  <script>
+    document.getElementById('shellLogout')?.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (window.DebestAdmin) DebestAdmin.logout(true);
+      else window.location.href = './login.html';
+    });
+  </script>
 </body>
 </html>

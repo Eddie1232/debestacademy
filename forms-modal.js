@@ -2,6 +2,7 @@
 var formsSubmitted = {
   all: false,
   byWhich: Object.create(null),
+  bySet: Object.create(null),
 };
 
 const FORMS_API_BASE = (() => {
@@ -16,14 +17,42 @@ const FORMS_API_BASE = (() => {
   return 'http://127.0.0.1:5500';
 })();
 
+const FORM_SETS = {
+  student: {
+    type: 'student',
+    which: 'student-all',
+    printOrder: ['student-application', 'health-records', 'parent-guardian'],
+    label: 'student',
+  },
+  'teaching-staff': {
+    type: 'teaching-staff',
+    which: 'teaching-all',
+    printOrder: ['teaching-application', 'teaching-qualifications', 'teaching-referees'],
+    label: 'teaching staff',
+  },
+  'non-teaching-staff': {
+    type: 'non-teaching-staff',
+    which: 'non-teaching-all',
+    printOrder: ['nonteach-application', 'nonteach-experience', 'nonteach-referees'],
+    label: 'non-teaching staff',
+  },
+};
+
 function hasSubmitted(which) {
-  if (which === 'all-3' || which === 'all') return !!formsSubmitted.all;
-  return !!(formsSubmitted.all || formsSubmitted.byWhich[which]);
+  if (which === 'all-3' || which === 'all' || which === 'student-all') {
+    return !!(formsSubmitted.all || formsSubmitted.bySet.student || formsSubmitted.byWhich['student-all']);
+  }
+  if (which === 'teaching-all') return !!formsSubmitted.bySet['teaching-staff'];
+  if (which === 'non-teaching-all') return !!formsSubmitted.bySet['non-teaching-staff'];
+  return !!(formsSubmitted.all || formsSubmitted.byWhich[which] || formsSubmitted.bySet[which]);
 }
 
-function markSubmitted(which) {
-  if (which === 'all-3' || which === 'all') {
+function markSubmitted(which, formSet) {
+  if (which === 'all-3' || which === 'all' || which === 'student-all') {
     formsSubmitted.all = true;
+    formsSubmitted.bySet.student = true;
+  } else if (formSet) {
+    formsSubmitted.bySet[formSet] = true;
   } else {
     formsSubmitted.byWhich[which] = true;
   }
@@ -34,7 +63,7 @@ function fieldValue(name) {
   return el ? `${el.value || ''}`.trim() : '';
 }
 
-function collectApplicationForms() {
+function collectStudentForms() {
   return {
     student: {
       fullName: fieldValue('student-full-name'),
@@ -42,7 +71,8 @@ function collectApplicationForms() {
       currentGrade: fieldValue('student-current-grade'),
       gender: fieldValue('student-gender'),
       nationality: fieldValue('student-nationality'),
-      homeAddress: fieldValue('student-home-address')
+      campus: fieldValue('student-campus'),
+      homeAddress: fieldValue('student-home-address'),
     },
     health: {
       studentFullName: fieldValue('health-student-full-name'),
@@ -50,7 +80,7 @@ function collectApplicationForms() {
       allergies: fieldValue('health-allergies'),
       chronicIllness: fieldValue('health-chronic-illness'),
       immunization: fieldValue('health-immunization'),
-      doctorNotes: fieldValue('health-doctor-notes')
+      doctorNotes: fieldValue('health-doctor-notes'),
     },
     parent: {
       fullName: fieldValue('parent-full-name'),
@@ -58,21 +88,128 @@ function collectApplicationForms() {
       phone: fieldValue('parent-phone'),
       email: fieldValue('parent-email'),
       address: fieldValue('parent-address'),
-      consent: fieldValue('parent-consent')
-    }
+      consent: fieldValue('parent-consent'),
+    },
   };
 }
 
-async function sendApplicationToSecretary(which) {
-  const forms = collectApplicationForms();
-  if (!forms.student.fullName) {
+function collectTeachingForms() {
+  return {
+    teaching: {
+      fullName: fieldValue('teach-full-name'),
+      dateOfBirth: fieldValue('teach-dob'),
+      gender: fieldValue('teach-gender'),
+      nationality: fieldValue('teach-nationality'),
+      phone: fieldValue('teach-phone'),
+      email: fieldValue('teach-email'),
+      position: fieldValue('teach-position'),
+      campus: fieldValue('teach-campus'),
+      subjects: fieldValue('teach-subjects'),
+      availability: fieldValue('teach-availability'),
+      address: fieldValue('teach-address'),
+    },
+    teachingQualifications: {
+      highestQualification: fieldValue('teach-qualification'),
+      institution: fieldValue('teach-institution'),
+      yearCompleted: fieldValue('teach-qual-year'),
+      licence: fieldValue('teach-licence'),
+      yearsExperience: fieldValue('teach-years-experience'),
+      employer: fieldValue('teach-employer'),
+      experience: fieldValue('teach-experience'),
+      motivation: fieldValue('teach-motivation'),
+    },
+    teachingReferees: {
+      referee1Name: fieldValue('teach-ref1-name'),
+      referee1Contact: fieldValue('teach-ref1-contact'),
+      referee1Relation: fieldValue('teach-ref1-relation'),
+      referee2Name: fieldValue('teach-ref2-name'),
+      referee2Contact: fieldValue('teach-ref2-contact'),
+      referee2Relation: fieldValue('teach-ref2-relation'),
+      emergencyContact: fieldValue('teach-emergency'),
+      declaration: fieldValue('teach-declaration'),
+    },
+  };
+}
+
+function collectNonTeachingForms() {
+  return {
+    nonTeaching: {
+      fullName: fieldValue('nonteach-full-name'),
+      dateOfBirth: fieldValue('nonteach-dob'),
+      gender: fieldValue('nonteach-gender'),
+      nationality: fieldValue('nonteach-nationality'),
+      phone: fieldValue('nonteach-phone'),
+      email: fieldValue('nonteach-email'),
+      position: fieldValue('nonteach-position'),
+      campus: fieldValue('nonteach-campus'),
+      availability: fieldValue('nonteach-availability'),
+      startDate: fieldValue('nonteach-start-date'),
+      address: fieldValue('nonteach-address'),
+    },
+    nonTeachingExperience: {
+      education: fieldValue('nonteach-education'),
+      certificates: fieldValue('nonteach-certificates'),
+      yearsExperience: fieldValue('nonteach-years-experience'),
+      employer: fieldValue('nonteach-employer'),
+      skills: fieldValue('nonteach-skills'),
+      experience: fieldValue('nonteach-experience'),
+      motivation: fieldValue('nonteach-motivation'),
+    },
+    nonTeachingReferees: {
+      referee1Name: fieldValue('nonteach-ref1-name'),
+      referee1Contact: fieldValue('nonteach-ref1-contact'),
+      referee1Relation: fieldValue('nonteach-ref1-relation'),
+      referee2Name: fieldValue('nonteach-ref2-name'),
+      referee2Contact: fieldValue('nonteach-ref2-contact'),
+      referee2Relation: fieldValue('nonteach-ref2-relation'),
+      emergencyContact: fieldValue('nonteach-emergency'),
+      declaration: fieldValue('nonteach-declaration'),
+    },
+  };
+}
+
+// Backward-compatible alias used by older call sites.
+function collectApplicationForms() {
+  return collectStudentForms();
+}
+
+function collectFormsForSet(formSet) {
+  if (formSet === 'teaching-staff') return collectTeachingForms();
+  if (formSet === 'non-teaching-staff') return collectNonTeachingForms();
+  return collectStudentForms();
+}
+
+function validateFormsForSet(formSet, forms) {
+  if (formSet === 'teaching-staff') {
+    const name = forms.teaching?.fullName || '';
+    if (!name) throw new Error('Please enter your full name on the teaching application form before submitting.');
+    return;
+  }
+  if (formSet === 'non-teaching-staff') {
+    const name = forms.nonTeaching?.fullName || '';
+    if (!name) throw new Error('Please enter your full name on the non-teaching application form before submitting.');
+    return;
+  }
+  const studentName = forms.student?.fullName || '';
+  if (!studentName) {
     throw new Error('Please enter the student full name before submitting.');
   }
+}
+
+async function sendApplicationToSecretary(which, formSet) {
+  const setKey = formSet || 'student';
+  const meta = FORM_SETS[setKey] || FORM_SETS.student;
+  const forms = collectFormsForSet(setKey);
+  validateFormsForSet(setKey, forms);
 
   const res = await fetch(`${FORMS_API_BASE}/api/applications`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ which: which || 'all-3', forms })
+    body: JSON.stringify({
+      which: which || meta.which,
+      type: meta.type,
+      forms,
+    }),
   });
 
   const rawText = await res.text().catch(() => '');
@@ -96,7 +233,6 @@ function printForm(which) {
     return false;
   }
 
-  // Tag the page so print CSS can hide everything except the selected form card.
   document.body.setAttribute('data-print-mode', which);
   window.print();
 
@@ -109,8 +245,8 @@ function printForm(which) {
 
 async function submitForm(which) {
   try {
-    await sendApplicationToSecretary(which);
-    markSubmitted(which);
+    await sendApplicationToSecretary(which, 'student');
+    markSubmitted(which, 'student');
     document.dispatchEvent(
       new CustomEvent('forms:submitted', { detail: { which, at: Date.now() } })
     );
@@ -127,13 +263,22 @@ async function submitForm(which) {
 }
 
 function printAll() {
-  if (!hasSubmitted('all-3')) {
+  return printFormSet('student');
+}
+
+function printFormSet(formSet) {
+  const meta = FORM_SETS[formSet];
+  if (!meta) {
+    alert('Unknown form set.');
+    return false;
+  }
+
+  if (!hasSubmitted(meta.which) && !formsSubmitted.bySet[formSet]) {
     alert('Please submit the forms first before printing.');
     return false;
   }
 
-  // Print 3 separate times so print CSS can show only one card per print.
-  const order = ['student-application', 'health-records', 'parent-guardian'];
+  const order = meta.printOrder.slice();
 
   const runNext = (idx) => {
     if (idx >= order.length) {
@@ -143,8 +288,6 @@ function printAll() {
 
     document.body.setAttribute('data-print-mode', order[idx]);
     window.print();
-
-    // After print dialog closes, move to next.
     setTimeout(() => runNext(idx + 1), 250);
   };
 
@@ -153,13 +296,22 @@ function printAll() {
 }
 
 async function submitAll() {
+  return submitFormSet('student');
+}
+
+async function submitFormSet(formSet) {
+  const meta = FORM_SETS[formSet] || FORM_SETS.student;
   try {
-    await sendApplicationToSecretary('all-3');
-    markSubmitted('all-3');
+    await sendApplicationToSecretary(meta.which, formSet);
+    markSubmitted(meta.which, formSet);
     document.dispatchEvent(
-      new CustomEvent('forms:submitted', { detail: { which: 'all-3', at: Date.now() } })
+      new CustomEvent('forms:submitted', {
+        detail: { which: meta.which, formSet, at: Date.now() },
+      })
     );
-    alert('Submitted. The secretary has received the forms. You can now print.');
+    alert(
+      `Submitted. The secretary has received the ${meta.label} forms. You can now print.`
+    );
   } catch (err) {
     const msg = err && err.message ? err.message : 'Submit failed';
     const friendly =
@@ -184,4 +336,75 @@ async function printAndSubmitAll() {
 
 function printFilledForm(which) {
   return printForm(which);
+}
+
+function switchFormSet(formSet) {
+  const tabs = document.querySelectorAll('.form-tab');
+  const panels = document.querySelectorAll('.form-set-panel');
+
+  tabs.forEach((tab) => {
+    const active = tab.getAttribute('data-form-set') === formSet;
+    tab.classList.toggle('is-active', active);
+    tab.setAttribute('aria-selected', active ? 'true' : 'false');
+  });
+
+  panels.forEach((panel) => {
+    const active = panel.getAttribute('data-form-set') === formSet;
+    panel.classList.toggle('is-active', active);
+    if (active) {
+      panel.removeAttribute('hidden');
+    } else {
+      panel.setAttribute('hidden', '');
+    }
+  });
+
+  // Deep-link friendly hash without jumping the page awkwardly.
+  try {
+    if (formSet && formSet !== 'student') {
+      history.replaceState(null, '', `#${formSet}`);
+    } else {
+      history.replaceState(null, '', location.pathname + location.search);
+    }
+  } catch (_) { /* ignore */ }
+}
+
+function initFormTabs() {
+  document.querySelectorAll('.form-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const set = tab.getAttribute('data-form-set');
+      if (set) switchFormSet(set);
+    });
+  });
+
+  document.querySelectorAll('[data-action="submit"]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const set = btn.getAttribute('data-form-set') || 'student';
+      return submitFormSet(set);
+    });
+  });
+
+  document.querySelectorAll('[data-action="print"]').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const set = btn.getAttribute('data-form-set') || 'student';
+      return printFormSet(set);
+    });
+  });
+
+  // Open the right tab if the URL hash points to a staff set.
+  const hash = (location.hash || '').replace(/^#/, '');
+  if (hash === 'teaching-staff' || hash === 'non-teaching-staff' || hash === 'student') {
+    switchFormSet(hash);
+  } else if (hash === 'teaching') {
+    switchFormSet('teaching-staff');
+  } else if (hash === 'non-teaching' || hash === 'staff') {
+    switchFormSet('non-teaching-staff');
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initFormTabs, { once: true });
+} else {
+  initFormTabs();
 }

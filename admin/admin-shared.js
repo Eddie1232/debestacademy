@@ -6,9 +6,9 @@
   const JWT_STORAGE_KEY = 'debest_admin_token_v1';
 
   const ROLE_DASHBOARD = {
-    Secretary: './secretary.html',
-    Manager: './manager.html',
-    Headmaster: './headmaster.html'
+    Secretary: '/admin/secretary.html',
+    Manager: '/admin/manager.html',
+    Headmaster: '/admin/headmaster.html'
   };
 
   function getApiBase() {
@@ -86,7 +86,16 @@
   }
 
   function dashboardForRole(role) {
-    return ROLE_DASHBOARD[role] || './login.html';
+    // Prefer absolute paths so redirect works from any /admin/* page depth
+    const relative = ROLE_DASHBOARD[role];
+    if (!relative) return './login.html';
+    if (relative.startsWith('/')) return relative;
+    // Resolve against /admin/ so login from nested paths still works
+    try {
+      return new URL(relative, (typeof location !== 'undefined' ? location.origin : '') + '/admin/').pathname;
+    } catch (e) {
+      return relative;
+    }
   }
 
   function loginUrl() {

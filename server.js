@@ -9,7 +9,31 @@ const { PROPOSAL_STATUSES, getNextStatus, applyProposalToEvents, applyProposalTo
 
 const app = express();
 
-app.use(helmet());
+// Helmet defaults break this school site on plain HTTP LAN:
+// - CSP script-src 'self' blocks inline <script> used by login/admin pages
+// - upgrade-insecure-requests forces HTTPS (no TLS on typical school host)
+// - HSTS is inappropriate without HTTPS
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: false,
+    directives: {
+      defaultSrc: ["'self'"],
+      baseUri: ["'self'"],
+      fontSrc: ["'self'", 'https:', 'data:'],
+      formAction: ["'self'"],
+      frameAncestors: ["'self'"],
+      frameSrc: ["'self'"],
+      imgSrc: ["'self'", 'data:', 'blob:'],
+      objectSrc: ["'none'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+      connectSrc: ["'self'"],
+      // Do NOT set upgradeInsecureRequests — host is HTTP on the school LAN
+    }
+  },
+  hsts: false
+}));
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
@@ -273,7 +297,10 @@ app.post('/api/admin/login', adminIpAllowed, loginRateLimit, async (req, res) =>
   }
 
   const d = await getDB();
-  const admin = (d.data.admins || []).find((a) => a.username === username);
+  const wanted = String(username).trim();
+  const admin = (d.data.admins || []).find(
+    (a) => a.username && a.username.toLowerCase() === wanted.toLowerCase()
+  );
   if (!admin || !admin.passwordHash) {
     return res.status(401).json({ error: 'Invalid username or password' });
   }
@@ -511,17 +538,60 @@ app.put('/api/news', authRequired, adminIpAllowed, roleRequired('Headmaster'), a
   return res.json({ ok: true });
 });
 
-// ---- Student application forms (public submit; secretary/admin inbox) ----
+// ---- Application forms (student + staff; public submit; secretary/admin inbox) ----
+const APPLICATION_TYPES = new Set(['student', 'teaching-staff', 'non-teaching-staff']);
+
+function resolveApplicationType(body, forms) {
+  const raw = `${body?.type || body?.applicationType || ''}`.trim().toLowerCase();
+  if (APPLICATION_TYPES.has(raw)) return raw;
+  if (forms?.teaching) return 'teaching-staff';
+  if (forms?.nonTeaching) return 'non-teaching-staff';
+  return 'student';
+}
+
+function applicantDisplayName(app) {
+  const forms = app.forms || {};
+  const type = app.type || 'student';
+  if (type === 'teaching-staff') {
+    return forms.teaching?.fullName || 'Unknown teaching applicant';
+  }
+  if (type === 'non-teaching-staff') {
+    return forms.nonTeaching?.fullName || 'Unknown staff applicant';
+  }
+  return forms.student?.fullName || forms.student?.['student-full-name'] || 'Unknown student';
+}
+
 function summarizeApplication(app) {
-  const student = app.forms?.student || {};
-  const parent = app.forms?.parent || {};
+  const forms = app.forms || {};
+  const student = forms.student || {};
+  const parent = forms.parent || {};
+  const teaching = forms.teaching || {};
+  const nonTeaching = forms.nonTeaching || {};
+  const type = app.type || 'student';
+
+  let contactName = '';
+  let contactPhone = '';
+  if (type === 'teaching-staff') {
+    contactName = teaching.fullName || '';
+    contactPhone = teaching.phone || '';
+  } else if (type === 'non-teaching-staff') {
+    contactName = nonTeaching.fullName || '';
+    contactPhone = nonTeaching.phone || '';
+  } else {
+    contactName = parent.fullName || parent['parent-full-name'] || '';
+    contactPhone = parent.phone || parent['parent-phone'] || '';
+  }
+
   return {
     id: app.id,
+    type,
     status: app.status || 'new',
     submittedAt: app.submittedAt,
-    studentName: student.fullName || student['student-full-name'] || 'Unknown student',
-    parentName: parent.fullName || parent['parent-full-name'] || '',
-    parentPhone: parent.phone || parent['parent-phone'] || '',
+    applicantName: applicantDisplayName(app),
+    studentName: student.fullName || student['student-full-name'] || applicantDisplayName(app),
+    parentName: contactName,
+    parentPhone: contactPhone,
+    position: teaching.position || nonTeaching.position || student.currentGrade || '',
     which: app.which || 'all-3'
   };
 }
@@ -535,22 +605,33 @@ app.post('/api/applications', async (req, res) => {
     return res.status(400).json({ error: 'forms object is required' });
   }
 
-  const student = forms.student || {};
-  const studentName = `${student.fullName || student['student-full-name'] || ''}`.trim();
-  if (!studentName) {
-    return res.status(400).json({ error: 'Student full name is required' });
+  const type = resolveApplicationType(body, forms);
+
+  if (type === 'teaching-staff') {
+    const name = `${forms.teaching?.fullName || ''}`.trim();
+    if (!name) {
+      return res.status(400).json({ error: 'Teaching applicant full name is required' });
+    }
+  } else if (type === 'non-teaching-staff') {
+    const name = `${forms.nonTeaching?.fullName || ''}`.trim();
+    if (!name) {
+      return res.status(400).json({ error: 'Non-teaching applicant full name is required' });
+    }
+  } else {
+    const student = forms.student || {};
+    const studentName = `${student.fullName || student['student-full-name'] || ''}`.trim();
+    if (!studentName) {
+      return res.status(400).json({ error: 'Student full name is required' });
+    }
   }
 
   const application = {
     id: `app-${Date.now()}`,
-    which: body.which || 'all-3',
+    type,
+    which: body.which || (type === 'student' ? 'all-3' : `${type}-all`),
     status: 'new',
     submittedAt: new Date().toISOString(),
-    forms: {
-      student: forms.student || {},
-      health: forms.health || {},
-      parent: forms.parent || {}
-    },
+    forms: { ...forms },
     // Assigned to secretary inbox by default
     assignedTo: 'Secretary',
     notes: body.notes || ''

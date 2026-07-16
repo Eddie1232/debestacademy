@@ -29,28 +29,37 @@
   }
 })();
 
-// Smooth scrolling and active link highlighting
+// Smooth scrolling and active link highlighting (in-page hash links only)
         var navLinks = document.querySelectorAll('nav ul li a');
         for (var i = 0; i < navLinks.length; i++) {
             navLinks[i].addEventListener('click', function(e) {
+                var href = this.getAttribute('href') || '';
+                // Allow normal navigation for full page links (e.g. contact.html, debest.html#about)
+                if (href.charAt(0) !== '#') {
+                    return;
+                }
+
+                var target = document.getElementById(href.substring(1));
+                if (!target) {
+                    return;
+                }
+
                 e.preventDefault();
-                
+
                 // Remove active class from all links
                 for (var j = 0; j < navLinks.length; j++) {
                     navLinks[j].classList.remove('active');
                 }
-                
+
                 // Add active class to clicked link
                 this.classList.add('active');
-                
-                // Get target section ID
-                var targetId = this.getAttribute('href').substring(1);// Smooth scroll to section
-                document.getElementById(targetId).scrollIntoView({ 
+
+                target.scrollIntoView({
                     behavior: 'smooth'
                 });
-                
+
                 // Update URL hash without page jump
-                history.pushState(null, null, '#' + targetId);
+                history.pushState(null, null, href);
             });
         }
         

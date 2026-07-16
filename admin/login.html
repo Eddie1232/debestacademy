@@ -86,7 +86,7 @@
         (Secretary, Manager, or Headmaster).
       </p>
 
-      <form id="loginForm">
+      <form id="loginForm" method="post" action="#" autocomplete="on" novalidate>
         <label for="username">Username</label>
         <input id="username" name="username" type="text" autocomplete="username" required />
 
@@ -99,68 +99,17 @@
       <p id="authMsg" style="margin-top: 14px; font-weight: 900;"></p>
       <button id="retryBtn" class="cal-btn" type="button" style="display: none;">Retry connection</button>
       <p class="muted" style="margin-top: 12px; font-size: 0.9rem;">
-        Use the same host address as the public website (e.g. <code>http://192.168.x.x:5500</code>).
-        Only one school computer should run the server.
+        Open this page from the host that runs <code>npm start</code>
+        (e.g. <code>http://192.168.x.x:5500/admin/login.html</code>).
+        Demo accounts: <code>Secretary</code> / <code>Secretary123</code>,
+        <code>Manager</code> / <code>Manager123</code>,
+        <code>Headmaster</code> / <code>Headmaster123</code>.
       </p>
     </div>
   </main>
 
+  <!-- External scripts only — works with CSP script-src 'self' -->
   <script src="./admin-shared.js"></script>
-  <script>
-    (function () {
-      const authMsg = document.getElementById('authMsg');
-      const retryBtn = document.getElementById('retryBtn');
-      const loginBtn = document.getElementById('loginBtn');
-      const form = document.getElementById('loginForm');
-
-      if (window.DebestAdmin.redirectIfLoggedIn()) return;
-
-      async function ensureServer() {
-        const up = await DebestAdmin.checkServer();
-        if (!up) {
-          authMsg.textContent = 'Admin server is not reachable. Start the server on the host PC (npm start).';
-          authMsg.className = 'danger';
-          retryBtn.style.display = 'block';
-          loginBtn.disabled = true;
-          return false;
-        }
-        authMsg.textContent = '';
-        authMsg.className = '';
-        retryBtn.style.display = 'none';
-        loginBtn.disabled = false;
-        return true;
-      }
-
-      retryBtn.addEventListener('click', ensureServer);
-      ensureServer();
-
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        authMsg.textContent = '';
-        authMsg.className = '';
-        loginBtn.disabled = true;
-
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value;
-
-        try {
-          const up = await ensureServer();
-          if (!up) return;
-
-          const result = await DebestAdmin.login(username, password);
-          authMsg.textContent = 'Login successful. Redirecting…';
-          authMsg.className = 'success';
-
-          // Role dashboards are relative to /admin/
-          const path = DebestAdmin.dashboardForRole(result.role);
-          window.location.replace(path);
-        } catch (err) {
-          authMsg.textContent = (err && err.message) ? err.message : 'Login failed';
-          authMsg.className = 'danger';
-          loginBtn.disabled = false;
-        }
-      });
-    })();
-  </script>
+  <script src="./admin-login.js"></script>
 </body>
 </html>
