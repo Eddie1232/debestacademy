@@ -13,30 +13,9 @@
   </script>
   <style>
     html, body { margin: 0; height: 100%; background: #fff8f0; }
-    .shell-banner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      padding: 8px 14px;
-      background: #341f4d;
-      color: #fff8f0;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      font-weight: 800;
-      font-size: 0.9rem;
-    }
-    .shell-banner a {
-      color: #fff8f0;
-      text-decoration: none;
-      opacity: 0.9;
-      margin-left: 12px;
-      font-weight: 700;
-    }
-    .shell-banner a:hover { text-decoration: underline; opacity: 1; }
     #dashFrame {
       width: 100%;
-      height: calc(100vh - 38px);
+      height: 100vh;
       border: 0;
       display: block;
       background: #fff8f0;
@@ -44,24 +23,10 @@
   </style>
 </head>
 <body>
-  <div class="shell-banner">
-    <span>Headmaster workspace · final approvals &amp; calendar oversight</span>
-    <span>
-      <a href="../debest.html" target="_blank" rel="noopener">Public site</a>
-      <a href="./login.html" id="shellLogout">Switch account</a>
-    </span>
-  </div>
   <iframe
     id="dashFrame"
     title="Headmaster Dashboard"
     src="./terms-calendar-admin-base.html?role=Headmaster&embedded=1"
   ></iframe>
-  <script>
-    document.getElementById('shellLogout')?.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (window.DebestAdmin) DebestAdmin.logout(true);
-      else window.location.href = './login.html';
-    });
-  </script>
 </body>
 </html>

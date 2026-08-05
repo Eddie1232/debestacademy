@@ -46,19 +46,36 @@ function getNextStatus(role, action, currentStatus) {
   return currentStatus;
 }
 
+function isCalendarProposal(proposal) {
+  if (!proposal || typeof proposal !== 'object') return false;
+  // Legacy proposals without a category are treated as calendar items.
+  return !proposal.category || proposal.category === 'calendar';
+}
+
+function isFinalApprovedStatus(status) {
+  return status === PROPOSAL_STATUSES.FINAL_APPROVED || status === PROPOSAL_STATUSES.APPROVED;
+}
+
 function applyProposalToEvents(events, proposal) {
   const nextEvents = { ...(events || {}) };
   if (!proposal || !proposal.event) return nextEvents;
 
-  const date = proposal.event.date;
+  const date = `${proposal.event.date || ''}`.trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return nextEvents;
+
   const entry = {
-    title: proposal.event.title,
+    title: proposal.event.title || 'Activity',
     type: proposal.event.type || 'General',
-    notes: proposal.event.notes || ''
+    notes: proposal.event.notes || '',
+    proposalId: proposal.id || undefined
   };
 
-  const existing = nextEvents[date] || [];
-  const idx = existing.findIndex((item) => item.title === entry.title && item.type === entry.type);
+  // Copy the day array so we never mutate the caller's stored events in place.
+  const existing = Array.isArray(nextEvents[date]) ? nextEvents[date].slice() : [];
+  const idx = existing.findIndex((item) => {
+    if (entry.proposalId && item.proposalId) return item.proposalId === entry.proposalId;
+    return item.title === entry.title && item.type === entry.type;
+  });
   if (idx >= 0) {
     existing[idx] = entry;
   } else {
@@ -67,6 +84,31 @@ function applyProposalToEvents(events, proposal) {
 
   nextEvents[date] = existing;
   return nextEvents;
+}
+
+/**
+ * Merge every finally-approved calendar proposal into the shared term calendar.
+ * Public student/parent calendars and admin calendars all read this same store.
+ */
+function syncApprovedCalendarEvents(termCalendarEvents, proposals) {
+  let events = { ...(termCalendarEvents || {}) };
+  const approved = (Array.isArray(proposals) ? proposals : []).filter(
+    (proposal) => isCalendarProposal(proposal) && isFinalApprovedStatus(proposal.status)
+  );
+
+  for (const proposal of approved) {
+    events = applyProposalToEvents(events, proposal);
+  }
+
+  return events;
+}
+
+function calendarEventsEqual(a, b) {
+  try {
+    return JSON.stringify(a || {}) === JSON.stringify(b || {});
+  } catch (e) {
+    return false;
+  }
 }
 
 function applyProposalToNews(items, proposal) {
@@ -95,6 +137,10 @@ function applyProposalToNews(items, proposal) {
 module.exports = {
   PROPOSAL_STATUSES,
   getNextStatus,
+  isCalendarProposal,
+  isFinalApprovedStatus,
   applyProposalToEvents,
-  applyProposalToNews
+  applyProposalToNews,
+  syncApprovedCalendarEvents,
+  calendarEventsEqual
 };

@@ -21,19 +21,16 @@ const FORM_SETS = {
   student: {
     type: 'student',
     which: 'student-all',
-    printOrder: ['student-application', 'health-records', 'parent-guardian'],
     label: 'student',
   },
   'teaching-staff': {
     type: 'teaching-staff',
     which: 'teaching-all',
-    printOrder: ['teaching-application', 'teaching-qualifications', 'teaching-referees'],
     label: 'teaching staff',
   },
   'non-teaching-staff': {
     type: 'non-teaching-staff',
     which: 'non-teaching-all',
-    printOrder: ['nonteach-application', 'nonteach-experience', 'nonteach-referees'],
     label: 'non-teaching staff',
   },
 };
@@ -228,19 +225,12 @@ async function sendApplicationToSecretary(which, formSet) {
 }
 
 function printForm(which) {
-  if (!hasSubmitted(which)) {
+  // Legacy single-form print → print the student A4 sheet once
+  if (!hasSubmitted(which) && !hasSubmitted('student-all')) {
     alert('Please submit the form first before printing.');
     return false;
   }
-
-  document.body.setAttribute('data-print-mode', which);
-  window.print();
-
-  setTimeout(() => {
-    document.body.removeAttribute('data-print-mode');
-  }, 250);
-
-  return false;
+  return printFormSet('student');
 }
 
 async function submitForm(which) {
@@ -274,24 +264,19 @@ function printFormSet(formSet) {
   }
 
   if (!hasSubmitted(meta.which) && !formsSubmitted.bySet[formSet]) {
-    alert('Please submit the forms first before printing.');
+    alert('Please submit the form first before printing.');
     return false;
   }
 
-  const order = meta.printOrder.slice();
+  // One print job = one A4 sheet (not three separate pages)
+  document.body.setAttribute('data-print-set', formSet);
+  document.body.removeAttribute('data-print-mode');
+  window.print();
 
-  const runNext = (idx) => {
-    if (idx >= order.length) {
-      document.body.removeAttribute('data-print-mode');
-      return;
-    }
+  setTimeout(() => {
+    document.body.removeAttribute('data-print-set');
+  }, 400);
 
-    document.body.setAttribute('data-print-mode', order[idx]);
-    window.print();
-    setTimeout(() => runNext(idx + 1), 250);
-  };
-
-  runNext(0);
   return false;
 }
 

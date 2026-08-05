@@ -17,17 +17,17 @@
     </header>
 
     <main class="forms-container" role="main">
-      <div class="forms-header">
+      <div class="forms-header no-print">
         <div>
           <h2 class="forms-title">Application Forms</h2>
           <div class="small">
-            Choose a form set below. Fill every section, press <b>Submit</b>, then <b>Print</b> for the school office.
+            Choose a form below. Fill the single A4 sheet, press <b>Submit</b>, then <b>Print</b> for the school office.
           </div>
         </div>
-        <div class="pill" aria-label="Important note">Submit first, then print for the school office</div>
+        <div class="pill" aria-label="Important note">One A4 sheet · Submit first, then print</div>
       </div>
 
-      <nav class="form-tabs" role="tablist" aria-label="Form categories">
+      <nav class="form-tabs no-print" role="tablist" aria-label="Form categories">
         <button
           type="button"
           class="form-tab is-active"
@@ -63,7 +63,7 @@
         </button>
       </nav>
 
-      <!-- ========== STUDENT FORMS ========== -->
+      <!-- ========== STUDENT — single A4 sheet ========== -->
       <div
         id="panel-student"
         class="form-set-panel is-active"
@@ -71,21 +71,22 @@
         aria-labelledby="tab-student"
         data-form-set="student"
       >
-        <p class="set-intro">
-          For parents/guardians enrolling a child from Creche through Junior High School.
+        <p class="set-intro no-print">
+          For parents/guardians enrolling a child from Creche through Junior High School. Everything prints on one A4 sheet.
         </p>
 
-        <section class="form-card" data-print-id="student-application" data-form-set="student">
-          <div class="form-card-banner">
-            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
-            <div>
-              <div class="form-card-school">DEBEST ACADEMY</div>
-              <h3>1) Student Application Form</h3>
+        <article class="a4-sheet" data-a4-sheet="student" data-form-set="student">
+          <header class="a4-header">
+            <img src="./debestcrest.jpg" alt="" class="a4-crest" />
+            <div class="a4-header-text">
+              <div class="a4-school">DEBEST ACADEMY</div>
+              <h3 class="a4-title">Student Admission Application</h3>
+              <p class="a4-subtitle">Creche · Kindergarten · Primary · Junior High School</p>
             </div>
-          </div>
-          <p>Fill the student details below. The school crest watermark will appear on the printed copy.</p>
+          </header>
 
-          <div class="print-block" data-print-block>
+          <section class="a4-section" aria-labelledby="stu-sec-a">
+            <h4 id="stu-sec-a" class="a4-section-title">A. Student details</h4>
             <div class="form-field-grid">
               <label>
                 Student Full Name *
@@ -120,36 +121,15 @@
                   <option>Either / Not sure</option>
                 </select>
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Home Address
-                <textarea name="student-home-address" rows="3" placeholder="Write full home address"></textarea>
+                <textarea name="student-home-address" rows="2" placeholder="Write full home address"></textarea>
               </label>
             </div>
+          </section>
 
-            <div class="signature-row">
-              <div>
-                Student Signature (optional)
-                <div class="signature-line"></div>
-              </div>
-              <div>
-                Date
-                <div class="signature-line"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-card" data-print-id="health-records" data-form-set="student">
-          <div class="form-card-banner">
-            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
-            <div>
-              <div class="form-card-school">DEBEST ACADEMY</div>
-              <h3>2) Health Records Form</h3>
-            </div>
-          </div>
-          <p>Fill health information below, then <b>Submit</b>, then <b>Print</b>.</p>
-
-          <div class="print-block" data-print-block>
+          <section class="a4-section" aria-labelledby="stu-sec-b">
+            <h4 id="stu-sec-b" class="a4-section-title">B. Health records</h4>
             <div class="form-field-grid">
               <label>
                 Student Full Name
@@ -158,10 +138,6 @@
               <label>
                 Blood Group
                 <input type="text" name="health-blood-group" placeholder="e.g., O+" />
-              </label>
-              <label style="grid-column: 1 / -1;">
-                Allergies (if any)
-                <textarea name="health-allergies" rows="3" placeholder="List allergies or write 'None'"></textarea>
               </label>
               <label>
                 Chronic Illness (if any)
@@ -176,36 +152,19 @@
                   <option>Not done</option>
                 </select>
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
+                Allergies (if any)
+                <textarea name="health-allergies" rows="2" placeholder="List allergies or write 'None'"></textarea>
+              </label>
+              <label class="span-2">
                 Doctor / Clinic Notes
-                <textarea name="health-doctor-notes" rows="3" placeholder="Add any relevant notes"></textarea>
+                <textarea name="health-doctor-notes" rows="2" placeholder="Add any relevant notes"></textarea>
               </label>
             </div>
+          </section>
 
-            <div class="signature-row">
-              <div>
-                Parent/Guardian Signature
-                <div class="signature-line"></div>
-              </div>
-              <div>
-                Date
-                <div class="signature-line"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-card" data-print-id="parent-guardian" data-form-set="student">
-          <div class="form-card-banner">
-            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
-            <div>
-              <div class="form-card-school">DEBEST ACADEMY</div>
-              <h3>3) Parent/Guardian Information Form</h3>
-            </div>
-          </div>
-          <p>Fill parent/guardian details below, then <b>Submit</b>, then <b>Print</b>.</p>
-
-          <div class="print-block" data-print-block>
+          <section class="a4-section" aria-labelledby="stu-sec-c">
+            <h4 id="stu-sec-c" class="a4-section-title">C. Parent / guardian</h4>
             <div class="form-field-grid">
               <label>
                 Parent/Guardian Full Name
@@ -223,36 +182,40 @@
                 Email (optional)
                 <input type="email" name="parent-email" placeholder="you@example.com" />
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Address
-                <textarea name="parent-address" rows="3" placeholder="Write full address"></textarea>
+                <textarea name="parent-address" rows="2" placeholder="Write full address"></textarea>
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Consent (brief)
-                <textarea name="parent-consent" rows="3" placeholder="Write consent statement or any notes"></textarea>
+                <textarea name="parent-consent" rows="2" placeholder="Write consent statement or any notes"></textarea>
               </label>
             </div>
+          </section>
 
-            <div class="signature-row">
-              <div>
-                Parent/Guardian Signature
-                <div class="signature-line"></div>
-              </div>
-              <div>
-                Date
-                <div class="signature-line"></div>
-              </div>
+          <footer class="a4-signatures">
+            <div>
+              Parent/Guardian Signature
+              <div class="signature-line"></div>
             </div>
-          </div>
-        </section>
+            <div>
+              Date
+              <div class="signature-line"></div>
+            </div>
+            <div>
+              Office use only
+              <div class="signature-line"></div>
+            </div>
+          </footer>
+        </article>
 
-        <div class="form-actions">
-          <button class="btn" type="button" data-action="submit" data-form-set="student">Submit student forms</button>
-          <button class="btn btn-outline" type="button" data-action="print" data-form-set="student">Print student forms</button>
+        <div class="form-actions no-print">
+          <button class="btn" type="button" data-action="submit" data-form-set="student">Submit</button>
+          <button class="btn btn-outline" type="button" data-action="print" data-form-set="student">Print A4 sheet</button>
         </div>
       </div>
 
-      <!-- ========== TEACHING STAFF FORMS ========== -->
+      <!-- ========== TEACHING STAFF — single A4 sheet ========== -->
       <div
         id="panel-teaching"
         class="form-set-panel"
@@ -261,21 +224,22 @@
         data-form-set="teaching-staff"
         hidden
       >
-        <p class="set-intro">
-          For applicants seeking teaching positions (Creche through Junior High School). Submit online, then print and deliver signed copies to the office.
+        <p class="set-intro no-print">
+          For applicants seeking teaching positions. Everything prints on one A4 sheet.
         </p>
 
-        <section class="form-card" data-print-id="teaching-application" data-form-set="teaching-staff">
-          <div class="form-card-banner">
-            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
-            <div>
-              <div class="form-card-school">DEBEST ACADEMY</div>
-              <h3>1) Teaching Staff Application Form</h3>
+        <article class="a4-sheet" data-a4-sheet="teaching-staff" data-form-set="teaching-staff">
+          <header class="a4-header">
+            <img src="./debestcrest.jpg" alt="" class="a4-crest" />
+            <div class="a4-header-text">
+              <div class="a4-school">DEBEST ACADEMY</div>
+              <h3 class="a4-title">Teaching Staff Application</h3>
+              <p class="a4-subtitle">Creche through Junior High School</p>
             </div>
-          </div>
-          <p>Personal details and the teaching role you are applying for.</p>
+          </header>
 
-          <div class="print-block" data-print-block>
+          <section class="a4-section" aria-labelledby="tch-sec-a">
+            <h4 id="tch-sec-a" class="a4-section-title">A. Personal details &amp; role</h4>
             <div class="form-field-grid">
               <label>
                 Full Name *
@@ -328,7 +292,7 @@
                 </select>
               </label>
               <label>
-                Subjects / Classes You Can Teach
+                Subjects / Classes
                 <input type="text" name="teach-subjects" placeholder="e.g., Mathematics, Science — JHS" />
               </label>
               <label>
@@ -340,36 +304,15 @@
                   <option>Substitute / Relief</option>
                 </select>
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Residential Address
-                <textarea name="teach-address" rows="3" placeholder="Write full residential address"></textarea>
+                <textarea name="teach-address" rows="2" placeholder="Write full residential address"></textarea>
               </label>
             </div>
+          </section>
 
-            <div class="signature-row">
-              <div>
-                Applicant Signature
-                <div class="signature-line"></div>
-              </div>
-              <div>
-                Date
-                <div class="signature-line"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-card" data-print-id="teaching-qualifications" data-form-set="teaching-staff">
-          <div class="form-card-banner">
-            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
-            <div>
-              <div class="form-card-school">DEBEST ACADEMY</div>
-              <h3>2) Qualifications &amp; Experience Form</h3>
-            </div>
-          </div>
-          <p>Education, professional training, and teaching experience.</p>
-
-          <div class="print-block" data-print-block>
+          <section class="a4-section" aria-labelledby="tch-sec-b">
+            <h4 id="tch-sec-b" class="a4-section-title">B. Qualifications &amp; experience</h4>
             <div class="form-field-grid">
               <label>
                 Highest Academic Qualification
@@ -384,7 +327,7 @@
                 <input type="text" name="teach-qual-year" placeholder="e.g., 2019" />
               </label>
               <label>
-                Professional Licence / Registration (if any)
+                Professional Licence (if any)
                 <input type="text" name="teach-licence" placeholder="e.g., NTC number" />
               </label>
               <label>
@@ -395,40 +338,19 @@
                 Current / Last Employer
                 <input type="text" name="teach-employer" placeholder="School or organisation name" />
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Previous Roles &amp; Responsibilities
-                <textarea name="teach-experience" rows="4" placeholder="Summarise recent teaching roles, classes taught, and achievements"></textarea>
+                <textarea name="teach-experience" rows="2" placeholder="Summarise recent teaching roles and achievements"></textarea>
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Why do you want to teach at DEBEST ACADEMY?
-                <textarea name="teach-motivation" rows="3" placeholder="Brief statement of interest"></textarea>
+                <textarea name="teach-motivation" rows="2" placeholder="Brief statement of interest"></textarea>
               </label>
             </div>
+          </section>
 
-            <div class="signature-row">
-              <div>
-                Applicant Signature
-                <div class="signature-line"></div>
-              </div>
-              <div>
-                Date
-                <div class="signature-line"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-card" data-print-id="teaching-referees" data-form-set="teaching-staff">
-          <div class="form-card-banner">
-            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
-            <div>
-              <div class="form-card-school">DEBEST ACADEMY</div>
-              <h3>3) Referees &amp; Declaration Form</h3>
-            </div>
-          </div>
-          <p>Provide two referees and confirm that the information is true.</p>
-
-          <div class="print-block" data-print-block>
+          <section class="a4-section" aria-labelledby="tch-sec-c">
+            <h4 id="tch-sec-c" class="a4-section-title">C. Referees &amp; declaration</h4>
             <div class="form-field-grid">
               <label>
                 Referee 1 — Full Name
@@ -454,36 +376,40 @@
                 Referee 2 — Relationship
                 <input type="text" name="teach-ref2-relation" placeholder="e.g., Colleague" />
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Emergency Contact Name &amp; Phone
                 <input type="text" name="teach-emergency" placeholder="e.g., Kofi Mensah — 0244 000 000" />
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Declaration
-                <textarea name="teach-declaration" rows="3" placeholder="I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.">I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea>
+                <textarea name="teach-declaration" rows="2">I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea>
               </label>
             </div>
+          </section>
 
-            <div class="signature-row">
-              <div>
-                Applicant Signature
-                <div class="signature-line"></div>
-              </div>
-              <div>
-                Date
-                <div class="signature-line"></div>
-              </div>
+          <footer class="a4-signatures">
+            <div>
+              Applicant Signature
+              <div class="signature-line"></div>
             </div>
-          </div>
-        </section>
+            <div>
+              Date
+              <div class="signature-line"></div>
+            </div>
+            <div>
+              Office use only
+              <div class="signature-line"></div>
+            </div>
+          </footer>
+        </article>
 
-        <div class="form-actions">
-          <button class="btn" type="button" data-action="submit" data-form-set="teaching-staff">Submit teaching forms</button>
-          <button class="btn btn-outline" type="button" data-action="print" data-form-set="teaching-staff">Print teaching forms</button>
+        <div class="form-actions no-print">
+          <button class="btn" type="button" data-action="submit" data-form-set="teaching-staff">Submit</button>
+          <button class="btn btn-outline" type="button" data-action="print" data-form-set="teaching-staff">Print A4 sheet</button>
         </div>
       </div>
 
-      <!-- ========== NON-TEACHING STAFF FORMS ========== -->
+      <!-- ========== NON-TEACHING STAFF — single A4 sheet ========== -->
       <div
         id="panel-non-teaching"
         class="form-set-panel"
@@ -492,21 +418,22 @@
         data-form-set="non-teaching-staff"
         hidden
       >
-        <p class="set-intro">
-          For applicants seeking non-teaching roles (administration, finance, security, catering, transport, facilities, and other support staff).
+        <p class="set-intro no-print">
+          For non-teaching roles (admin, finance, security, catering, transport, facilities). One A4 sheet.
         </p>
 
-        <section class="form-card" data-print-id="nonteach-application" data-form-set="non-teaching-staff">
-          <div class="form-card-banner">
-            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
-            <div>
-              <div class="form-card-school">DEBEST ACADEMY</div>
-              <h3>1) Non-Teaching Staff Application Form</h3>
+        <article class="a4-sheet" data-a4-sheet="non-teaching-staff" data-form-set="non-teaching-staff">
+          <header class="a4-header">
+            <img src="./debestcrest.jpg" alt="" class="a4-crest" />
+            <div class="a4-header-text">
+              <div class="a4-school">DEBEST ACADEMY</div>
+              <h3 class="a4-title">Non-Teaching Staff Application</h3>
+              <p class="a4-subtitle">Administration · Support · Facilities</p>
             </div>
-          </div>
-          <p>Personal details and the support role you are applying for.</p>
+          </header>
 
-          <div class="print-block" data-print-block>
+          <section class="a4-section" aria-labelledby="nt-sec-a">
+            <h4 id="nt-sec-a" class="a4-section-title">A. Personal details &amp; role</h4>
             <div class="form-field-grid">
               <label>
                 Full Name *
@@ -575,36 +502,15 @@
                 Expected Start Date
                 <input type="date" name="nonteach-start-date" />
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Residential Address
-                <textarea name="nonteach-address" rows="3" placeholder="Write full residential address"></textarea>
+                <textarea name="nonteach-address" rows="2" placeholder="Write full residential address"></textarea>
               </label>
             </div>
+          </section>
 
-            <div class="signature-row">
-              <div>
-                Applicant Signature
-                <div class="signature-line"></div>
-              </div>
-              <div>
-                Date
-                <div class="signature-line"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-card" data-print-id="nonteach-experience" data-form-set="non-teaching-staff">
-          <div class="form-card-banner">
-            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
-            <div>
-              <div class="form-card-school">DEBEST ACADEMY</div>
-              <h3>2) Skills, Experience &amp; Background Form</h3>
-            </div>
-          </div>
-          <p>Education, work history, and skills relevant to the role.</p>
-
-          <div class="print-block" data-print-block>
+          <section class="a4-section" aria-labelledby="nt-sec-b">
+            <h4 id="nt-sec-b" class="a4-section-title">B. Skills, experience &amp; background</h4>
             <div class="form-field-grid">
               <label>
                 Highest Education Level
@@ -622,44 +528,23 @@
                 Current / Last Employer
                 <input type="text" name="nonteach-employer" placeholder="Organisation name" />
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Key Skills
-                <textarea name="nonteach-skills" rows="3" placeholder="e.g., Record keeping, customer service, computer skills, driving"></textarea>
+                <textarea name="nonteach-skills" rows="2" placeholder="e.g., Record keeping, customer service, computer skills"></textarea>
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Work Experience Summary
-                <textarea name="nonteach-experience" rows="4" placeholder="Describe recent roles and duties"></textarea>
+                <textarea name="nonteach-experience" rows="2" placeholder="Describe recent roles and duties"></textarea>
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Why do you want to work at DEBEST ACADEMY?
-                <textarea name="nonteach-motivation" rows="3" placeholder="Brief statement of interest"></textarea>
+                <textarea name="nonteach-motivation" rows="2" placeholder="Brief statement of interest"></textarea>
               </label>
             </div>
+          </section>
 
-            <div class="signature-row">
-              <div>
-                Applicant Signature
-                <div class="signature-line"></div>
-              </div>
-              <div>
-                Date
-                <div class="signature-line"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="form-card" data-print-id="nonteach-referees" data-form-set="non-teaching-staff">
-          <div class="form-card-banner">
-            <img src="./debestcrest.jpg" alt="" class="form-card-crest" />
-            <div>
-              <div class="form-card-school">DEBEST ACADEMY</div>
-              <h3>3) Referees &amp; Declaration Form</h3>
-            </div>
-          </div>
-          <p>Provide referees and confirm the accuracy of your application.</p>
-
-          <div class="print-block" data-print-block>
+          <section class="a4-section" aria-labelledby="nt-sec-c">
+            <h4 id="nt-sec-c" class="a4-section-title">C. Referees &amp; declaration</h4>
             <div class="form-field-grid">
               <label>
                 Referee 1 — Full Name
@@ -685,38 +570,42 @@
                 Referee 2 — Relationship
                 <input type="text" name="nonteach-ref2-relation" placeholder="e.g., Colleague" />
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Emergency Contact Name &amp; Phone
                 <input type="text" name="nonteach-emergency" placeholder="e.g., Ama Boateng — 0244 000 000" />
               </label>
-              <label style="grid-column: 1 / -1;">
+              <label class="span-2">
                 Declaration
-                <textarea name="nonteach-declaration" rows="3" placeholder="I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.">I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea>
+                <textarea name="nonteach-declaration" rows="2">I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea>
               </label>
             </div>
+          </section>
 
-            <div class="signature-row">
-              <div>
-                Applicant Signature
-                <div class="signature-line"></div>
-              </div>
-              <div>
-                Date
-                <div class="signature-line"></div>
-              </div>
+          <footer class="a4-signatures">
+            <div>
+              Applicant Signature
+              <div class="signature-line"></div>
             </div>
-          </div>
-        </section>
+            <div>
+              Date
+              <div class="signature-line"></div>
+            </div>
+            <div>
+              Office use only
+              <div class="signature-line"></div>
+            </div>
+          </footer>
+        </article>
 
-        <div class="form-actions">
-          <button class="btn" type="button" data-action="submit" data-form-set="non-teaching-staff">Submit non-teaching forms</button>
-          <button class="btn btn-outline" type="button" data-action="print" data-form-set="non-teaching-staff">Print non-teaching forms</button>
+        <div class="form-actions no-print">
+          <button class="btn" type="button" data-action="submit" data-form-set="non-teaching-staff">Submit</button>
+          <button class="btn btn-outline" type="button" data-action="print" data-form-set="non-teaching-staff">Print A4 sheet</button>
         </div>
       </div>
 
-      <p class="small forms-footer-note">
-        After filling the form fields, press <b>Submit</b> first. Printing is only available after you submit.
-        Bring signed printed copies to the school office within one week where required.
+      <p class="small forms-footer-note no-print">
+        After filling the form, press <b>Submit</b> first. Printing is only available after you submit.
+        Bring the signed A4 printout to the school office within one week where required.
       </p>
     </main>
 

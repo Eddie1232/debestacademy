@@ -1334,11 +1334,18 @@
       }
 
       async function fetchEventsFromBackend(){
-        const res = await fetch(`${API_BASE}/api/terms-calendar`, { method:'GET', credentials:'include' });
+        const res = await fetch(`${API_BASE}/api/terms-calendar`, {
+          method: 'GET',
+          credentials: 'include',
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
         if(!res.ok) throw new Error('Could not load calendar');
         const data = await res.json();
         if(data && data.events && typeof data.events === 'object'){
+          // Same shared store as student/parent calendars (approved activities included).
           state.events = { ...structuredClone(DEFAULT_EVENTS), ...data.events };
+          syncCalendarToClients();
         }
       }
 
@@ -2013,12 +2020,14 @@
         });
         if(!res.ok) throw new Error('Proposal action failed');
         const data = await res.json().catch(() => ({}));
-        if(action === 'approve' && data.termCalendar && data.termCalendar.events){
-          state.events = { ...structuredClone(DEFAULT_EVENTS), ...data.termCalendar.events };
-          syncCalendarToClients();
-          render();
-        } else if(action === 'approve') {
-          await fetchEventsFromBackend();
+        // After final headmaster approval the shared term calendar is updated
+        // server-side; refresh so admin + public calendars show the same events.
+        if(action === 'approve'){
+          if(data.termCalendar && data.termCalendar.events){
+            state.events = { ...structuredClone(DEFAULT_EVENTS), ...data.termCalendar.events };
+          } else {
+            await fetchEventsFromBackend();
+          }
           syncCalendarToClients();
           render();
         }

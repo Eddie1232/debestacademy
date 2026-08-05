@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>DEBEST ADMIN - Super Admin</title>
+  <script src="./admin-shared.js"></script>
+  <script>
+    window.DEBEST_EXPECTED_ROLE = 'SuperAdmin';
+    if (!window.DebestAdmin || !DebestAdmin.requireAuth('SuperAdmin')) {
+      /* requireAuth redirects */
+    }
+  </script>
+  <style>
+    html, body { margin: 0; min-height: 100%; background: #fff8f0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    .shell-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 8px 14px;
+      background: #1f1430;
+      color: #fff8f0;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+    .shell-banner a {
+      color: #fff8f0;
+      text-decoration: none;
+      opacity: 0.9;
+      margin-left: 12px;
+      font-weight: 700;
+    }
+    .shell-banner a:hover { text-decoration: underline; opacity: 1; }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      color: #341f4d;
+      font-size: 1.55rem;
+    }
+    .lead {
+      color: #6d587a;
+      font-weight: 600;
+      margin: 0 0 22px;
+      line-height: 1.45;
+    }
+    .card {
+      background: #fff;
+      border: 2px solid #e8dcf2;
+      border-radius: 14px;
+      box-shadow: 0 5px 20px rgba(124, 101, 144, 0.1);
+      padding: 18px 18px 16px;
+      margin-bottom: 18px;
+    }
+    .card h2 {
+      margin: 0 0 10px;
+      color: #341f4d;
+      font-size: 1.15rem;
+    }
+    .card .hint {
+      color: #6d587a;
+      font-weight: 600;
+      font-size: 0.92rem;
+      margin: 0 0 14px;
+    }
+    .admin-row {
+      border: 1px solid #e8dcf2;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #fdf9fb;
+    }
+    .admin-row header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .role-pill {
+      background: #341f4d;
+      color: #fff8f0;
+      font-weight: 900;
+      font-size: 0.78rem;
+      letter-spacing: 0.4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .username-label {
+      font-weight: 800;
+      color: #5a3e72;
+    }
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px 12px;
+      align-items: end;
+    }
+    label {
+      display: block;
+      font-weight: 800;
+      color: #5a3e72;
+      font-size: 0.85rem;
+    }
+    input {
+      width: 100%;
+      margin-top: 5px;
+      padding: 9px 11px;
+      border: 2px solid #d9cde6;
+      border-radius: 10px;
+      background: #fff;
+      font-weight: 600;
+      box-sizing: border-box;
+    }
+    .cal-btn {
+      background: #5a3e72;
+      color: #fff8f0;
+      border: none;
+      padding: 10px 14px;
+      font-weight: 900;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .cal-btn:hover { background: #7e628f; }
+    .cal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .cal-btn.secondary {
+      background: #fff8f0;
+      color: #5a3e72;
+      border: 2px solid #5a3e72;
+    }
+    .row-msg {
+      margin: 10px 0 0;
+      font-weight: 800;
+      min-height: 1.2em;
+      font-size: 0.9rem;
+    }
+    .row-msg.ok { color: #2d6a4f; }
+    .row-msg.err { color: #b11f2e; }
+    .health-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+    .stat {
+      background: #f5eef9;
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .stat .k {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #6d587a;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .stat .v {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #341f4d;
+      margin-top: 4px;
+      word-break: break-all;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    #pageMsg { font-weight: 800; margin-bottom: 12px; min-height: 1.2em; }
+    #pageMsg.err { color: #b11f2e; }
+    #pageMsg.ok { color: #2d6a4f; }
+    code { font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <div class="shell-banner">
+    <span>Super Admin · credential recovery &amp; technical ops</span>
+    <span>
+      <a href="../debest.html" target="_blank" rel="noopener">Public site</a>
+      <a href="./login.html" id="shellLogout">Switch account</a>
+    </span>
+  </div>
+
+  <main>
+    <h1>Technical operations</h1>
+    <p class="lead">
+      Reset usernames and passwords for the three school admins (Secretary, Manager, Headmaster).
+      This account cannot edit calendar, news, proposals, or applications.
+    </p>
+    <p id="pageMsg" aria-live="polite"></p>
+
+    <section class="card" aria-labelledby="cred-title">
+      <h2 id="cred-title">Managed admin credentials</h2>
+      <p class="hint">Leave a field blank to keep the current value. New passwords must be at least 8 characters.</p>
+      <div id="adminsList">Loading accounts…</div>
+    </section>
+
+    <section class="card" aria-labelledby="health-title">
+      <h2 id="health-title">System health</h2>
+      <p class="hint">Server status and data counts for troubleshooting on the school LAN host.</p>
+      <div id="healthGrid" class="health-grid">Loading…</div>
+      <div class="actions">
+        <button type="button" class="cal-btn secondary" id="refreshHealthBtn">Refresh health</button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="backup-title">
+      <h2 id="backup-title">Data backup</h2>
+      <p class="hint">
+        Download a full copy of <code>data.json</code> (admins, calendar, proposals, applications).
+        Store it safely offline. Restore only by stopping the server and replacing the file carefully.
+      </p>
+      <div class="actions">
+        <button type="button" class="cal-btn" id="backupBtn">Download data.json backup</button>
+      </div>
+      <p id="backupMsg" class="row-msg" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      if (!window.DebestAdmin) return;
+
+      const session = DebestAdmin.getSession();
+      if (!session || session.role !== 'SuperAdmin') return;
+
+      const pageMsg = document.getElementById('pageMsg');
+      const adminsList = document.getElementById('adminsList');
+      const healthGrid = document.getElementById('healthGrid');
+      const backupMsg = document.getElementById('backupMsg');
+
+      document.getElementById('shellLogout')?.addEventListener('click', function (e) {
+        e.preventDefault();
+        DebestAdmin.logout(true);
+      });
+
+      function apiBase() {
+        return DebestAdmin.getApiBase();
+      }
+
+      function authHeaders(extra) {
+        const h = Object.assign({ Authorization: 'Bearer ' + session.token }, extra || {});
+        return h;
+      }
+
+      function setPageMsg(text, kind) {
+        if (!pageMsg) return;
+        pageMsg.textContent = text || '';
+        pageMsg.className = kind || '';
+      }
+
+      function formatUptime(seconds) {
+        const s = Math.floor(Number(seconds) || 0);
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        const sec = s % 60;
+        if (h > 0) return h + 'h ' + m + 'm';
+        if (m > 0) return m + 'm ' + sec + 's';
+        return sec + 's';
+      }
+
+      async function loadAdmins() {
+        adminsList.textContent = 'Loading accounts…';
+        try {
+          const res = await fetch(apiBase() + '/api/super/admins', { headers: authHeaders() });
+          const data = await res.json().catch(function () { return {}; });
+          if (!res.ok) throw new Error(data.error || 'Failed to load admins');
+          const admins = data.admins || [];
+          if (!admins.length) {
+            adminsList.textContent = 'No managed admin accounts found.';
+            return;
+          }
+          adminsList.innerHTML = '';
+          admins.forEach(function (admin) {
+            adminsList.appendChild(renderAdminRow(admin));
+          });
+        } catch (err) {
+          adminsList.textContent = '';
+          setPageMsg(err.message || 'Failed to load admins', 'err');
+        }
+      }
+
+      function renderAdminRow(admin) {
+        const row = document.createElement('div');
+        row.className = 'admin-row';
+        row.dataset.id = admin.id;
+
+        row.innerHTML =
+          '<header>' +
+            '<span class="username-label" data-username></span>' +
+            '<span class="role-pill"></span>' +
+          '</header>' +
+          '<form class="field-grid" novalidate>' +
+            '<label>New username' +
+              '<input name="username" type="text" autocomplete="off" placeholder="Leave blank to keep" />' +
+            '</label>' +
+            '<label>New password' +
+              '<input name="password" type="password" autocomplete="new-password" placeholder="Min. 8 characters" />' +
+            '</label>' +
+            '<label>Confirm password' +
+              '<input name="confirm" type="password" autocomplete="new-password" placeholder="Repeat password" />' +
+            '</label>' +
+            '<div><button class="cal-btn" type="submit">Save credentials</button></div>' +
+          '</form>' +
+          '<p class="row-msg" data-msg aria-live="polite"></p>';
+
+        row.querySelector('.role-pill').textContent = admin.role;
+        row.querySelector('[data-username]').textContent = admin.username;
+
+        const form = row.querySelector('form');
+        const msgEl = row.querySelector('[data-msg]');
+
+        form.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          msgEl.textContent = '';
+          msgEl.className = 'row-msg';
+
+          const username = (form.username.value || '').trim();
+          const password = form.password.value || '';
+          const confirm = form.confirm.value || '';
+
+          if (!username && !password) {
+            msgEl.textContent = 'Enter a new username and/or password.';
+            msgEl.className = 'row-msg err';
+            return;
+          }
+          if (password && password.length < 8) {
+            msgEl.textContent = 'Password must be at least 8 characters.';
+            msgEl.className = 'row-msg err';
+            return;
+          }
+          if (password && password !== confirm) {
+            msgEl.textContent = 'Password and confirmation do not match.';
+            msgEl.className = 'row-msg err';
+            return;
+          }
+
+          const body = {};
+          if (username) body.username = username;
+          if (password) body.password = password;
+
+          const btn = form.querySelector('button[type="submit"]');
+          if (btn) btn.disabled = true;
+
+          try {
+            const res = await fetch(apiBase() + '/api/super/admins/' + encodeURIComponent(admin.id), {
+              method: 'PUT',
+              headers: authHeaders({ 'Content-Type': 'application/json' }),
+              body: JSON.stringify(body)
+            });
+            const data = await res.json().catch(function () { return {}; });
+            if (!res.ok) throw new Error(data.error || 'Update failed');
+
+            form.password.value = '';
+            form.confirm.value = '';
+            form.username.value = '';
+            if (data.admin && data.admin.username) {
+              row.querySelector('[data-username]').textContent = data.admin.username;
+              admin.username = data.admin.username;
+            }
+            msgEl.textContent = 'Credentials updated for ' + (data.admin && data.admin.username ? data.admin.username : admin.role) + '.';
+            msgEl.className = 'row-msg ok';
+          } catch (err) {
+            msgEl.textContent = err.message || 'Update failed';
+            msgEl.className = 'row-msg err';
+          } finally {
+            if (btn) btn.disabled = false;
+          }
+        });
+
+        return row;
+      }
+
+      function renderHealth(data) {
+        const counts = data.counts || {};
+        const stats = [
+          { k: 'Status', v: data.ok ? 'OK' : 'Issue' },
+          { k: 'Uptime', v: formatUptime(data.uptime) },
+          { k: 'Host / port', v: String(data.host || '') + ':' + String(data.port || '') },
+          { k: 'Node', v: data.node || '—' },
+          { k: 'Admins', v: String(counts.admins ?? '—') },
+          { k: 'Proposals', v: String(counts.proposals ?? '—') },
+          { k: 'Applications', v: String(counts.applications ?? '—') },
+          { k: 'News items', v: String(counts.newsItems ?? '—') },
+          { k: 'Calendar dates', v: String(counts.calendarDates ?? '—') },
+          { k: 'DB file', v: data.dbFile || '—' }
+        ];
+        healthGrid.innerHTML = stats.map(function (s) {
+          return '<div class="stat"><div class="k">' + escapeHtml(s.k) + '</div><div class="v">' + escapeHtml(s.v) + '</div></div>';
+        }).join('');
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      async function loadHealth() {
+        healthGrid.textContent = 'Loading…';
+        try {
+          const res = await fetch(apiBase() + '/api/super/health', { headers: authHeaders() });
+          const data = await res.json().catch(function () { return {}; });
+          if (!res.ok) throw new Error(data.error || 'Health check failed');
+          renderHealth(data);
+        } catch (err) {
+          healthGrid.innerHTML = '<div class="stat"><div class="k">Error</div><div class="v">' + escapeHtml(err.message || 'Failed') + '</div></div>';
+        }
+      }
+
+      document.getElementById('refreshHealthBtn')?.addEventListener('click', function () {
+        loadHealth();
+      });
+
+      document.getElementById('backupBtn')?.addEventListener('click', async function () {
+        backupMsg.textContent = '';
+        backupMsg.className = 'row-msg';
+        const btn = document.getElementById('backupBtn');
+        if (btn) btn.disabled = true;
+        try {
+          const res = await fetch(apiBase() + '/api/super/backup', { headers: authHeaders() });
+          if (!res.ok) {
+            const data = await res.json().catch(function () { return {}; });
+            throw new Error(data.error || 'Backup failed (HTTP ' + res.status + ')');
+          }
+          const blob = await res.blob();
+          const cd = res.headers.get('Content-Disposition') || '';
+          const match = /filename="([^"]+)"/.exec(cd);
+          const filename = match ? match[1] : 'debest-data-backup.json';
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+          backupMsg.textContent = 'Backup downloaded: ' + filename;
+          backupMsg.className = 'row-msg ok';
+        } catch (err) {
+          backupMsg.textContent = err.message || 'Backup failed';
+          backupMsg.className = 'row-msg err';
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      });
+
+      loadAdmins();
+      loadHealth();
+    })();
+  </script>
+</body>
+</html>

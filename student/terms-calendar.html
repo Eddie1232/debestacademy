@@ -81,6 +81,17 @@
 
     const STORAGE_KEY = 'debest_terms_calendar_events_v1';
 
+    // Use the same server selected by the admin dashboard. This matters when
+    // the public pages are opened from a static host while the school API runs
+    // on a separate LAN computer.
+    const CALENDAR_API_BASE = (() => {
+      try{
+        const saved = localStorage.getItem('debest_admin_api_base');
+        if(saved && (saved.startsWith('http://') || saved.startsWith('https://'))) return saved.replace(/\/$/, '');
+      }catch(e){/* ignore */}
+      return location.protocol.startsWith('http') && location.host ? location.origin : 'http://127.0.0.1:5500';
+    })();
+
     const state = {
       currentYear: new Date().getFullYear(),
       currentMonth: new Date().getMonth(),
@@ -144,7 +155,7 @@
 
     async function loadFromBackend(){
       try{
-        const res = await fetch('/api/terms-calendar', { method:'GET' });
+        const res = await fetch(`${CALENDAR_API_BASE}/api/terms-calendar`, { method:'GET', cache:'no-store' });
         if(!res.ok) return;
         const data = await res.json();
         if(data && data.events && typeof data.events === 'object'){
@@ -185,8 +196,10 @@
     });
 
     refreshFromBackend();
-    setInterval(refreshFromBackend, 10000);
+    setInterval(refreshFromBackend, 5000);
+    document.addEventListener('visibilitychange', ()=>{
+      if(!document.hidden) refreshFromBackend();
+    });
   </script>
 </body>
 </html>
-

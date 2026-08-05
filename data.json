@@ -10,7 +10,7 @@
       "id": "mgr-1",
       "username": "Manager",
       "role": "Manager",
-      "passwordHash": "$2a$10$CXejZwTv8boXT0JHxrgFbOCU7NH8qto5WKxD1yYR/vVEgjsU6QLL2"
+      "passwordHash": "$2a$10$oWMMUMgT.ccNmGC2EDcKBer5v6JHmADkRPBrmC1863DQAdgBOH6o2"
     },
     {
       "id": "hm-1",
@@ -29,6 +29,12 @@
       "username": "Comma",
       "role": "Headmaster",
       "passwordHash": "$2a$10$YZPLwBrOeNsoy9NIxbraw.GdZ3Y7K8WocL9wxjvS9tSAR0Wnzq0Z."
+    },
+    {
+      "id": "super-1",
+      "username": "SuperAdmin",
+      "role": "SuperAdmin",
+      "passwordHash": "$2a$10$H8EVIlaTRKTmqOUHLNEJYuP3AgUO0JG2DN6zlTSpIcWhPwyK.QPG6"
     }
   ],
   "termCalendar": {
@@ -81,11 +87,59 @@
           "type": "Sports",
           "notes": "today we enjoy ourselves"
         }
+      ],
+      "2026-07-05": [
+        {
+          "title": "Term begins",
+          "type": "Assembly",
+          "notes": "",
+          "proposalId": "1783266899260"
+        }
+      ],
+      "2026-07-17": [
+        {
+          "title": "We meet at Kasoa",
+          "type": "Sports",
+          "notes": "",
+          "proposalId": "1783267199967"
+        }
+      ],
+      "2026-07-19": [
+        {
+          "title": "Grand opening",
+          "type": "Assembly",
+          "notes": "",
+          "proposalId": "1783267409261"
+        }
+      ],
+      "2026-07-25": [
+        {
+          "title": "Midterm",
+          "type": "General",
+          "notes": ""
+        }
       ]
     }
   },
   "news": {
-    "items": []
+    "items": [
+      {
+        "id": "1784961747527",
+        "title": "New school Policy",
+        "body": "",
+        "date": "2026-07-29",
+        "category": "Announcement",
+        "publishedBy": "Comma"
+      },
+      {
+        "id": "1784960412772",
+        "title": "Meeting",
+        "body": "",
+        "date": "2026-07-27",
+        "category": "Announcement",
+        "publishedBy": "Comma"
+      }
+    ]
   },
   "proposals": [
     {
@@ -378,6 +432,158 @@
       "createdAt": "2026-07-05T16:03:29.261Z",
       "updatedAt": "2026-07-05T16:05:51.560Z",
       "reviewedBy": "Comma"
+    },
+    {
+      "id": "1784960412772",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "category": "news",
+      "status": "final_approved",
+      "assignedTo": "Completed",
+      "priority": "Medium",
+      "event": {
+        "date": "2026-07-27",
+        "title": "Meeting",
+        "type": "",
+        "notes": ""
+      },
+      "notes": "Submitted by Secretary",
+      "comments": [
+        {
+          "id": "1784960426540",
+          "author": "Secretary",
+          "role": "Secretary",
+          "message": "rrggg",
+          "createdAt": "2026-07-25T06:20:26.540Z"
+        }
+      ],
+      "history": [
+        {
+          "action": "created",
+          "actor": "Secretary",
+          "message": "Draft created",
+          "at": "2026-07-25T06:20:12.774Z"
+        },
+        {
+          "action": "submit",
+          "actor": "Secretary",
+          "message": "Submitted for manager review",
+          "at": "2026-07-25T06:20:12.791Z"
+        },
+        {
+          "action": "comment",
+          "actor": "Secretary",
+          "message": "rrggg",
+          "at": "2026-07-25T06:20:26.540Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Manager",
+          "message": "Approved and sent to the Headmaster",
+          "at": "2026-07-25T06:27:37.469Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Comma",
+          "message": "Final approval granted",
+          "at": "2026-07-25T06:28:29.641Z"
+        }
+      ],
+      "createdAt": "2026-07-25T06:20:12.772Z",
+      "updatedAt": "2026-07-25T06:28:29.641Z",
+      "reviewedBy": "Comma"
+    },
+    {
+      "id": "1784961747527",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "category": "news",
+      "status": "final_approved",
+      "assignedTo": "Completed",
+      "priority": "High",
+      "event": {
+        "date": "2026-07-29",
+        "title": "New school Policy",
+        "type": "",
+        "notes": ""
+      },
+      "notes": "Submitted by Secretary",
+      "comments": [],
+      "history": [
+        {
+          "action": "created",
+          "actor": "Secretary",
+          "message": "Draft created",
+          "at": "2026-07-25T06:42:27.527Z"
+        },
+        {
+          "action": "submit",
+          "actor": "Secretary",
+          "message": "Submitted for manager review",
+          "at": "2026-07-25T06:42:27.537Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Manager",
+          "message": "Approved and sent to the Headmaster",
+          "at": "2026-07-25T06:43:58.680Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Comma",
+          "message": "Final approval granted",
+          "at": "2026-07-25T06:44:39.731Z"
+        }
+      ],
+      "createdAt": "2026-07-25T06:42:27.527Z",
+      "updatedAt": "2026-07-25T06:44:39.731Z",
+      "reviewedBy": "Comma"
+    },
+    {
+      "id": "1784962354915",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "category": "calendar",
+      "status": "final_approved",
+      "assignedTo": "Completed",
+      "priority": "Medium",
+      "event": {
+        "date": "2026-07-25",
+        "title": "Midterm",
+        "type": "General",
+        "notes": ""
+      },
+      "notes": "Submitted by Secretary",
+      "comments": [],
+      "history": [
+        {
+          "action": "created",
+          "actor": "Secretary",
+          "message": "Draft created",
+          "at": "2026-07-25T06:52:34.916Z"
+        },
+        {
+          "action": "submit",
+          "actor": "Secretary",
+          "message": "Submitted for manager review",
+          "at": "2026-07-25T06:52:34.931Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Manager",
+          "message": "Approved and sent to the Headmaster",
+          "at": "2026-07-25T06:53:48.243Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Comma",
+          "message": "Final approval granted",
+          "at": "2026-07-25T06:55:06.591Z"
+        }
+      ],
+      "createdAt": "2026-07-25T06:52:34.915Z",
+      "updatedAt": "2026-07-25T06:55:06.591Z",
+      "reviewedBy": "Comma"
     }
   ],
   "applications": [
@@ -406,6 +612,44 @@
       "notes": "",
       "reviewedBy": "Comma",
       "reviewedAt": "2026-07-16T01:31:10.073Z"
+    },
+    {
+      "id": "app-1784166190038",
+      "type": "student",
+      "which": "student-all",
+      "status": "reviewed",
+      "submittedAt": "2026-07-16T01:43:10.038Z",
+      "forms": {
+        "student": {
+          "fullName": "Sammy",
+          "dateOfBirth": "",
+          "currentGrade": "",
+          "gender": "",
+          "nationality": "",
+          "campus": "",
+          "homeAddress": ""
+        },
+        "health": {
+          "studentFullName": "",
+          "bloodGroup": "",
+          "allergies": "",
+          "chronicIllness": "",
+          "immunization": "",
+          "doctorNotes": ""
+        },
+        "parent": {
+          "fullName": "",
+          "relationship": "",
+          "phone": "",
+          "email": "",
+          "address": "",
+          "consent": ""
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-07-17T23:51:14.620Z"
     }
   ]
 }

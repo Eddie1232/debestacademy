@@ -1,9 +1,9 @@
-/* Styles for the fillable admission & staff forms page */
+/* Fillable application forms — single A4 sheet per form type */
 
 .forms-container {
-  max-width: 980px;
+  max-width: 920px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px 16px 48px;
 }
 
 .forms-header {
@@ -32,7 +32,6 @@
   font-weight: 700;
 }
 
-/* Category tabs */
 .form-tabs {
   display: flex;
   flex-wrap: wrap;
@@ -79,77 +78,166 @@
   line-height: 1.55;
 }
 
-.form-card {
-  border: 1px solid rgba(90, 62, 114, 0.18);
-  border-radius: 14px;
-  padding: 18px 18px 16px;
-  margin: 14px 0;
+/* ---------- Single A4 sheet ---------- */
+.a4-sheet {
+  /* ~A4 proportions on screen; exact A4 when printing */
+  width: min(210mm, 100%);
+  min-height: 297mm;
+  margin: 0 auto 18px;
+  padding: 14mm 14mm 12mm;
   background: #fff;
+  border: 1px solid rgba(90, 62, 114, 0.2);
+  border-radius: 4px;
+  box-shadow: 0 10px 32px rgba(90, 62, 114, 0.1);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(90, 62, 114, 0.06);
+  box-sizing: border-box;
+  color: #2c1f34;
 }
 
-/* Crest watermark backdrop inside each printable form card */
-.form-card::before {
+/* Crest watermark — once per sheet */
+.a4-sheet::before {
   content: "";
   position: absolute;
   inset: 0;
   background-image: url("./debestcrest.jpg");
   background-repeat: no-repeat;
-  background-position: center 70px;
-  background-size: 300px 300px;
-  opacity: 0.42;
-  filter: grayscale(0.05) contrast(1.4) brightness(1.1);
+  background-position: center 42%;
+  background-size: 46% auto;
+  opacity: 0.14;
+  filter: grayscale(0.1) contrast(1.15);
   pointer-events: none;
   z-index: 0;
 }
 
-.print-block {
+.a4-sheet > * {
   position: relative;
   z-index: 1;
 }
 
-.form-card > *:not(.print-block) {
-  position: relative;
-  z-index: 1;
-}
-
-.form-card-banner {
+.a4-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
+  gap: 14px;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 2.5px solid #5a3e72;
 }
 
-.form-card-crest {
-  width: 52px;
-  height: 52px;
+.a4-crest {
+  width: 58px;
+  height: 58px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 2px solid #341f4d;
   background: #fff;
   flex-shrink: 0;
 }
 
-.form-card-school {
-  font-size: 0.78rem;
+.a4-school {
+  font-size: 0.72rem;
   font-weight: 900;
-  letter-spacing: 1.5px;
+  letter-spacing: 2px;
   color: #5a3e72;
   text-transform: uppercase;
 }
 
-.form-card h3 {
+.a4-title {
   margin: 2px 0 0;
   color: #341f4d;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1.2;
 }
 
-.form-card p {
-  margin: 0 0 12px;
-  color: rgba(75, 59, 79, 0.85);
+.a4-subtitle {
+  margin: 3px 0 0;
+  color: #6d587a;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.a4-section {
+  margin-bottom: 12px;
+}
+
+.a4-section-title {
+  margin: 0 0 8px;
+  padding: 4px 8px;
+  background: rgba(90, 62, 114, 0.08);
+  border-left: 4px solid #5a3e72;
+  color: #341f4d;
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.form-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+
+.form-field-grid label,
+.form-field-grid .span-2 {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.78rem;
+  color: rgba(52, 31, 77, 0.92);
+  font-weight: 700;
+}
+
+.form-field-grid .span-2 {
+  grid-column: 1 / -1;
+}
+
+.form-field-grid input,
+.form-field-grid select,
+.form-field-grid textarea {
+  width: 100%;
+  border: 1px solid rgba(90, 62, 114, 0.28);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.86rem;
+  background: rgba(255, 255, 255, 0.88);
+  color: #111;
+  font-family: inherit;
   font-weight: 500;
+  box-sizing: border-box;
+}
+
+.form-field-grid input:focus,
+.form-field-grid select:focus,
+.form-field-grid textarea:focus {
+  outline: none;
+  border-color: #7e628f;
+  background: #fff;
+  box-shadow: 0 0 0 2px rgba(126, 98, 143, 0.15);
+}
+
+.form-field-grid textarea {
+  resize: vertical;
+  min-height: 44px;
+}
+
+.a4-signatures {
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr 1.1fr;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1.5px dashed rgba(90, 62, 114, 0.35);
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: rgba(52, 31, 77, 0.85);
+}
+
+.signature-line {
+  height: 28px;
+  margin-top: 6px;
+  border-bottom: 1.5px solid rgba(52, 31, 77, 0.45);
 }
 
 .form-actions {
@@ -158,7 +246,7 @@
   gap: 10px;
   align-items: center;
   justify-content: center;
-  margin: 18px 0 8px;
+  margin: 12px 0 8px;
 }
 
 .small {
@@ -167,11 +255,10 @@
 }
 
 .forms-footer-note {
-  margin-top: 20px;
+  margin-top: 16px;
   text-align: center;
 }
 
-/* Primary action buttons on forms page */
 .btn {
   appearance: none;
   border: none;
@@ -209,83 +296,21 @@
   color: #fff8f0;
 }
 
-.form-field-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.form-field-grid label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 0.95rem;
-  color: rgba(52, 31, 77, 0.9);
-  font-weight: 700;
-}
-
-.form-field-grid input,
-.form-field-grid select,
-.form-field-grid textarea {
-  width: 100%;
-  border: 1px solid rgba(90, 62, 114, 0.22);
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 0.98rem;
-  background: rgba(255, 255, 255, 0.92);
-  color: #111;
-  font-family: inherit;
-}
-
-.form-field-grid input:focus,
-.form-field-grid select:focus,
-.form-field-grid textarea:focus {
-  outline: none;
-  border-color: #7e628f;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(126, 98, 143, 0.15);
-}
-
-.form-field-grid textarea {
-  resize: vertical;
-  min-height: 90px;
-}
-
-.signature-row {
-  display: flex;
-  gap: 20px;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-top: 18px;
-  padding-top: 10px;
-  border-top: 1px dashed rgba(90, 62, 114, 0.25);
-}
-
-.signature-row > div {
-  flex: 1;
-  min-width: 180px;
-  font-weight: 700;
-  color: rgba(52, 31, 77, 0.8);
-  font-size: 0.95rem;
-}
-
-.signature-line {
-  height: 38px;
-  margin-top: 8px;
-  border-bottom: 2px solid rgba(52, 31, 77, 0.4);
-}
-
-.sr-only-printable {
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
 @media (max-width: 700px) {
+  .a4-sheet {
+    padding: 16px 14px;
+    min-height: 0;
+  }
+
   .form-field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-field-grid .span-2 {
+    grid-column: auto;
+  }
+
+  .a4-signatures {
     grid-template-columns: 1fr;
   }
 
@@ -297,36 +322,23 @@
     width: 100%;
     text-align: center;
   }
+}
 
-  .signature-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
+/* ---------- Print: one A4 page per form set ---------- */
+@page {
+  size: A4 portrait;
+  margin: 10mm;
 }
 
 @media print {
-  /* Hide all cards by default; show only the one matching print mode */
-  body[data-print-mode] .form-card {
-    display: none !important;
+  html,
+  body {
+    background: #fff !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  body[data-print-mode="student-application"] .form-card[data-print-id="student-application"],
-  body[data-print-mode="health-records"] .form-card[data-print-id="health-records"],
-  body[data-print-mode="parent-guardian"] .form-card[data-print-id="parent-guardian"],
-  body[data-print-mode="teaching-application"] .form-card[data-print-id="teaching-application"],
-  body[data-print-mode="teaching-qualifications"] .form-card[data-print-id="teaching-qualifications"],
-  body[data-print-mode="teaching-referees"] .form-card[data-print-id="teaching-referees"],
-  body[data-print-mode="nonteach-application"] .form-card[data-print-id="nonteach-application"],
-  body[data-print-mode="nonteach-experience"] .form-card[data-print-id="nonteach-experience"],
-  body[data-print-mode="nonteach-referees"] .form-card[data-print-id="nonteach-referees"] {
-    display: block !important;
-  }
-
-  /* When printing a set, panels with [hidden] must still show the selected card */
-  body[data-print-mode] .form-set-panel {
-    display: block !important;
-  }
-
+  .no-print,
   header,
   nav,
   .forms-header,
@@ -334,7 +346,8 @@
   .form-actions,
   .set-intro,
   .forms-footer-note,
-  .home-btn {
+  .home-btn,
+  .crest-container {
     display: none !important;
   }
 
@@ -344,49 +357,78 @@
     padding: 0;
   }
 
-  .form-card {
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    box-shadow: none !important;
-    break-inside: avoid;
+  /* Only the selected form set panel prints */
+  body[data-print-set] .form-set-panel {
+    display: none !important;
   }
 
-  /* Keep crest watermark visible when printing */
-  .form-card::before {
-    opacity: 0.38;
+  body[data-print-set="student"] .form-set-panel[data-form-set="student"],
+  body[data-print-set="teaching-staff"] .form-set-panel[data-form-set="teaching-staff"],
+  body[data-print-set="non-teaching-staff"] .form-set-panel[data-form-set="non-teaching-staff"] {
+    display: block !important;
+  }
+
+  body[data-print-set] .a4-sheet {
+    display: block !important;
+  }
+
+  .a4-sheet {
+    width: 100% !important;
+    min-height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    page-break-after: avoid;
+    page-break-inside: auto;
+  }
+
+  .a4-sheet::before {
+    opacity: 0.12;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  .print-block {
-    border: 1px solid rgba(0, 0, 0, 0.18);
-    padding: 16px;
-    border-radius: 0;
-    position: relative;
-    z-index: 1;
+  .a4-section-title {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .form-field-grid {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .form-field-grid textarea {
-    min-height: 80px;
+    gap: 6px 10px;
   }
 
   .form-field-grid input,
   .form-field-grid select,
   .form-field-grid textarea {
     background: transparent !important;
-    border-color: rgba(0, 0, 0, 0.25);
+    border-color: rgba(0, 0, 0, 0.35);
+    box-shadow: none !important;
+    font-size: 10pt;
+    padding: 4px 6px;
   }
 
-  .signature-row {
-    border-top: 1px dashed rgba(0, 0, 0, 0.25);
+  .form-field-grid label,
+  .form-field-grid .span-2 {
+    font-size: 9pt;
   }
 
-  .form-card-banner {
-    margin-bottom: 12px;
+  .form-field-grid textarea {
+    min-height: 36px;
+  }
+
+  .a4-title {
+    font-size: 14pt;
+  }
+
+  .a4-section {
+    margin-bottom: 8px;
+    page-break-inside: avoid;
+  }
+
+  .a4-signatures {
+    page-break-inside: avoid;
   }
 }

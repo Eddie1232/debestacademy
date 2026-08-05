@@ -93,6 +93,7 @@ npm run dev
 | Secretary | `/admin/secretary.html` |
 | Manager | `/admin/manager.html` |
 | Headmaster | `/admin/headmaster.html` |
+| Super Admin (IT) | `/admin/superadmin.html` |
 
 ### Demo login credentials
 
@@ -101,6 +102,7 @@ npm run dev
 | `Secretary` | `Secretary123` | Secretary |
 | `Manager` | `Manager123` | Manager |
 | `Headmaster` | `Headmaster123` | Headmaster |
+| `SuperAdmin` | `SuperAdmin123` | SuperAdmin (IT — credentials + tech ops only) |
 | `admin` | `Admin123` | Headmaster (legacy) |
 
 Passwords are bcrypt-hashed in `data.json` (not stored in the frontend). See [README_ADMIN_LOGIN.md](README_ADMIN_LOGIN.md) for LAN setup and password resets.
@@ -112,6 +114,7 @@ Passwords are bcrypt-hashed in `data.json` (not stored in the frontend). See [RE
 - `GET/POST/PUT /api/proposals` — Secretary → Manager → Headmaster workflow
 - `GET/PUT /api/applications` — public submit; admin inbox
 - `GET /api/dashboard` — role summary cards
+- SuperAdmin: `GET/PUT /api/super/admins`, `GET /api/super/health`, `GET /api/super/backup`
 
 ### School network checklist
 

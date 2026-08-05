@@ -8,7 +8,8 @@
   const ROLE_DASHBOARD = {
     Secretary: '/admin/secretary.html',
     Manager: '/admin/manager.html',
-    Headmaster: '/admin/headmaster.html'
+    Headmaster: '/admin/headmaster.html',
+    SuperAdmin: '/admin/superadmin.html'
   };
 
   function getApiBase() {
