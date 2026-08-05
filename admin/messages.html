@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DEBEST ADMIN - Messages</title>
+  <script src="./admin-shared.js"></script>
+  <style>
+    :root { --ink:#341f4d; --muted:#6d587a; --accent:#5a3e72; --soft:#f8f2fb; --border:#e4d8ed; --bg:#fff8f0; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:var(--bg); color:var(--ink); font-family:"Segoe UI",Tahoma,sans-serif; }
+    .shell { max-width:1180px; margin:0 auto; padding:20px 16px 36px; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; background:linear-gradient(135deg,#f7f0fb,#e9dff2); border:1px solid var(--border); border-radius:16px; padding:14px 16px; box-shadow:0 8px 28px rgba(90,62,114,.1); }
+    h1,h2,p { margin-top:0; } h1 { margin-bottom:3px; font-size:1.28rem; } .sub,.hint { color:var(--muted); font-weight:600; margin-bottom:0; }
+    .identity { color:var(--accent); font-weight:800; font-size:.88rem; } .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    button { font:inherit; cursor:pointer; } .btn { border:0; border-radius:9px; padding:9px 13px; font-weight:800; background:var(--accent); color:#fff8f0; } .btn:hover { background:#7e628f; } .btn.secondary { background:#fff; border:1.5px solid #d4c2e0; color:var(--accent); } .btn:disabled { opacity:.55; cursor:not-allowed; }
+    .layout { display:grid; grid-template-columns:300px minmax(0,1fr); gap:14px; margin-top:16px; min-height:620px; }
+    .card { background:#fffdfd; border:1px solid var(--border); border-radius:14px; box-shadow:0 4px 16px rgba(90,62,114,.06); }
+    .people { padding:14px; } .people-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; } .people h2 { font-size:1rem; margin-bottom:0; }
+    .person { width:100%; text-align:left; padding:12px; margin:5px 0; border:1px solid transparent; border-radius:10px; background:transparent; color:var(--ink); } .person:hover,.person.active { background:var(--soft); border-color:#d9c7e6; } .person-name { display:block; font-weight:900; } .person-role { display:block; color:var(--muted); font-size:.8rem; font-weight:700; margin-top:2px; }
+    .workspace { display:grid; grid-template-rows:auto minmax(220px,1fr) auto; overflow:hidden; } .conversation-head { padding:16px 18px 12px; border-bottom:1px solid #eee5f3; display:flex; justify-content:space-between; align-items:start; gap:12px; } .conversation-head h2 { font-size:1.08rem; margin-bottom:4px; }
+    .messages { padding:16px 18px; overflow:auto; max-height:440px; background:linear-gradient(#fffdfd,#fbf8fc); } .empty { color:var(--muted); font-weight:600; text-align:center; padding:60px 16px; }
+    .message { max-width:82%; margin:0 0 12px; padding:11px 13px; border:1px solid #e5dbea; border-radius:12px 12px 12px 3px; background:#fff; box-shadow:0 2px 6px rgba(90,62,114,.04); } .message.mine { margin-left:auto; border-radius:12px 12px 3px 12px; background:#f0e7f6; border-color:#d9c7e6; } .meta { color:var(--muted); font-size:.76rem; font-weight:700; margin-bottom:5px; } .subject { font-weight:900; margin-bottom:4px; } .body { white-space:pre-wrap; line-height:1.42; color:#493a50; } .priority { display:inline-block; margin-left:6px; border-radius:99px; padding:2px 6px; font-size:.68rem; text-transform:uppercase; letter-spacing:.25px; background:#ede4f3; color:var(--accent); } .priority.urgent { background:#fde8e9; color:#a51e2a; } .priority.high { background:#fff0d8; color:#8b5b13; }
+    .composer { border-top:1px solid #eee5f3; padding:15px 18px; background:#fff; } .form-grid { display:grid; grid-template-columns:1fr 130px; gap:9px; } label { display:block; color:var(--muted); font-size:.78rem; font-weight:800; margin-bottom:4px; } input,select,textarea { width:100%; border:1.5px solid #d8c9e3; border-radius:9px; padding:9px 10px; font:inherit; color:var(--ink); background:#fff; } textarea { min-height:86px; resize:vertical; grid-column:1 / -1; } .composer-foot { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:10px; } .status { color:var(--muted); font-size:.85rem; font-weight:700; } .status.error { color:#a51e2a; }
+    @media (max-width:760px) { .shell { padding:12px; } .layout { grid-template-columns:1fr; min-height:0; } .people { display:flex; overflow:auto; gap:6px; } .people-head { min-width:100%; } .people-list { display:flex; gap:6px; } .person { min-width:170px; margin:0; } .messages { max-height:380px; } .form-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div><h1>Admin messages</h1><p class="sub">Private, direct communication for the Debest Academy admin team.</p></div>
+      <div class="actions"><span class="identity" id="identity">Signed in</span><span class="identity" id="unreadBadge" hidden></span><button class="btn secondary" type="button" id="backBtn">← Dashboard</button><button class="btn secondary" type="button" id="logoutBtn">Log out</button></div>
+    </header>
+    <div class="layout">
+      <aside class="card people"><div class="people-head"><h2>Team directory</h2><button class="btn secondary" type="button" id="refreshBtn">Refresh</button></div><div class="people-list" id="peopleList"></div></aside>
+      <section class="card workspace">
+        <div class="conversation-head"><div><h2 id="conversationTitle">Select a colleague</h2><p class="hint" id="conversationHint">Choose an administrator to view your private conversation.</p></div></div>
+        <div class="messages" id="messageList"><div class="empty">Your messages will appear here.</div></div>
+        <form class="composer" id="composeForm">
+          <div class="form-grid"><div><label for="recipient">To</label><select id="recipient" required><option value="">Choose an administrator</option></select></div><div><label for="priority">Priority</label><select id="priority"><option value="normal">Normal</option><option value="high">High</option><option value="urgent">Urgent</option></select></div><div style="grid-column:1 / -1"><label for="subject">Subject <span style="font-weight:600">(optional)</span></label><input id="subject" maxlength="140" placeholder="What is this about?" /></div><textarea id="message" maxlength="5000" required placeholder="Write a clear, professional message…"></textarea></div>
+          <div class="composer-foot"><span class="status" id="status" aria-live="polite">Messages are visible only to you and the selected recipient.</span><button class="btn" type="submit" id="sendBtn">Send message</button></div>
+        </form>
+      </section>
+    </div>
+  </main>
+  <script>
+    (() => {
+      const session = window.DebestAdmin && DebestAdmin.getSession();
+      if (!session) { window.location.replace('./login.html'); return; }
+      const api = DebestAdmin.getApiBase(); const auth = { Authorization: 'Bearer ' + session.token, 'Content-Type': 'application/json' };
+      const messageIdentityId = session.role === 'Headmaster' ? 'hm-1' : session.sub;
+      const isCurrentHeadmasterMessage = (item, field) => session.role === 'Headmaster' && item[`${field}Role`] === 'Headmaster';
+      const isCurrentSender = (item) => item.senderId === messageIdentityId || isCurrentHeadmasterMessage(item, 'sender');
+      const isCurrentRecipient = (item) => item.recipientId === messageIdentityId || isCurrentHeadmasterMessage(item, 'recipient');
+      const state = { recipients: [], selectedId: '', messages: [], allMessages: [] };
+      const $ = (id) => document.getElementById(id);
+      const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const friendlyDate = (value) => { try { return new Date(value).toLocaleString([], { dateStyle:'medium', timeStyle:'short' }); } catch (_) { return ''; } };
+      // Only the official Headmaster account belongs in the staff directory.
+      const directoryRecipients = (people) => (people || []).filter(person => !(
+        // A Headmaster never needs to see the Headmaster role as a recipient.
+        (session.role === 'Headmaster' && person.role === 'Headmaster') ||
+        person.role === 'Headmaster' && (person.id !== 'hm-1' || ['admin', 'comma'].includes(String(person.username || '').toLowerCase()))
+      ));
+      function setStatus(text, error) { const el=$('status'); el.textContent=text; el.className='status' + (error ? ' error' : ''); }
+      function setUnreadCount(count) { const badge=$('unreadBadge'); badge.dataset.count=String(count || 0); badge.hidden=!count; badge.textContent=count ? `${count} unread` : ''; }
+      function selectedRecipient() { return state.recipients.find(person => person.id === state.selectedId); }
+      function renderPeople() {
+        $('peopleList').innerHTML = state.recipients.length ? state.recipients.map(person => `<button type="button" class="person ${person.id === state.selectedId ? 'active' : ''}" data-person="${escapeHtml(person.id)}"><span class="person-name">${escapeHtml(person.username)}</span><span class="person-role">${escapeHtml(person.role)}</span></button>`).join('') : '<p class="hint">No other admin accounts are available.</p>';
+        $('recipient').innerHTML = '<option value="">Choose an administrator</option>' + state.recipients.map(person => `<option value="${escapeHtml(person.id)}">${escapeHtml(person.username)} · ${escapeHtml(person.role)}</option>`).join('');
+        $('recipient').value = state.selectedId;
+      }
+      function renderConversation() {
+        const person = selectedRecipient();
+        $('conversationTitle').textContent = person ? person.username : 'Select a colleague';
+        $('conversationHint').textContent = person ? `${person.role} · Direct messages between the two of you.` : 'Choose an administrator to view your private conversation.';
+        if (!person) { $('messageList').innerHTML='<div class="empty">Select an administrator from the directory to start a conversation.</div>'; return; }
+        if (!state.messages.length) { $('messageList').innerHTML='<div class="empty">No messages yet. Start the conversation with a concise note.</div>'; return; }
+        $('messageList').innerHTML = state.messages.map(item => {
+          const mine = isCurrentSender(item);
+          const priority = item.priority && item.priority !== 'normal' ? `<span class="priority ${escapeHtml(item.priority)}">${escapeHtml(item.priority)}</span>` : '';
+          return `<article class="message ${mine ? 'mine' : ''}"><div class="meta">${escapeHtml(mine ? 'You' : item.senderName)} · ${escapeHtml(friendlyDate(item.createdAt))}${priority}</div>${item.subject ? `<div class="subject">${escapeHtml(item.subject)}</div>` : ''}<div class="body">${escapeHtml(item.message)}</div></article>`;
+        }).join('');
+        $('messageList').scrollTop = $('messageList').scrollHeight;
+      }
+      async function loadConversation(id) {
+        state.selectedId = id || ''; state.messages=[]; renderPeople(); renderConversation();
+        if (!id) return;
+        setStatus('Loading conversation…');
+        const res = await fetch(`${api}/api/messages`, { headers: auth });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Could not load messages');
+        // Normalize Headmaster identities so legacy Headmaster logins
+        // (admin, hm-comma) appear under the canonical hm-1 inbox.
+        const normalize = (payload) => {
+          const rawRecipients = Array.isArray(payload.recipients) ? payload.recipients : [];
+          const rawMessages = Array.isArray(payload.messages) ? payload.messages : [];
+          // Build a canonical Headmaster recipient if any headmaster exists.
+          const hasCanonical = rawRecipients.some(r => r.id === 'hm-1');
+          const headmasters = rawRecipients.filter(r => r.role === 'Headmaster');
+          const recipients = rawRecipients
+            .map(r => ({ ...r }))
+            .filter(r => !(r.role === 'Headmaster' && r.id !== 'hm-1'));
+          if (!hasCanonical && headmasters.length) {
+            // Ensure a single Headmaster entry exists.
+            recipients.push({ id: 'hm-1', username: 'Headmaster', role: 'Headmaster' });
+          }
+          const messages = rawMessages.map((m) => {
+            const copy = Object.assign({}, m);
+            if (copy.senderRole === 'Headmaster') copy.senderId = 'hm-1';
+            if (copy.recipientRole === 'Headmaster') copy.recipientId = 'hm-1';
+            if (copy.senderRole === 'Headmaster') copy.senderName = 'Headmaster';
+            if (copy.recipientRole === 'Headmaster') copy.recipientName = 'Headmaster';
+            return copy;
+          });
+          const unreadCount = Number(payload.unreadCount || 0);
+          return { recipients, messages, unreadCount };
+        };
+
+        const normalized = normalize(data || {});
+        state.recipients = directoryRecipients(normalized.recipients || state.recipients);
+        state.allMessages = normalized.messages || [];
+        state.messages = state.allMessages.filter(item => (
+          (isCurrentSender(item) && item.recipientId === id) ||
+          (isCurrentRecipient(item) && item.senderId === id)
+        ));
+        renderPeople(); renderConversation(); setStatus('Messages are visible only to you and the selected recipient.');
+        const unread = state.messages.filter(item => isCurrentRecipient(item) && !item.readAt);
+        if (unread.length) { await Promise.all(unread.map(item => fetch(`${api}/api/messages/${encodeURIComponent(item.id)}`, { method:'PATCH', headers:auth, body:JSON.stringify({read:true}) }))); const prior=Number($('unreadBadge').dataset.count || 0); setUnreadCount(Math.max(0, prior-unread.length)); }
+      }
+      async function refreshDirectory() {
+        setStatus('Refreshing…');
+        const res = await fetch(`${api}/api/messages`, { headers: auth }); const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Could not load the admin directory');
+        // Normalize server data as above for consistent Headmaster inbox.
+        const normalized2 = (function(payload){
+          const rawRecipients = Array.isArray(payload.recipients) ? payload.recipients : [];
+          const rawMessages = Array.isArray(payload.messages) ? payload.messages : [];
+          const hasCanonical = rawRecipients.some(r => r.id === 'hm-1');
+          const headmasters = rawRecipients.filter(r => r.role === 'Headmaster');
+          const recipients = rawRecipients
+            .map(r => ({ ...r }))
+            .filter(r => !(r.role === 'Headmaster' && r.id !== 'hm-1'));
+          if (!hasCanonical && headmasters.length) {
+            recipients.push({ id: 'hm-1', username: 'Headmaster', role: 'Headmaster' });
+          }
+          const messages = rawMessages.map((m) => {
+            const copy = Object.assign({}, m);
+            if (copy.senderRole === 'Headmaster') copy.senderId = 'hm-1';
+            if (copy.recipientRole === 'Headmaster') copy.recipientId = 'hm-1';
+            if (copy.senderRole === 'Headmaster') copy.senderName = 'Headmaster';
+            if (copy.recipientRole === 'Headmaster') copy.recipientName = 'Headmaster';
+            return copy;
+          });
+          const unreadCount = Number(payload.unreadCount || 0);
+          return { recipients, messages, unreadCount };
+        })(data || {});
+        state.recipients = directoryRecipients(normalized2.recipients); state.allMessages = normalized2.messages || []; setUnreadCount(normalized2.unreadCount || 0);
+        // Make incoming mail immediately visible instead of leaving the inbox
+        // blank until the recipient manually chooses the sender.
+        if (!state.selectedId) {
+          const newestIncoming = (data.messages || [])
+            .filter(item => isCurrentRecipient(item))
+            .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0];
+          if (newestIncoming && state.recipients.some(person => person.id === newestIncoming.senderId)) {
+            await loadConversation(newestIncoming.senderId);
+            return;
+          }
+        }
+        renderPeople(); renderConversation(); setStatus('Messages are visible only to you and the selected recipient.');
+      }
+      $('peopleList').addEventListener('click', e => { const button=e.target.closest('[data-person]'); if (button) loadConversation(button.dataset.person).catch(err => setStatus(err.message,true)); });
+      $('recipient').addEventListener('change', e => { if (e.target.value !== state.selectedId) loadConversation(e.target.value).catch(err => setStatus(err.message,true)); });
+      $('refreshBtn').addEventListener('click', () => refreshDirectory().then(() => state.selectedId && loadConversation(state.selectedId)).catch(err => setStatus(err.message,true)));
+      $('composeForm').addEventListener('submit', async e => { e.preventDefault(); const recipientId=$('recipient').value; if (!recipientId) { setStatus('Choose a recipient before sending.',true); return; } const latest=state.messages[state.messages.length-1]; $('sendBtn').disabled=true; setStatus('Sending message…'); try { const res=await fetch(`${api}/api/messages`, { method:'POST', headers:auth, body:JSON.stringify({recipientId, subject:$('subject').value, message:$('message').value, priority:$('priority').value, threadId:latest && latest.threadId || ''}) }); const data=await res.json().catch(()=>({})); if (!res.ok) throw new Error(data.error || 'Message could not be sent'); $('subject').value=''; $('message').value=''; await loadConversation(recipientId); setStatus('Message sent.'); } catch(err) { setStatus(err.message,true); } finally { $('sendBtn').disabled=false; } });
+      $('identity').textContent = `${session.username} · ${session.role}`;
+      $('backBtn').addEventListener('click', () => window.location.href = DebestAdmin.dashboardForRole(session.role));
+      $('logoutBtn').addEventListener('click', () => DebestAdmin.logout());
+      refreshDirectory().catch(err => setStatus(err.message,true));
+    })();
+  </script>
+</body>
+</html>
