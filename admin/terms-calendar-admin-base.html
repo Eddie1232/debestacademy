@@ -555,7 +555,8 @@
         display: block;
       }
 
-      .menu-panel button {
+      .menu-panel button,
+      .menu-panel a {
         display: block;
         width: 100%;
         text-align: left;
@@ -567,9 +568,11 @@
         border-radius: 8px;
         cursor: pointer;
         font-family: inherit;
+        text-decoration: none;
       }
 
-      .menu-panel button:hover {
+      .menu-panel button:hover,
+      .menu-panel a:hover {
         background: #f7f0fb;
       }
 
@@ -744,6 +747,9 @@
           <div class="topbar-actions">
             <span class="pill soft" id="rolePill">Role dashboard</span>
             <span class="pill soft" id="signedInUser">Signed in</span>
+            <a class="btn btn-ghost btn-sm" href="./messages.html" target="_top" id="messagesLink">
+              Messages <span class="tab-count" id="messageUnreadBadge" style="display:none;">0</span>
+            </a>
             <div class="menu" id="userMenu">
               <button class="btn btn-ghost btn-sm" type="button" id="userMenuBtn" aria-haspopup="true" aria-expanded="false">
                 Menu ▾
@@ -753,6 +759,7 @@
                 <button type="button" data-goto-tab="applications">Applications</button>
                 <button type="button" data-goto-tab="calendar">Calendar</button>
                 <button type="button" data-goto-tab="proposals">Proposals</button>
+                <a href="./messages.html" target="_top">Messages</a>
                 <button type="button" id="logoutBtnTop" class="danger-item">Logout</button>
               </div>
             </div>
@@ -1821,6 +1828,16 @@
         if(appsDashEl && !(Array.isArray(state.applications) && state.applications.length)){
           appsDashEl.textContent = data.summary?.newApplications ?? 0;
         }
+        const messageBadge = document.getElementById('messageUnreadBadge');
+        const messageLink = document.getElementById('messagesLink');
+        const unreadMessages = Number(data.summary?.unreadMessages || 0);
+        if(messageBadge){
+          messageBadge.textContent = String(unreadMessages);
+          messageBadge.style.display = unreadMessages > 0 ? 'inline-block' : 'none';
+        }
+        if(messageLink){
+          messageLink.setAttribute('aria-label', unreadMessages > 0 ? `Messages: ${unreadMessages} unread` : 'Messages');
+        }
 
         if(inboxEl){
           const inbox = Array.isArray(data.inbox) ? data.inbox : [];
@@ -1854,6 +1871,31 @@
             const first = inbox[0];
             todayActionsEl.textContent = `${first.title || 'An item'} is waiting for ${first.status === 'pending_manager_review' ? 'manager review' : first.status === 'awaiting_headmaster_approval' ? 'headmaster approval' : 'attention'}.`;
           }
+        }
+      }
+
+      async function refreshMessageNotification(){
+        if(!token) return;
+        const badge = document.getElementById('messageUnreadBadge');
+        const link = document.getElementById('messagesLink');
+        try{
+          const res = await fetch(`${API_BASE}/api/messages`, {
+            method:'GET',
+            headers: { 'Authorization':'Bearer ' + token }
+          });
+          if(!res.ok) return;
+          const data = await res.json().catch(() => ({}));
+          const count = Number(data.unreadCount || 0);
+          if(badge){
+            badge.textContent = String(count);
+            badge.style.display = count > 0 ? 'inline-block' : 'none';
+          }
+          if(link){
+            link.setAttribute('aria-label', count > 0 ? `Messages: ${count} unread` : 'Messages');
+          }
+        }catch(e){
+          // Messaging is supplementary to the dashboard; do not interrupt
+          // core calendar/workflow activity if the check is temporarily unavailable.
         }
       }
 
@@ -2110,6 +2152,7 @@
           await fetchProposalsFromBackend();
           await fetchApplicationsFromBackend();
           await fetchDashboardFromBackend();
+          await refreshMessageNotification();
           syncProposalToolbar();
           syncActiveRoleUI();
           applyRoleVisibility();
@@ -2172,6 +2215,7 @@
       document.getElementById('retryBtn')?.addEventListener('click', () => retryConnection());
       document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
       document.getElementById('logoutBtnTop')?.addEventListener('click', doLogout);
+      setInterval(() => { refreshMessageNotification(); }, 30000);
 
       // Tabs
       document.querySelectorAll('.tab-btn').forEach((btn) => {
