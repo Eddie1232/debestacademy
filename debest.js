@@ -3,7 +3,9 @@
     const crestContainers = document.querySelectorAll('.crest-container');
     if (!crestContainers.length) return;
 
-    const isNestedPage = window.location.pathname.includes('/student/') || window.location.pathname.includes('/admin/');
+    const isNestedPage =
+      window.location.pathname.includes('/student/') ||
+      window.location.pathname.includes('/admin/');
     const adminHref = isNestedPage
       ? new URL('../admin/login.html', window.location.href).toString()
       : new URL('./admin/login.html', window.location.href).toString();
@@ -30,65 +32,73 @@
 })();
 
 // Smooth scrolling and active link highlighting (in-page hash links only)
-        var navLinks = document.querySelectorAll('nav ul li a');
-        for (var i = 0; i < navLinks.length; i++) {
-            navLinks[i].addEventListener('click', function(e) {
-                var href = this.getAttribute('href') || '';
-                // Allow normal navigation for full page links (e.g. contact.html, debest.html#about)
-                if (href.charAt(0) !== '#') {
-                    return;
-                }
+var navLinks = document.querySelectorAll('nav ul li a');
+for (var i = 0; i < navLinks.length; i++) {
+  navLinks[i].addEventListener('click', function (e) {
+    var href = this.getAttribute('href') || '';
+    // Allow normal navigation for full page links (e.g. contact.html, debest.html#about)
+    if (href.charAt(0) !== '#') {
+      return;
+    }
 
-                var target = document.getElementById(href.substring(1));
-                if (!target) {
-                    return;
-                }
+    var target = document.getElementById(href.substring(1));
+    if (!target) {
+      return;
+    }
 
-                e.preventDefault();
+    e.preventDefault();
 
-                // Remove active class from all links
-                for (var j = 0; j < navLinks.length; j++) {
-                    navLinks[j].classList.remove('active');
-                }
+    // Remove active class from all links
+    for (var j = 0; j < navLinks.length; j++) {
+      navLinks[j].classList.remove('active');
+    }
 
-                // Add active class to clicked link
-                this.classList.add('active');
+    // Add active class to clicked link
+    this.classList.add('active');
 
-                target.scrollIntoView({
-                    behavior: 'smooth'
-                });
-
-                // Update URL hash without page jump
-                history.pushState(null, null, href);
-            });
-        }
-        
-        // Highlight active nav link on scroll
-        window.addEventListener('scroll', function() {
-            var sections = document.querySelectorAll('section');
-            var navLinks = document.querySelectorAll('nav ul li a');
-            var currentSection = '';
-            
-            for (var k = 0; k < sections.length; k++) {
-                var sectionTop = sections[k].offsetTop;
-                if (window.pageYOffset >= sectionTop - 100) {
-                    currentSection = sections[k].getAttribute('id');
-                }
-            }
-            
-            for (var l = 0; l < navLinks.length; l++) {
-                navLinks[l].classList.remove('active');
-                if (navLinks[l].getAttribute('href') === '#' + currentSection) {
-                    navLinks[l].classList.add('active');
-                }
-            }
-        });
-        document.querySelectorAll('#faq dt').forEach(function(dt) {
-    dt.addEventListener('click', function() {
-      var dd = document.getElementById(dt.getAttribute('aria-controls'));
-      dd.classList.toggle('active');
+    target.scrollIntoView({
+      behavior: 'smooth',
     });
+
+    // Update URL hash without page jump
+    history.pushState(null, null, href);
   });
+}
+
+// Highlight active nav link on scroll
+window.addEventListener('scroll', function () {
+  var sections = document.querySelectorAll('section');
+  var navLinks = document.querySelectorAll('nav ul li a');
+  var currentSection = '';
+
+  for (var k = 0; k < sections.length; k++) {
+    var sectionTop = sections[k].offsetTop;
+    if (window.pageYOffset >= sectionTop - 100) {
+      currentSection = sections[k].getAttribute('id');
+    }
+  }
+
+  for (var l = 0; l < navLinks.length; l++) {
+    navLinks[l].classList.remove('active');
+    if (navLinks[l].getAttribute('href') === '#' + currentSection) {
+      navLinks[l].classList.add('active');
+    }
+  }
+});
+document.querySelectorAll('#faq dt').forEach(function (dt) {
+  dt.addEventListener('click', function () {
+    var dd = document.getElementById(dt.getAttribute('aria-controls'));
+    if (!dd) return;
+    var isOpen = dd.classList.toggle('active');
+    dt.classList.toggle('open', isOpen);
+  });
+  dt.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      dt.click();
+    }
+  });
+});
 (function () {
   const galleryImgs = Array.from(document.querySelectorAll('.gallery img'));
   if (!galleryImgs.length) return;

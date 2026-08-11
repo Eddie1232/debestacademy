@@ -9,5 +9,3 @@
 - [x] Admin login + restricted calendar editing (backend).
 - [x] Student/parent calendar reads admin-updated events from backend.
 - [x] Add “More news and updates...” link below News & Updates on `debest.html`.
-
-

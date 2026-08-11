@@ -97,10 +97,10 @@
 
 /* Crest watermark — once per sheet */
 .a4-sheet::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
-  background-image: url("./debestcrest.jpg");
+  background-image: url('./debestcrest.jpg');
   background-repeat: no-repeat;
   background-position: center 42%;
   background-size: 46% auto;
@@ -249,6 +249,130 @@
   margin: 12px 0 8px;
 }
 
+.submit-checkmark {
+  pointer-events: none;
+  position: fixed;
+  left: 50%;
+  top: 18%;
+  transform: translateX(-50%) translateY(-10px);
+  display: grid;
+  place-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 24px 60px rgba(83, 61, 122, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, transform 0.3s ease, visibility 0.3s ease;
+  z-index: 900;
+  max-width: min(92%, 420px);
+}
+
+.submit-checkmark.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.interview-message {
+  max-width: 300px;
+  text-align: center;
+  font-size: 0.92rem;
+  line-height: 1.4;
+  color: #4b3b4f;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.22s ease 0.1s, transform 0.22s ease 0.1s;
+}
+
+.notice-prefix {
+  color: #d42f2f;
+  font-weight: 900;
+}
+
+.notice-content {
+  color: #1f1f1f;
+  font-weight: 800;
+}
+
+.interview-message.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.checkmark-ring {
+  width: 92px;
+  height: 92px;
+}
+
+.checkmark-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.checkmark-circle {
+  fill: none;
+  stroke: #7e628f;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dasharray: 265;
+  stroke-dashoffset: 265;
+  opacity: 0.25;
+  animation: ring-draw 0.85s ease-out forwards;
+}
+
+.checkmark-path {
+  fill: none;
+  stroke: #5a3e72;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: checkmark-draw 0.65s ease-out 0.25s forwards;
+}
+
+.checkmark-label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #341f4d;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.submit-checkmark.is-active .checkmark-circle {
+  animation: ring-draw 0.85s ease-out forwards;
+}
+
+.submit-checkmark.is-active .checkmark-path {
+  animation: checkmark-draw 0.65s ease-out 0.25s forwards;
+}
+
+@keyframes ring-draw {
+  from {
+    stroke-dashoffset: 265;
+    opacity: 0.25;
+    transform: scale(0.75);
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes checkmark-draw {
+  from {
+    stroke-dashoffset: 100;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
 .small {
   font-size: 0.9rem;
   color: rgba(75, 59, 79, 0.78);
@@ -362,14 +486,18 @@
     display: none !important;
   }
 
-  body[data-print-set="student"] .form-set-panel[data-form-set="student"],
-  body[data-print-set="teaching-staff"] .form-set-panel[data-form-set="teaching-staff"],
-  body[data-print-set="non-teaching-staff"] .form-set-panel[data-form-set="non-teaching-staff"] {
+  body[data-print-set='student'] .form-set-panel[data-form-set='student'],
+  body[data-print-set='teaching-staff'] .form-set-panel[data-form-set='teaching-staff'],
+  body[data-print-set='non-teaching-staff'] .form-set-panel[data-form-set='non-teaching-staff'] {
     display: block !important;
   }
 
   body[data-print-set] .a4-sheet {
     display: block !important;
+  }
+
+  .submit-checkmark {
+    display: none !important;
   }
 
   .a4-sheet {

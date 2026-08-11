@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DEBEST ACADEMY - Admin Dashboard</title>
     <link rel="stylesheet" href="../debest.css" />
     <style>
@@ -244,7 +244,7 @@
       }
 
       .toolbar select,
-      .toolbar input[type="search"] {
+      .toolbar input[type='search'] {
         min-width: 140px;
         max-width: 220px;
       }
@@ -724,19 +724,27 @@
       <!-- Auth gate -->
       <div id="authView" class="auth-card" aria-live="polite">
         <div class="pill">ADMINS ONLY</div>
-        <h2 style="margin:12px 0 8px;color:#341f4d;">Session required</h2>
-        <p class="muted" style="margin:0 0 14px;">
+        <h2 style="margin: 12px 0 8px; color: #341f4d">Session required</h2>
+        <p class="muted" style="margin: 0 0 14px">
           Sign in at the staff login page. Role dashboards open after authentication.
         </p>
-        <p id="authMsg" style="margin-top:12px;font-weight:900;"></p>
-        <button id="retryBtn" class="cal-btn" style="margin-top:8px;display:none;" type="button">Retry connection</button>
-        <p style="margin-top:14px;">
-          <a class="cal-btn" style="display:inline-block;text-decoration:none;text-align:center;" href="./login.html" target="_top">Go to staff login</a>
+        <p id="authMsg" style="margin-top: 12px; font-weight: 900"></p>
+        <button id="retryBtn" class="cal-btn" style="margin-top: 8px; display: none" type="button">
+          Retry connection
+        </button>
+        <p style="margin-top: 14px">
+          <a
+            class="cal-btn"
+            style="display: inline-block; text-decoration: none; text-align: center"
+            href="./login.html"
+            target="_top"
+            >Go to staff login</a
+          >
         </p>
       </div>
 
       <!-- Main admin UI -->
-      <div id="adminView" style="display:none;">
+      <div id="adminView" style="display: none">
         <header class="topbar">
           <div class="topbar-brand">
             <div>
@@ -748,10 +756,17 @@
             <span class="pill soft" id="rolePill">Role dashboard</span>
             <span class="pill soft" id="signedInUser">Signed in</span>
             <a class="btn btn-ghost btn-sm" href="./messages.html" target="_top" id="messagesLink">
-              Messages <span class="tab-count" id="messageUnreadBadge" style="display:none;">0</span>
+              Messages
+              <span class="tab-count" id="messageUnreadBadge" style="display: none">0</span>
             </a>
             <div class="menu" id="userMenu">
-              <button class="btn btn-ghost btn-sm" type="button" id="userMenuBtn" aria-haspopup="true" aria-expanded="false">
+              <button
+                class="btn btn-ghost btn-sm"
+                type="button"
+                id="userMenuBtn"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
                 Menu ▾
               </button>
               <div class="menu-panel" role="menu">
@@ -767,16 +782,40 @@
         </header>
 
         <nav class="tab-nav" role="tablist" aria-label="Admin sections">
-          <button type="button" class="tab-btn is-active" role="tab" data-tab="overview" aria-selected="true">
+          <button
+            type="button"
+            class="tab-btn is-active"
+            role="tab"
+            data-tab="overview"
+            aria-selected="true"
+          >
             Overview
           </button>
-          <button type="button" class="tab-btn" role="tab" data-tab="applications" aria-selected="false">
+          <button
+            type="button"
+            class="tab-btn"
+            role="tab"
+            data-tab="applications"
+            aria-selected="false"
+          >
             Applications <span class="tab-count" id="tabCountApps">0</span>
           </button>
-          <button type="button" class="tab-btn" role="tab" data-tab="calendar" aria-selected="false">
+          <button
+            type="button"
+            class="tab-btn"
+            role="tab"
+            data-tab="calendar"
+            aria-selected="false"
+          >
             Calendar
           </button>
-          <button type="button" class="tab-btn" role="tab" data-tab="proposals" aria-selected="false">
+          <button
+            type="button"
+            class="tab-btn"
+            role="tab"
+            data-tab="proposals"
+            aria-selected="false"
+          >
             Proposals <span class="tab-count" id="tabCountProposals">0</span>
           </button>
         </nav>
@@ -787,10 +826,15 @@
             <div class="panel-head">
               <div>
                 <h2>Shared overview</h2>
-                <p>Quick snapshot for secretary, manager, and headmaster. Click a card to open that area.</p>
+                <p>
+                  Quick snapshot for secretary, manager, and headmaster. Click a card to open that
+                  area.
+                </p>
               </div>
               <div class="toolbar">
-                <button class="btn btn-ghost btn-sm" type="button" id="refreshOverviewBtn">Refresh</button>
+                <button class="btn btn-ghost btn-sm" type="button" id="refreshOverviewBtn">
+                  Refresh
+                </button>
               </div>
             </div>
 
@@ -818,25 +862,33 @@
             </div>
 
             <div class="split-2">
-              <div class="panel" style="margin:0;background:#fff;">
-                <h3 style="margin:0 0 8px;color:#341f4d;font-size:1rem;">Inbox</h3>
+              <div class="panel" style="margin: 0; background: #fff">
+                <h3 style="margin: 0 0 8px; color: #341f4d; font-size: 1rem">Inbox</h3>
                 <div id="inboxList" class="inbox-list"></div>
               </div>
-              <div class="panel" style="margin:0;background:#fff;">
-                <h3 style="margin:0 0 8px;color:#341f4d;font-size:1rem;">Recent activity</h3>
+              <div class="panel" style="margin: 0; background: #fff">
+                <h3 style="margin: 0 0 8px; color: #341f4d; font-size: 1rem">Recent activity</h3>
                 <div id="activityList" class="activity-list"></div>
               </div>
             </div>
 
             <div class="today-box" id="todayActionsBox">
-              <div style="font-weight:900;color:#5a3e72;">Today’s actions</div>
-              <div id="todayActionsText" class="muted" style="margin-top:6px;">No action required right now.</div>
+              <div style="font-weight: 900; color: #5a3e72">Today’s actions</div>
+              <div id="todayActionsText" class="muted" style="margin-top: 6px">
+                No action required right now.
+              </div>
             </div>
           </div>
         </section>
 
         <!-- APPLICATIONS -->
-        <section id="panel-applications" class="tab-panel" data-tab-panel="applications" role="tabpanel" hidden>
+        <section
+          id="panel-applications"
+          class="tab-panel"
+          data-tab-panel="applications"
+          role="tabpanel"
+          hidden
+        >
           <div class="panel" id="applicationsPanel">
             <div class="panel-head">
               <div>
@@ -859,7 +911,9 @@
                   <option value="archived">Archived</option>
                 </select>
                 <input type="search" id="appSearch" placeholder="Search name…" />
-                <button class="btn btn-soft btn-sm" type="button" id="refreshApplicationsBtn">Refresh</button>
+                <button class="btn btn-soft btn-sm" type="button" id="refreshApplicationsBtn">
+                  Refresh
+                </button>
               </div>
             </div>
             <div id="applicationsList" class="compact-list"></div>
@@ -867,32 +921,64 @@
         </section>
 
         <!-- CALENDAR -->
-        <section id="panel-calendar" class="tab-panel" data-tab-panel="calendar" role="tabpanel" hidden>
+        <section
+          id="panel-calendar"
+          class="tab-panel"
+          data-tab-panel="calendar"
+          role="tabpanel"
+          hidden
+        >
           <div class="panel">
             <div class="panel-head">
               <div>
                 <h2>Terms calendar</h2>
-                <p>Browse school events. Click a day for details. Headmasters can clear a month from the tools menu.</p>
+                <p>
+                  Browse school events. Click a day for details. Headmasters can clear a month from
+                  the tools menu.
+                </p>
               </div>
               <div class="toolbar">
                 <div class="calendar-controls">
-                  <button class="cal-btn btn-sm" id="prevBtn" type="button" aria-label="Previous month">◀</button>
+                  <button
+                    class="cal-btn btn-sm"
+                    id="prevBtn"
+                    type="button"
+                    aria-label="Previous month"
+                  >
+                    ◀
+                  </button>
                   <div id="monthYear">Month Year</div>
-                  <button class="cal-btn btn-sm" id="nextBtn" type="button" aria-label="Next month">▶</button>
+                  <button class="cal-btn btn-sm" id="nextBtn" type="button" aria-label="Next month">
+                    ▶
+                  </button>
                 </div>
                 <div class="menu" id="calendarToolsMenu">
-                  <button class="btn btn-ghost btn-sm" type="button" id="calendarToolsBtn">Tools ▾</button>
+                  <button class="btn btn-ghost btn-sm" type="button" id="calendarToolsBtn">
+                    Tools ▾
+                  </button>
                   <div class="menu-panel">
                     <button type="button" data-goto-tab="proposals">Open proposals</button>
-                    <button type="button" id="clearMonthBtn" class="danger-item" style="display:none;">Clear this month</button>
+                    <button
+                      type="button"
+                      id="clearMonthBtn"
+                      class="danger-item"
+                      style="display: none"
+                    >
+                      Clear this month
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
 
             <div class="calendar-grid" aria-hidden="true">
-              <div class="dow">Sun</div><div class="dow">Mon</div><div class="dow">Tue</div>
-              <div class="dow">Wed</div><div class="dow">Thu</div><div class="dow">Fri</div><div class="dow">Sat</div>
+              <div class="dow">Sun</div>
+              <div class="dow">Mon</div>
+              <div class="dow">Tue</div>
+              <div class="dow">Wed</div>
+              <div class="dow">Thu</div>
+              <div class="dow">Fri</div>
+              <div class="dow">Sat</div>
             </div>
             <div id="calendarGrid" class="calendar-grid"></div>
             <p class="save-note" id="formStatus" aria-live="polite"></p>
@@ -900,12 +986,20 @@
         </section>
 
         <!-- PROPOSALS -->
-        <section id="panel-proposals" class="tab-panel" data-tab-panel="proposals" role="tabpanel" hidden>
+        <section
+          id="panel-proposals"
+          class="tab-panel"
+          data-tab-panel="proposals"
+          role="tabpanel"
+          hidden
+        >
           <div class="panel">
             <div class="panel-head">
               <div>
                 <h2>Proposal workflow</h2>
-                <p id="proposalRoleHint">Secretary drafts, Manager reviews, Headmaster gives final approval.</p>
+                <p id="proposalRoleHint">
+                  Secretary drafts, Manager reviews, Headmaster gives final approval.
+                </p>
               </div>
               <div class="toolbar">
                 <label class="sr-only" for="proposalStatusFilter">Status filter</label>
@@ -918,8 +1012,17 @@
                   <option value="rejected">Rejected</option>
                   <option value="needs_revisions">Needs revisions</option>
                 </select>
-                <button class="btn btn-sm" type="button" id="openNewProposalBtn" style="display:none;">+ New proposal</button>
-                <button class="btn btn-ghost btn-sm" type="button" id="refreshProposalsBtn">Refresh</button>
+                <button
+                  class="btn btn-sm"
+                  type="button"
+                  id="openNewProposalBtn"
+                  style="display: none"
+                >
+                  + New proposal
+                </button>
+                <button class="btn btn-ghost btn-sm" type="button" id="refreshProposalsBtn">
+                  Refresh
+                </button>
               </div>
             </div>
 
@@ -931,7 +1034,7 @@
             </div>
 
             <div id="proposalStatus" class="save-note" aria-live="polite"></div>
-            <div id="proposalList" class="compact-list" style="margin-top:12px;"></div>
+            <div id="proposalList" class="compact-list" style="margin-top: 12px"></div>
           </div>
 
           <!-- Hidden form container for saveProposal() field queries; also used by modal -->
@@ -971,14 +1074,23 @@
     </main>
 
     <!-- Application detail modal -->
-    <div class="modal-backdrop" id="appModal" role="dialog" aria-modal="true" aria-labelledby="appModalTitle" hidden>
+    <div
+      class="modal-backdrop"
+      id="appModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="appModalTitle"
+      hidden
+    >
       <div class="modal modal-lg">
         <div class="modal-head">
           <div>
             <h3 id="appModalTitle">Application</h3>
-            <div id="appModalMeta" class="muted" style="margin-top:4px;"></div>
+            <div id="appModalMeta" class="muted" style="margin-top: 4px"></div>
           </div>
-          <button type="button" class="btn btn-ghost btn-sm" data-close-modal="appModal">Close</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-close-modal="appModal">
+            Close
+          </button>
         </div>
         <div class="modal-body">
           <div id="appModalBody" class="detail-grid"></div>
@@ -988,14 +1100,23 @@
     </div>
 
     <!-- Proposal detail modal -->
-    <div class="modal-backdrop" id="proposalModal" role="dialog" aria-modal="true" aria-labelledby="proposalModalTitle" hidden>
+    <div
+      class="modal-backdrop"
+      id="proposalModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="proposalModalTitle"
+      hidden
+    >
       <div class="modal modal-lg">
         <div class="modal-head">
           <div>
             <h3 id="proposalModalTitle">Proposal</h3>
-            <div id="proposalModalMeta" class="muted" style="margin-top:4px;"></div>
+            <div id="proposalModalMeta" class="muted" style="margin-top: 4px"></div>
           </div>
-          <button type="button" class="btn btn-ghost btn-sm" data-close-modal="proposalModal">Close</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-close-modal="proposalModal">
+            Close
+          </button>
         </div>
         <div class="modal-body" id="proposalModalBody"></div>
         <div class="modal-foot" id="proposalModalActions"></div>
@@ -1003,29 +1124,53 @@
     </div>
 
     <!-- Day events popup -->
-    <div class="modal-backdrop" id="dayModal" role="dialog" aria-modal="true" aria-labelledby="dayModalTitle" hidden>
+    <div
+      class="modal-backdrop"
+      id="dayModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dayModalTitle"
+      hidden
+    >
       <div class="modal">
         <div class="modal-head">
           <h3 id="dayModalTitle">Day</h3>
-          <button type="button" class="btn btn-ghost btn-sm" data-close-modal="dayModal">Close</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-close-modal="dayModal">
+            Close
+          </button>
         </div>
         <div class="modal-body" id="dayModalBody"></div>
         <div class="modal-foot">
-          <button type="button" class="btn btn-sm" id="dayModalProposeBtn" style="display:none;">Propose event on this day</button>
-          <button type="button" class="btn btn-ghost btn-sm" data-close-modal="dayModal">Done</button>
+          <button type="button" class="btn btn-sm" id="dayModalProposeBtn" style="display: none">
+            Propose event on this day
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm" data-close-modal="dayModal">
+            Done
+          </button>
         </div>
       </div>
     </div>
 
     <!-- New proposal modal -->
-    <div class="modal-backdrop" id="newProposalModal" role="dialog" aria-modal="true" aria-labelledby="newProposalTitle" hidden>
+    <div
+      class="modal-backdrop"
+      id="newProposalModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="newProposalTitle"
+      hidden
+    >
       <div class="modal modal-lg">
         <div class="modal-head">
           <div>
             <h3 id="newProposalTitle">New proposal</h3>
-            <p class="muted" style="margin:4px 0 0;">Create a draft or submit it for manager review.</p>
+            <p class="muted" style="margin: 4px 0 0">
+              Create a draft or submit it for manager review.
+            </p>
           </div>
-          <button type="button" class="btn btn-ghost btn-sm" data-close-modal="newProposalModal">Close</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-close-modal="newProposalModal">
+            Close
+          </button>
         </div>
         <div class="modal-body">
           <div class="row">
@@ -1044,10 +1189,15 @@
               <input type="date" id="m_eventDate" required />
             </div>
           </div>
-          <div class="row" style="margin-top:12px;">
+          <div class="row" style="margin-top: 12px">
             <div class="field">
               <label for="m_eventTitle">Title</label>
-              <input type="text" id="m_eventTitle" placeholder="e.g., Term begins / New announcement" required />
+              <input
+                type="text"
+                id="m_eventTitle"
+                placeholder="e.g., Term begins / New announcement"
+                required
+              />
             </div>
             <div class="field">
               <label for="m_proposalPriority">Priority</label>
@@ -1066,7 +1216,7 @@
               </select>
             </div>
           </div>
-          <div class="row" style="margin-top:12px;">
+          <div class="row" style="margin-top: 12px">
             <div class="field">
               <label for="m_eventType" id="m_eventTypeLabel">Type</label>
               <select id="m_eventType">
@@ -1077,14 +1227,16 @@
                 <option value="Assembly">Assembly</option>
               </select>
             </div>
-            <div class="field" style="flex:1.4;">
+            <div class="field" style="flex: 1.4">
               <label for="m_eventNotes" id="m_eventNotesLabel">Notes (optional)</label>
               <textarea id="m_eventNotes" placeholder="Add details..."></textarea>
             </div>
           </div>
         </div>
         <div class="modal-foot">
-          <button type="button" class="btn btn-ghost" data-close-modal="newProposalModal">Cancel</button>
+          <button type="button" class="btn btn-ghost" data-close-modal="newProposalModal">
+            Cancel
+          </button>
           <button type="button" class="btn btn-soft" id="modalSaveDraftBtn">Save draft</button>
           <button type="button" class="btn" id="modalSubmitProposalBtn">Submit to manager</button>
         </div>
@@ -1095,14 +1247,29 @@
       const JWT_STORAGE_KEY = 'debest_admin_token_v1';
 
       const DEFAULT_EVENTS = {
-        "2026-01-06": [{ title: "Term 1 Begins", type: "General", notes: "Students resume." }],
-        "2026-02-14": [{ title: "Mid-Term Tests", type: "Exams", notes: "Normal timetable." }],
-        "2026-03-27": [{ title: "Sports Day", type: "Sports", notes: "Inter-house competition." }],
-        "2026-04-10": [{ title: "Good Friday", type: "Holiday", notes: "Public holiday." }],
-        "2026-04-17": [{ title: "End of Term 1 / Begin Term 2", type: "General", notes: "Term transition." }]
+        '2026-01-06': [{ title: 'Term 1 Begins', type: 'General', notes: 'Students resume.' }],
+        '2026-02-14': [{ title: 'Mid-Term Tests', type: 'Exams', notes: 'Normal timetable.' }],
+        '2026-03-27': [{ title: 'Sports Day', type: 'Sports', notes: 'Inter-house competition.' }],
+        '2026-04-10': [{ title: 'Good Friday', type: 'Holiday', notes: 'Public holiday.' }],
+        '2026-04-17': [
+          { title: 'End of Term 1 / Begin Term 2', type: 'General', notes: 'Term transition.' },
+        ],
       };
 
-      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const monthNames = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ];
 
       const authView = document.getElementById('authView');
       const adminView = document.getElementById('adminView');
@@ -1121,87 +1288,172 @@
         currentMonth: new Date().getMonth(),
         events: structuredClone(DEFAULT_EVENTS),
         proposals: [],
-        applications: []
+        applications: [],
       };
 
       const API_BASE = (() => {
         try {
           const o = localStorage.getItem('debest_admin_api_base');
-          if(o && (o.startsWith('http://') || o.startsWith('https://'))) return o;
-        } catch(e){/* ignore */}
+          if (o && (o.startsWith('http://') || o.startsWith('https://'))) return o;
+        } catch (e) {
+          /* ignore */
+        }
         if (location.protocol.startsWith('http') && location.host) return location.origin;
         return 'http://127.0.0.1:5500';
       })();
 
-      function escapeHtml(value){
-        return String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+      function clearSession() {
+        token = '';
+        localStorage.removeItem(JWT_STORAGE_KEY);
       }
 
-      function goToLogin(){
+      function getSession() {
+        const tok = localStorage.getItem(JWT_STORAGE_KEY);
+        if (!tok) return null;
+        const payload = parseJwt(tok);
+        if (!payload || (payload.exp && Date.now() >= payload.exp * 1000)) {
+          clearSession();
+          return null;
+        }
+        return {
+          token: tok,
+          username: payload.username || payload.user || '',
+          role: payload.role || '',
+          sub: payload.sub,
+          exp: payload.exp,
+        };
+      }
+
+      function ensureSession() {
+        return getSession();
+      }
+
+      function getAuthToken() {
+        const session = getSession();
+        if (!session || !session.token) {
+          clearSession();
+          goToLogin();
+          return null;
+        }
+        return session.token;
+      }
+
+      async function authedFetch(url, options = {}) {
+        const authToken = getAuthToken();
+        if (!authToken) {
+          throw new Error('Session invalid');
+        }
+        const opts = {
+          ...options,
+          headers: {
+            ...(options.headers || {}),
+            Authorization: 'Bearer ' + authToken,
+          },
+        };
+        const res = await fetch(url, opts);
+        if (res.status === 401 || res.status === 403) {
+          clearSession();
+          goToLogin();
+          throw new Error('Session expired or invalid');
+        }
+        return res;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? '').replace(
+          /[&<>"']/g,
+          (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char])
+        );
+      }
+
+      function goToLogin() {
         try {
           if (window.top && window.top !== window) {
             window.top.location.href = './login.html';
             return;
           }
-        } catch(e){/* ignore */}
+        } catch (e) {
+          /* ignore */
+        }
         window.location.href = './login.html';
       }
 
-      async function checkServer(timeout = 2000){
-        try{
+      async function checkServer(timeout = 2000) {
+        try {
           const ctl = new AbortController();
-          const id = setTimeout(()=>ctl.abort(), timeout);
-          const res = await fetch(`${API_BASE}/health`, { method:'GET', signal: ctl.signal });
+          const id = setTimeout(() => ctl.abort(), timeout);
+          const res = await fetch(`${API_BASE}/health`, { method: 'GET', signal: ctl.signal });
           clearTimeout(id);
           return res && res.ok;
-        }catch(e){
+        } catch (e) {
           return false;
         }
       }
 
-      function disableAdminUI(){
-        try{
-          document.querySelectorAll('#eventForm input, #eventForm button, #eventForm select, #eventForm textarea').forEach(el=>{
-            el.disabled = true;
-          });
-        }catch(e){/* ignore */}
-      }
-
-      function enableAdminUI(){
-        try{
-          document.querySelectorAll('#eventForm input, #eventForm button, #eventForm select, #eventForm textarea').forEach(el=>{
-            el.disabled = false;
-          });
-        }catch(e){/* ignore */}
-      }
-
-      async function retryConnection(){
-        const btn = document.getElementById('retryBtn');
-        const msg = document.getElementById('authMsg');
-        if(btn) btn.disabled = true;
-        if(msg){ msg.textContent = 'Checking server...'; msg.className = ''; }
-        const up = await checkServer(3000);
-        if(up){
-          if(msg){ msg.textContent = 'Connection restored.'; msg.className = 'success'; }
-          enableAdminUI();
-          if(btn) btn.style.display = 'none';
-          init();
-        }else{
-          if(msg){ msg.textContent = 'Still unreachable. Start the local server and try again.'; msg.className = 'danger'; }
-          if(btn) btn.disabled = false;
-          if(btn) btn.style.display = 'inline-block';
+      function disableAdminUI() {
+        try {
+          document
+            .querySelectorAll(
+              '#eventForm input, #eventForm button, #eventForm select, #eventForm textarea'
+            )
+            .forEach((el) => {
+              el.disabled = true;
+            });
+        } catch (e) {
+          /* ignore */
         }
       }
 
-      function toISODate(d){
+      function enableAdminUI() {
+        try {
+          document
+            .querySelectorAll(
+              '#eventForm input, #eventForm button, #eventForm select, #eventForm textarea'
+            )
+            .forEach((el) => {
+              el.disabled = false;
+            });
+        } catch (e) {
+          /* ignore */
+        }
+      }
+
+      async function retryConnection() {
+        const btn = document.getElementById('retryBtn');
+        const msg = document.getElementById('authMsg');
+        if (btn) btn.disabled = true;
+        if (msg) {
+          msg.textContent = 'Checking server...';
+          msg.className = '';
+        }
+        const up = await checkServer(3000);
+        if (up) {
+          if (msg) {
+            msg.textContent = 'Connection restored.';
+            msg.className = 'success';
+          }
+          enableAdminUI();
+          if (btn) btn.style.display = 'none';
+          init();
+        } else {
+          if (msg) {
+            msg.textContent = 'Still unreachable. Start the local server and try again.';
+            msg.className = 'danger';
+          }
+          if (btn) btn.disabled = false;
+          if (btn) btn.style.display = 'inline-block';
+        }
+      }
+
+      function toISODate(d) {
         const y = d.getFullYear();
-        const m = String(d.getMonth()+1).padStart(2,'0');
-        const day = String(d.getDate()).padStart(2,'0');
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
         return `${y}-${m}-${day}`;
       }
 
       /* ---- Tabs & menus ---- */
-      function switchTab(tabId){
+      function switchTab(tabId) {
         document.querySelectorAll('.tab-btn').forEach((btn) => {
           const on = btn.getAttribute('data-tab') === tabId;
           btn.classList.toggle('is-active', on);
@@ -1209,36 +1461,38 @@
         });
         document.querySelectorAll('[data-tab-panel]').forEach((panel) => {
           const on = panel.getAttribute('data-tab-panel') === tabId;
-          if(on) panel.removeAttribute('hidden');
+          if (on) panel.removeAttribute('hidden');
           else panel.setAttribute('hidden', '');
         });
         closeAllMenus();
       }
 
-      function closeAllMenus(){
+      function closeAllMenus() {
         document.querySelectorAll('.menu.open').forEach((m) => m.classList.remove('open'));
-        document.querySelectorAll('[aria-expanded="true"]').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+        document
+          .querySelectorAll('[aria-expanded="true"]')
+          .forEach((b) => b.setAttribute('aria-expanded', 'false'));
       }
 
-      function openModal(id){
+      function openModal(id) {
         const el = document.getElementById(id);
-        if(!el) return;
+        if (!el) return;
         el.classList.add('open');
         el.removeAttribute('hidden');
         document.body.style.overflow = 'hidden';
       }
 
-      function closeModal(id){
+      function closeModal(id) {
         const el = document.getElementById(id);
-        if(!el) return;
+        if (!el) return;
         el.classList.remove('open');
         el.setAttribute('hidden', '');
-        if(!document.querySelector('.modal-backdrop.open')){
+        if (!document.querySelector('.modal-backdrop.open')) {
           document.body.style.overflow = '';
         }
       }
 
-      function closeAllModals(){
+      function closeAllModals() {
         document.querySelectorAll('.modal-backdrop.open').forEach((el) => {
           el.classList.remove('open');
           el.setAttribute('hidden', '');
@@ -1247,20 +1501,20 @@
       }
 
       /* ---- Calendar render ---- */
-      function render(){
+      function render() {
         const grid = document.getElementById('calendarGrid');
-        if(!grid) return;
+        if (!grid) return;
         grid.innerHTML = '';
 
         const month = state.currentMonth;
         const year = state.currentYear;
         const firstOfMonth = new Date(year, month, 1);
         const startDay = firstOfMonth.getDay();
-        const daysInMonth = new Date(year, month+1, 0).getDate();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
 
         document.getElementById('monthYear').textContent = `${monthNames[month]} ${year}`;
 
-        for(let i=0;i<42;i++){
+        for (let i = 0; i < 42; i++) {
           const cellDayIndex = i - startDay + 1;
           const dayDate = new Date(year, month, cellDayIndex);
           const isCurrentMonth = cellDayIndex >= 1 && cellDayIndex <= daysInMonth;
@@ -1277,20 +1531,22 @@
 
           const iso = toISODate(dayDate);
           cell.dataset.iso = iso;
-          const events = (state.events[iso] || []);
+          const events = state.events[iso] || [];
 
           const eventsWrap = document.createElement('div');
           eventsWrap.className = 'events';
 
-          if(events.length){
-            events.slice(0,3).forEach(ev=>{
+          if (events.length) {
+            events.slice(0, 3).forEach((ev) => {
               const el = document.createElement('div');
               el.className = 'event';
-              el.title = ev.notes ? `${ev.title} (${ev.type})\n${ev.notes}` : `${ev.title} (${ev.type})`;
+              el.title = ev.notes
+                ? `${ev.title} (${ev.type})\n${ev.notes}`
+                : `${ev.title} (${ev.type})`;
               el.textContent = ev.title;
               eventsWrap.appendChild(el);
             });
-            if(events.length > 3){
+            if (events.length > 3) {
               const more = document.createElement('div');
               more.className = 'event';
               more.textContent = `+${events.length - 3} more`;
@@ -1301,7 +1557,7 @@
           cell.appendChild(eventsWrap);
           cell.addEventListener('click', () => openDayModal(iso, isCurrentMonth));
           cell.addEventListener('keydown', (e) => {
-            if(e.key === 'Enter' || e.key === ' ') {
+            if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               openDayModal(iso, isCurrentMonth);
             }
@@ -1310,227 +1566,321 @@
         }
       }
 
-      function openDayModal(iso, isCurrentMonth){
+      function openDayModal(iso, isCurrentMonth) {
         selectedDayIso = iso;
         const events = state.events[iso] || [];
         document.getElementById('dayModalTitle').textContent = iso;
         const body = document.getElementById('dayModalBody');
-        if(!events.length){
+        if (!events.length) {
           body.innerHTML = '<div class="empty-state">No events on this day.</div>';
         } else {
-          body.innerHTML = events.map((ev) => `
+          body.innerHTML = events
+            .map(
+              (ev) => `
             <div class="compact-row" style="margin-bottom:8px;">
               <div class="compact-main">
                 <strong>${escapeHtml(ev.title || 'Event')}</strong>
                 <div class="status-badge">${escapeHtml(ev.type || 'General')}</div>
-                <div class="muted" style="margin-top:4px;">${escapeHtml(ev.notes || 'No notes')}</div>
+                <div class="muted" style="margin-top:4px;">${escapeHtml(
+                  ev.notes || 'No notes'
+                )}</div>
               </div>
             </div>
-          `).join('');
+          `
+            )
+            .join('');
         }
         const proposeBtn = document.getElementById('dayModalProposeBtn');
-        if(proposeBtn){
+        if (proposeBtn) {
           proposeBtn.style.display = activeRole === 'Secretary' && isCurrentMonth ? '' : 'none';
         }
         openModal('dayModal');
       }
 
-      function setAuthUI(isAuthed){
+      function setAuthUI(isAuthed) {
         authView.style.display = isAuthed ? 'none' : 'block';
         adminView.style.display = isAuthed ? 'block' : 'none';
       }
 
-      async function fetchEventsFromBackend(){
+      async function fetchEventsFromBackend() {
         const res = await fetch(`${API_BASE}/api/terms-calendar`, {
           method: 'GET',
           credentials: 'include',
           cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
+          headers: { 'Cache-Control': 'no-cache' },
         });
-        if(!res.ok) throw new Error('Could not load calendar');
+        if (!res.ok) throw new Error('Could not load calendar');
         const data = await res.json();
-        if(data && data.events && typeof data.events === 'object'){
+        if (data && data.events && typeof data.events === 'object') {
           // Same shared store as student/parent calendars (approved activities included).
           state.events = { ...structuredClone(DEFAULT_EVENTS), ...data.events };
           syncCalendarToClients();
         }
       }
 
-      async function saveEventsToBackend(){
-        const res = await fetch(`${API_BASE}/api/terms-calendar`, {
-          method:'PUT',
-          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
-          body: JSON.stringify({ events: state.events })
+      async function saveEventsToBackend() {
+        const res = await authedFetch(`${API_BASE}/api/terms-calendar`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ events: state.events }),
         });
-        if(!res.ok){
-          const t = await res.text().catch(()=>null);
+        if (!res.ok) {
+          const t = await res.text().catch(() => null);
           throw new Error('Save failed' + (t ? ': ' + t : ''));
         }
-        try{
+        try {
           localStorage.setItem('debest_terms_calendar_events_v1', JSON.stringify(state.events));
-        }catch(e){/* ignore */}
+        } catch (e) {
+          /* ignore */
+        }
       }
 
-      function syncCalendarToClients(){
-        try{
+      function syncCalendarToClients() {
+        try {
           localStorage.setItem('debest_terms_calendar_events_v1', JSON.stringify(state.events));
-        }catch(e){/* ignore */}
+        } catch (e) {
+          /* ignore */
+        }
       }
 
-      function syncActiveRoleUI(){
+      function syncActiveRoleUI() {
         const el = document.getElementById('activeRole');
-        if(el) el.textContent = activeRole || '—';
+        if (el) el.textContent = activeRole || '—';
         const title = document.getElementById('pageTitle');
-        if(title) title.textContent = `${activeRole || 'Admin'} dashboard`;
+        if (title) title.textContent = `${activeRole || 'Admin'} dashboard`;
       }
 
-      function syncProposalToolbar(){
+      function syncProposalToolbar() {
         const openNew = document.getElementById('openNewProposalBtn');
         const roleHint = document.getElementById('proposalRoleHint');
         const saveBtn = document.getElementById('saveProposalBtn');
         const submitBtn = document.getElementById('submitProposalBtn');
 
-        if(activeRole === 'Secretary'){
-          if(openNew) openNew.style.display = '';
-          if(saveBtn) saveBtn.style.display = 'inline-block';
-          if(submitBtn) submitBtn.style.display = 'inline-block';
-          if(roleHint) roleHint.textContent = 'Create proposals with “New proposal”. Review drafts and submit them for manager review.';
+        if (activeRole === 'Secretary') {
+          if (openNew) openNew.style.display = '';
+          if (saveBtn) saveBtn.style.display = 'inline-block';
+          if (submitBtn) submitBtn.style.display = 'inline-block';
+          if (roleHint)
+            roleHint.textContent =
+              'Create proposals with “New proposal”. Review drafts and submit them for manager review.';
           return;
         }
 
-        if(openNew) openNew.style.display = 'none';
-        if(saveBtn) saveBtn.style.display = 'none';
-        if(submitBtn) submitBtn.style.display = 'none';
+        if (openNew) openNew.style.display = 'none';
+        if (saveBtn) saveBtn.style.display = 'none';
+        if (submitBtn) submitBtn.style.display = 'none';
 
-        if(activeRole === 'Manager' && roleHint){
-          roleHint.textContent = 'Open a proposal to approve, reject, request revisions, or add notes.';
-        } else if(activeRole === 'Headmaster' && roleHint){
-          roleHint.textContent = 'Open a proposal for final approval, rejection, or revision requests.';
-        } else if(roleHint){
+        if (activeRole === 'Manager' && roleHint) {
+          roleHint.textContent =
+            'Open a proposal to approve, reject, request revisions, or add notes.';
+        } else if (activeRole === 'Headmaster' && roleHint) {
+          roleHint.textContent =
+            'Open a proposal for final approval, rejection, or revision requests.';
+        } else if (roleHint) {
           roleHint.textContent = 'Proposal workflow for school admins.';
         }
       }
 
-      function proposalActionButtons(proposal){
+      function proposalActionButtons(proposal) {
         const buttons = [];
-        if(activeRole === 'Secretary' && proposal.status === 'draft') {
+        if (activeRole === 'Secretary' && proposal.status === 'draft') {
           buttons.push({ action: 'submit', label: 'Submit', className: 'btn btn-sm' });
         }
-        if(activeRole === 'Manager' && proposal.status === 'pending_manager_review') {
+        if (activeRole === 'Manager' && proposal.status === 'pending_manager_review') {
           buttons.push({ action: 'approve', label: 'Approve', className: 'btn btn-sm' });
           buttons.push({ action: 'reject', label: 'Reject', className: 'btn btn-danger btn-sm' });
-          buttons.push({ action: 'request-revisions', label: 'Request revisions', className: 'btn btn-soft btn-sm' });
+          buttons.push({
+            action: 'request-revisions',
+            label: 'Request revisions',
+            className: 'btn btn-soft btn-sm',
+          });
         }
-        if(activeRole === 'Headmaster' && proposal.status === 'awaiting_headmaster_approval') {
+        if (activeRole === 'Headmaster' && proposal.status === 'awaiting_headmaster_approval') {
           buttons.push({ action: 'approve', label: 'Final approve', className: 'btn btn-sm' });
           buttons.push({ action: 'reject', label: 'Reject', className: 'btn btn-danger btn-sm' });
-          buttons.push({ action: 'request-revisions', label: 'Request revisions', className: 'btn btn-soft btn-sm' });
+          buttons.push({
+            action: 'request-revisions',
+            label: 'Request revisions',
+            className: 'btn btn-soft btn-sm',
+          });
         }
         return buttons;
       }
 
-      function statusClassForProposal(status){
-        if(status === 'final_approved' || status === 'approved') return 'approved';
-        if(status === 'rejected') return 'rejected';
-        if(status === 'pending_manager_review' || status === 'awaiting_headmaster_approval') return 'review';
+      function statusClassForProposal(status) {
+        if (status === 'final_approved' || status === 'approved') return 'approved';
+        if (status === 'rejected') return 'rejected';
+        if (status === 'pending_manager_review' || status === 'awaiting_headmaster_approval')
+          return 'review';
         return 'draft';
       }
 
-      function renderProposalList(){
+      function renderProposalList() {
         const listEl = document.getElementById('proposalList');
-        if(!listEl) return;
+        if (!listEl) return;
 
         const filter = document.getElementById('proposalStatusFilter')?.value || 'all';
         let proposals = Array.isArray(state.proposals) ? state.proposals.slice() : [];
-        if(filter !== 'all'){
+        if (filter !== 'all') {
           proposals = proposals.filter((p) => p.status === filter);
         }
 
         const countEl = document.getElementById('tabCountProposals');
-        if(countEl){
+        if (countEl) {
           const actionable = (state.proposals || []).filter((p) => {
-            if(activeRole === 'Manager') return p.status === 'pending_manager_review';
-            if(activeRole === 'Headmaster') return p.status === 'awaiting_headmaster_approval';
-            if(activeRole === 'Secretary') return p.status === 'draft' || p.status === 'needs_revisions';
+            if (activeRole === 'Manager') return p.status === 'pending_manager_review';
+            if (activeRole === 'Headmaster') return p.status === 'awaiting_headmaster_approval';
+            if (activeRole === 'Secretary')
+              return p.status === 'draft' || p.status === 'needs_revisions';
             return p.status !== 'final_approved' && p.status !== 'rejected';
           }).length;
           countEl.textContent = String(actionable);
         }
 
-        if(!proposals.length){
+        if (!proposals.length) {
           listEl.innerHTML = '<div class="empty-state">No proposals match this filter.</div>';
           return;
         }
 
-        listEl.innerHTML = proposals.map((proposal) => {
-          const categoryLabel = proposal.category === 'news' ? 'News'
-            : proposal.category === 'policy' ? 'Policy'
-            : proposal.category === 'communication' ? 'Communication'
-            : proposal.category === 'resource' ? 'Resource' : 'Calendar';
-          const st = proposal.status || 'draft';
-          const sc = statusClassForProposal(st);
-          const actions = proposalActionButtons(proposal);
-          const menuId = `prop-menu-${escapeHtml(proposal.id)}`;
+        listEl.innerHTML = proposals
+          .map((proposal) => {
+            const categoryLabel =
+              proposal.category === 'news'
+                ? 'News'
+                : proposal.category === 'policy'
+                ? 'Policy'
+                : proposal.category === 'communication'
+                ? 'Communication'
+                : proposal.category === 'resource'
+                ? 'Resource'
+                : 'Calendar';
+            const st = proposal.status || 'draft';
+            const sc = statusClassForProposal(st);
+            const actions = proposalActionButtons(proposal);
+            const menuId = `prop-menu-${escapeHtml(proposal.id)}`;
 
-          return `
+            return `
             <div class="compact-row" data-proposal-id="${escapeHtml(proposal.id)}">
               <div class="compact-main">
                 <strong>${escapeHtml(proposal.event?.title || 'Untitled proposal')}</strong>
                 <div>
-                  <span class="status-pill ${sc}">${escapeHtml(st === 'final_approved' ? 'Approved' : st.replace(/_/g, ' '))}</span>
+                  <span class="status-pill ${sc}">${escapeHtml(
+              st === 'final_approved' ? 'Approved' : st.replace(/_/g, ' ')
+            )}</span>
                   <span class="status-badge draft">${escapeHtml(categoryLabel)}</span>
                 </div>
                 <div class="muted" style="margin-top:4px;">
-                  ${escapeHtml(proposal.priority || 'Medium')} priority • Assigned to ${escapeHtml(proposal.assignedTo || 'Manager')}
+                  ${escapeHtml(proposal.priority || 'Medium')} priority • Assigned to ${escapeHtml(
+              proposal.assignedTo || 'Manager'
+            )}
                   ${proposal.event?.date ? ' • ' + escapeHtml(proposal.event.date) : ''}
                 </div>
               </div>
               <div class="row-actions">
-                <button class="btn btn-ghost btn-sm" type="button" data-view-proposal="${escapeHtml(proposal.id)}">View</button>
-                ${actions.length ? `
+                <button class="btn btn-ghost btn-sm" type="button" data-view-proposal="${escapeHtml(
+                  proposal.id
+                )}">View</button>
+                ${
+                  actions.length
+                    ? `
                   <div class="menu" id="${menuId}">
                     <button class="btn btn-sm" type="button" data-menu-toggle="${menuId}">Actions ▾</button>
                     <div class="menu-panel">
-                      ${actions.map((a) => `<button type="button" data-action="${a.action}" data-id="${escapeHtml(proposal.id)}">${escapeHtml(a.label)}</button>`).join('')}
+                      ${actions
+                        .map(
+                          (a) =>
+                            `<button type="button" data-action="${a.action}" data-id="${escapeHtml(
+                              proposal.id
+                            )}">${escapeHtml(a.label)}</button>`
+                        )
+                        .join('')}
                     </div>
                   </div>
-                ` : ''}
+                `
+                    : ''
+                }
               </div>
             </div>
           `;
-        }).join('');
+          })
+          .join('');
       }
 
-      function openProposalModal(id){
+      function openProposalModal(id) {
         const proposal = (state.proposals || []).find((p) => p.id === id);
-        if(!proposal) return;
+        if (!proposal) return;
 
         const history = Array.isArray(proposal.history) ? proposal.history : [];
         const comments = Array.isArray(proposal.comments) ? proposal.comments : [];
-        const categoryLabel = proposal.category === 'news' ? 'News'
-          : proposal.category === 'policy' ? 'Policy'
-          : proposal.category === 'communication' ? 'Communication'
-          : proposal.category === 'resource' ? 'Resource' : 'Calendar';
+        const categoryLabel =
+          proposal.category === 'news'
+            ? 'News'
+            : proposal.category === 'policy'
+            ? 'Policy'
+            : proposal.category === 'communication'
+            ? 'Communication'
+            : proposal.category === 'resource'
+            ? 'Resource'
+            : 'Calendar';
 
-        document.getElementById('proposalModalTitle').textContent = proposal.event?.title || 'Proposal';
+        document.getElementById('proposalModalTitle').textContent =
+          proposal.event?.title || 'Proposal';
         document.getElementById('proposalModalMeta').innerHTML = `
-          <span class="status-pill ${statusClassForProposal(proposal.status)}">${escapeHtml((proposal.status || '').replace(/_/g,' '))}</span>
-          ${escapeHtml(categoryLabel)} • ${escapeHtml(proposal.priority || 'Medium')} • Assigned to ${escapeHtml(proposal.assignedTo || 'Manager')}
+          <span class="status-pill ${statusClassForProposal(proposal.status)}">${escapeHtml(
+          (proposal.status || '').replace(/_/g, ' ')
+        )}</span>
+          ${escapeHtml(categoryLabel)} • ${escapeHtml(
+          proposal.priority || 'Medium'
+        )} • Assigned to ${escapeHtml(proposal.assignedTo || 'Manager')}
         `;
 
         document.getElementById('proposalModalBody').innerHTML = `
           <div class="detail-grid">
-            <div><span class="muted">Date:</span> <strong>${escapeHtml(proposal.event?.date || '—')}</strong></div>
-            <div><span class="muted">Type:</span> <strong>${escapeHtml(proposal.event?.type || '—')}</strong></div>
-            <div><span class="muted">Notes:</span> <strong>${escapeHtml(proposal.event?.notes || proposal.notes || 'None')}</strong></div>
+            <div><span class="muted">Date:</span> <strong>${escapeHtml(
+              proposal.event?.date || '—'
+            )}</strong></div>
+            <div><span class="muted">Type:</span> <strong>${escapeHtml(
+              proposal.event?.type || '—'
+            )}</strong></div>
+            <div><span class="muted">Notes:</span> <strong>${escapeHtml(
+              proposal.event?.notes || proposal.notes || 'None'
+            )}</strong></div>
           </div>
           <div class="timeline-list">
             <div style="font-weight:900;color:#5a3e72;">Approval timeline</div>
-            ${history.length ? history.slice().reverse().map((entry)=>`<div class="timeline-entry">• ${escapeHtml(new Date(entry.at).toLocaleString())}: ${escapeHtml(entry.message || entry.action || 'Updated')} (${escapeHtml(entry.actor || 'System')})</div>`).join('') : '<div class="timeline-entry">No timeline entries yet.</div>'}
+            ${
+              history.length
+                ? history
+                    .slice()
+                    .reverse()
+                    .map(
+                      (entry) =>
+                        `<div class="timeline-entry">• ${escapeHtml(
+                          new Date(entry.at).toLocaleString()
+                        )}: ${escapeHtml(entry.message || entry.action || 'Updated')} (${escapeHtml(
+                          entry.actor || 'System'
+                        )})</div>`
+                    )
+                    .join('')
+                : '<div class="timeline-entry">No timeline entries yet.</div>'
+            }
           </div>
           <div class="timeline-list">
             <div style="font-weight:900;color:#5a3e72;">Comments</div>
-            ${comments.length ? comments.slice().reverse().map((comment)=>`<div class="timeline-entry">• ${escapeHtml(comment.message || 'Comment')} — ${escapeHtml(comment.author || 'Admin')}</div>`).join('') : '<div class="timeline-entry">No comments yet.</div>'}
+            ${
+              comments.length
+                ? comments
+                    .slice()
+                    .reverse()
+                    .map(
+                      (comment) =>
+                        `<div class="timeline-entry">• ${escapeHtml(
+                          comment.message || 'Comment'
+                        )} — ${escapeHtml(comment.author || 'Admin')}</div>`
+                    )
+                    .join('')
+                : '<div class="timeline-entry">No comments yet.</div>'
+            }
           </div>
           <div class="comment-box">
             <label for="modalCommentInput">Add a note</label>
@@ -1541,45 +1891,54 @@
         const actions = proposalActionButtons(proposal);
         const foot = document.getElementById('proposalModalActions');
         foot.innerHTML = `
-          ${actions.map((a) => `<button type="button" class="${a.className}" data-action="${a.action}" data-id="${escapeHtml(proposal.id)}">${escapeHtml(a.label)}</button>`).join('')}
-          <button type="button" class="btn btn-soft btn-sm" data-comment-submit data-id="${escapeHtml(proposal.id)}">Save note</button>
+          ${actions
+            .map(
+              (a) =>
+                `<button type="button" class="${a.className}" data-action="${
+                  a.action
+                }" data-id="${escapeHtml(proposal.id)}">${escapeHtml(a.label)}</button>`
+            )
+            .join('')}
+          <button type="button" class="btn btn-soft btn-sm" data-comment-submit data-id="${escapeHtml(
+            proposal.id
+          )}">Save note</button>
           <button type="button" class="btn btn-ghost btn-sm" data-close-modal="proposalModal">Close</button>
         `;
         openModal('proposalModal');
       }
 
-      async function fetchProposalsFromBackend(){
-        if(!token) return;
-        const res = await fetch(`${API_BASE}/api/proposals`, {
-          method:'GET',
-          headers: { 'Authorization':'Bearer ' + token }
+      async function fetchProposalsFromBackend() {
+        const res = await authedFetch(`${API_BASE}/api/proposals`, {
+          method: 'GET',
         });
-        if(!res.ok) throw new Error('Could not load proposals');
+        if (!res.ok) throw new Error('Could not load proposals');
         const data = await res.json();
         state.proposals = Array.isArray(data.proposals) ? data.proposals : [];
         renderProposalList();
       }
 
-      function applicationTypeLabel(type){
-        if(type === 'teaching-staff') return 'Teaching staff';
-        if(type === 'non-teaching-staff') return 'Non-teaching staff';
+      function applicationTypeLabel(type) {
+        if (type === 'teaching-staff') return 'Teaching staff';
+        if (type === 'non-teaching-staff') return 'Non-teaching staff';
         return 'Student admission';
       }
 
-      function applicationTitle(app){
+      function applicationTitle(app) {
         const type = app.type || 'student';
         const forms = app.forms || {};
-        if(type === 'teaching-staff') return forms.teaching?.fullName || 'Unknown teaching applicant';
-        if(type === 'non-teaching-staff') return forms.nonTeaching?.fullName || 'Unknown staff applicant';
+        if (type === 'teaching-staff')
+          return forms.teaching?.fullName || 'Unknown teaching applicant';
+        if (type === 'non-teaching-staff')
+          return forms.nonTeaching?.fullName || 'Unknown staff applicant';
         return forms.student?.fullName || 'Unknown student';
       }
 
-      function formatApplicationDetail(app){
+      function formatApplicationDetail(app) {
         const type = app.type || 'student';
         const forms = app.forms || {};
         let rows = [];
 
-        if(type === 'teaching-staff'){
+        if (type === 'teaching-staff') {
           const t = forms.teaching || {};
           const q = forms.teachingQualifications || {};
           const r = forms.teachingReferees || {};
@@ -1604,12 +1963,18 @@
             ['Employer', q.employer],
             ['Experience', q.experience],
             ['Motivation', q.motivation],
-            ['Referee 1', [r.referee1Name, r.referee1Contact, r.referee1Relation].filter(Boolean).join(' — ')],
-            ['Referee 2', [r.referee2Name, r.referee2Contact, r.referee2Relation].filter(Boolean).join(' — ')],
+            [
+              'Referee 1',
+              [r.referee1Name, r.referee1Contact, r.referee1Relation].filter(Boolean).join(' — '),
+            ],
+            [
+              'Referee 2',
+              [r.referee2Name, r.referee2Contact, r.referee2Relation].filter(Boolean).join(' — '),
+            ],
             ['Emergency contact', r.emergencyContact],
-            ['Declaration', r.declaration]
+            ['Declaration', r.declaration],
           ];
-        } else if(type === 'non-teaching-staff'){
+        } else if (type === 'non-teaching-staff') {
           const n = forms.nonTeaching || {};
           const e = forms.nonTeachingExperience || {};
           const r = forms.nonTeachingReferees || {};
@@ -1633,10 +1998,16 @@
             ['Skills', e.skills],
             ['Experience', e.experience],
             ['Motivation', e.motivation],
-            ['Referee 1', [r.referee1Name, r.referee1Contact, r.referee1Relation].filter(Boolean).join(' — ')],
-            ['Referee 2', [r.referee2Name, r.referee2Contact, r.referee2Relation].filter(Boolean).join(' — ')],
+            [
+              'Referee 1',
+              [r.referee1Name, r.referee1Contact, r.referee1Relation].filter(Boolean).join(' — '),
+            ],
+            [
+              'Referee 2',
+              [r.referee2Name, r.referee2Contact, r.referee2Relation].filter(Boolean).join(' — '),
+            ],
             ['Emergency contact', r.emergencyContact],
-            ['Declaration', r.declaration]
+            ['Declaration', r.declaration],
           ];
         } else {
           const student = forms.student || {};
@@ -1662,63 +2033,72 @@
             ['Phone', parent.phone],
             ['Email', parent.email],
             ['Parent address', parent.address],
-            ['Consent / notes', parent.consent]
+            ['Consent / notes', parent.consent],
           ];
         }
 
         return rows
           .filter(([, value]) => value)
-          .map(([label, value]) => `<div><span class="muted">${escapeHtml(label)}:</span> <strong>${escapeHtml(value)}</strong></div>`)
+          .map(
+            ([label, value]) =>
+              `<div><span class="muted">${escapeHtml(label)}:</span> <strong>${escapeHtml(
+                value
+              )}</strong></div>`
+          )
           .join('');
       }
 
-      function getFilteredApplications(){
+      function getFilteredApplications() {
         const typeFilter = document.getElementById('appTypeFilter')?.value || 'all';
         const statusFilter = document.getElementById('appStatusFilter')?.value || 'all';
         const q = (document.getElementById('appSearch')?.value || '').trim().toLowerCase();
         let apps = Array.isArray(state.applications) ? state.applications.slice() : [];
-        if(typeFilter !== 'all') apps = apps.filter((a) => (a.type || 'student') === typeFilter);
-        if(statusFilter !== 'all') apps = apps.filter((a) => (a.status || 'new') === statusFilter);
-        if(q){
+        if (typeFilter !== 'all') apps = apps.filter((a) => (a.type || 'student') === typeFilter);
+        if (statusFilter !== 'all') apps = apps.filter((a) => (a.status || 'new') === statusFilter);
+        if (q) {
           apps = apps.filter((a) => applicationTitle(a).toLowerCase().includes(q));
         }
         return apps;
       }
 
-      function renderApplicationsList(){
+      function renderApplicationsList() {
         const listEl = document.getElementById('applicationsList');
         const dashEl = document.getElementById('dashApplications');
         const tabCount = document.getElementById('tabCountApps');
-        if(!listEl) return;
+        if (!listEl) return;
 
         const allApps = Array.isArray(state.applications) ? state.applications : [];
         const newCount = allApps.filter((a) => (a.status || 'new') === 'new').length;
-        if(dashEl) dashEl.textContent = String(newCount);
-        if(tabCount) tabCount.textContent = String(newCount);
+        if (dashEl) dashEl.textContent = String(newCount);
+        if (tabCount) tabCount.textContent = String(newCount);
 
         const apps = getFilteredApplications();
 
-        if(!apps.length){
+        if (!apps.length) {
           listEl.innerHTML = '<div class="empty-state">No applications match your filters.</div>';
           return;
         }
 
-        listEl.innerHTML = apps.map((app) => {
-          const type = app.type || 'student';
-          const forms = app.forms || {};
-          const parent = forms.parent || {};
-          const teaching = forms.teaching || {};
-          const nonTeaching = forms.nonTeaching || {};
-          const status = app.status || 'new';
-          const statusClass = status === 'reviewed' ? 'approved' : status === 'archived' ? 'draft' : 'review';
-          const when = app.submittedAt ? new Date(app.submittedAt).toLocaleString() : 'recently';
-          const title = applicationTitle(app);
-          const typeLabel = applicationTypeLabel(type);
-          const position = teaching.position || nonTeaching.position || forms.student?.currentGrade || '';
-          const phone = type === 'student' ? (parent.phone || '') : (teaching.phone || nonTeaching.phone || '');
-          const menuId = `app-menu-${escapeHtml(app.id)}`;
+        listEl.innerHTML = apps
+          .map((app) => {
+            const type = app.type || 'student';
+            const forms = app.forms || {};
+            const parent = forms.parent || {};
+            const teaching = forms.teaching || {};
+            const nonTeaching = forms.nonTeaching || {};
+            const status = app.status || 'new';
+            const statusClass =
+              status === 'reviewed' ? 'approved' : status === 'archived' ? 'draft' : 'review';
+            const when = app.submittedAt ? new Date(app.submittedAt).toLocaleString() : 'recently';
+            const title = applicationTitle(app);
+            const typeLabel = applicationTypeLabel(type);
+            const position =
+              teaching.position || nonTeaching.position || forms.student?.currentGrade || '';
+            const phone =
+              type === 'student' ? parent.phone || '' : teaching.phone || nonTeaching.phone || '';
+            const menuId = `app-menu-${escapeHtml(app.id)}`;
 
-          return `
+            return `
             <div class="compact-row" data-application-id="${escapeHtml(app.id)}">
               <div class="compact-main">
                 <strong>${escapeHtml(title)}</strong>
@@ -1727,53 +2107,92 @@
                   <span class="status-badge draft">${escapeHtml(typeLabel)}</span>
                 </div>
                 <div class="muted" style="margin-top:4px;">
-                  ${escapeHtml(when)}${position ? ' • ' + escapeHtml(position) : ''}${phone ? ' • ' + escapeHtml(phone) : ''}
+                  ${escapeHtml(when)}${position ? ' • ' + escapeHtml(position) : ''}${
+              phone ? ' • ' + escapeHtml(phone) : ''
+            }
                 </div>
               </div>
               <div class="row-actions">
-                <button class="btn btn-ghost btn-sm" type="button" data-view-app="${escapeHtml(app.id)}">View</button>
+                <button class="btn btn-ghost btn-sm" type="button" data-view-app="${escapeHtml(
+                  app.id
+                )}">View</button>
                 <div class="menu" id="${menuId}">
                   <button class="btn btn-sm" type="button" data-menu-toggle="${menuId}">Actions ▾</button>
                   <div class="menu-panel">
-                    ${status === 'new' ? `<button type="button" data-app-action="reviewed" data-app-id="${escapeHtml(app.id)}">Mark reviewed</button>` : ''}
-                    ${status !== 'archived' ? `<button type="button" data-app-action="archived" data-app-id="${escapeHtml(app.id)}">Archive</button>` : ''}
-                    ${status === 'archived' ? `<button type="button" data-app-action="reviewed" data-app-id="${escapeHtml(app.id)}">Mark reviewed</button>` : ''}
-                    <button type="button" data-view-app="${escapeHtml(app.id)}">Open details</button>
+                    ${
+                      status === 'new'
+                        ? `<button type="button" data-app-action="reviewed" data-app-id="${escapeHtml(
+                            app.id
+                          )}">Mark reviewed</button>`
+                        : ''
+                    }
+                    ${
+                      status !== 'archived'
+                        ? `<button type="button" data-app-action="archived" data-app-id="${escapeHtml(
+                            app.id
+                          )}">Archive</button>`
+                        : ''
+                    }
+                    ${
+                      status === 'archived'
+                        ? `<button type="button" data-app-action="reviewed" data-app-id="${escapeHtml(
+                            app.id
+                          )}">Mark reviewed</button>`
+                        : ''
+                    }
+                    <button type="button" data-view-app="${escapeHtml(
+                      app.id
+                    )}">Open details</button>
                   </div>
                 </div>
               </div>
             </div>
           `;
-        }).join('');
+          })
+          .join('');
       }
 
-      function openApplicationModal(id){
+      function openApplicationModal(id) {
         const app = (state.applications || []).find((a) => a.id === id);
-        if(!app) return;
+        if (!app) return;
         const status = app.status || 'new';
-        const statusClass = status === 'reviewed' ? 'approved' : status === 'archived' ? 'draft' : 'review';
+        const statusClass =
+          status === 'reviewed' ? 'approved' : status === 'archived' ? 'draft' : 'review';
         document.getElementById('appModalTitle').textContent = applicationTitle(app);
         document.getElementById('appModalMeta').innerHTML = `
           <span class="status-badge ${statusClass}">${escapeHtml(status)}</span>
-          <span class="status-badge draft">${escapeHtml(applicationTypeLabel(app.type || 'student'))}</span>
+          <span class="status-badge draft">${escapeHtml(
+            applicationTypeLabel(app.type || 'student')
+          )}</span>
           ${app.submittedAt ? ' • ' + escapeHtml(new Date(app.submittedAt).toLocaleString()) : ''}
         `;
-        document.getElementById('appModalBody').innerHTML = formatApplicationDetail(app) || '<div class="empty-state">No details provided.</div>';
+        document.getElementById('appModalBody').innerHTML =
+          formatApplicationDetail(app) || '<div class="empty-state">No details provided.</div>';
         document.getElementById('appModalActions').innerHTML = `
-          ${status === 'new' ? `<button type="button" class="btn btn-sm" data-app-action="reviewed" data-app-id="${escapeHtml(app.id)}">Mark reviewed</button>` : ''}
-          ${status !== 'archived' ? `<button type="button" class="btn btn-soft btn-sm" data-app-action="archived" data-app-id="${escapeHtml(app.id)}">Archive</button>` : ''}
+          ${
+            status === 'new'
+              ? `<button type="button" class="btn btn-sm" data-app-action="reviewed" data-app-id="${escapeHtml(
+                  app.id
+                )}">Mark reviewed</button>`
+              : ''
+          }
+          ${
+            status !== 'archived'
+              ? `<button type="button" class="btn btn-soft btn-sm" data-app-action="archived" data-app-id="${escapeHtml(
+                  app.id
+                )}">Archive</button>`
+              : ''
+          }
           <button type="button" class="btn btn-ghost btn-sm" data-close-modal="appModal">Close</button>
         `;
         openModal('appModal');
       }
 
-      async function fetchApplicationsFromBackend(){
-        if(!token) return;
-        const res = await fetch(`${API_BASE}/api/applications`, {
-          method:'GET',
-          headers: { 'Authorization':'Bearer ' + token }
+      async function fetchApplicationsFromBackend() {
+        const res = await authedFetch(`${API_BASE}/api/applications`, {
+          method: 'GET',
         });
-        if(!res.ok){
+        if (!res.ok) {
           state.applications = [];
           renderApplicationsList();
           return;
@@ -1783,36 +2202,33 @@
         renderApplicationsList();
       }
 
-      async function updateApplicationStatus(id, status){
-        if(!token || !id || !status) return;
-        const res = await fetch(`${API_BASE}/api/applications/${encodeURIComponent(id)}`, {
-          method:'PUT',
+      async function updateApplicationStatus(id, status) {
+        if (!id || !status) return;
+        const res = await authedFetch(`${API_BASE}/api/applications/${encodeURIComponent(id)}`, {
+          method: 'PUT',
           headers: {
-            'Content-Type':'application/json',
-            'Authorization':'Bearer ' + token
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ status })
+          body: JSON.stringify({ status }),
         });
-        if(!res.ok){
-          const data = await res.json().catch(()=>({}));
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
           throw new Error(data.error || 'Could not update application');
         }
         await fetchApplicationsFromBackend();
         await fetchDashboardFromBackend();
         // Refresh open modal if still viewing this app
         const open = document.getElementById('appModal');
-        if(open && open.classList.contains('open')){
+        if (open && open.classList.contains('open')) {
           openApplicationModal(id);
         }
       }
 
-      async function fetchDashboardFromBackend(){
-        if(!token) return;
-        const res = await fetch(`${API_BASE}/api/dashboard`, {
-          method:'GET',
-          headers: { 'Authorization':'Bearer ' + token }
+      async function fetchDashboardFromBackend() {
+        const res = await authedFetch(`${API_BASE}/api/dashboard`, {
+          method: 'GET',
         });
-        if(!res.ok) return;
+        if (!res.ok) return;
         const data = await res.json();
         const pendingEl = document.getElementById('dashPending');
         const reviewEl = document.getElementById('dashReview');
@@ -1821,85 +2237,130 @@
         const activityEl = document.getElementById('activityList');
         const todayActionsEl = document.getElementById('todayActionsText');
 
-        if(pendingEl) pendingEl.textContent = data.summary?.pendingProposals ?? 0;
-        if(reviewEl) reviewEl.textContent = data.summary?.itemsNeedingReview ?? 0;
-        if(approvalsEl) approvalsEl.textContent = data.summary?.recentApprovals ?? 0;
+        if (pendingEl) pendingEl.textContent = data.summary?.pendingProposals ?? 0;
+        if (reviewEl) reviewEl.textContent = data.summary?.itemsNeedingReview ?? 0;
+        if (approvalsEl) approvalsEl.textContent = data.summary?.recentApprovals ?? 0;
         const appsDashEl = document.getElementById('dashApplications');
-        if(appsDashEl && !(Array.isArray(state.applications) && state.applications.length)){
+        if (appsDashEl && !(Array.isArray(state.applications) && state.applications.length)) {
           appsDashEl.textContent = data.summary?.newApplications ?? 0;
         }
         const messageBadge = document.getElementById('messageUnreadBadge');
         const messageLink = document.getElementById('messagesLink');
         const unreadMessages = Number(data.summary?.unreadMessages || 0);
-        if(messageBadge){
+        if (messageBadge) {
           messageBadge.textContent = String(unreadMessages);
           messageBadge.style.display = unreadMessages > 0 ? 'inline-block' : 'none';
         }
-        if(messageLink){
-          messageLink.setAttribute('aria-label', unreadMessages > 0 ? `Messages: ${unreadMessages} unread` : 'Messages');
+        if (messageLink) {
+          messageLink.setAttribute(
+            'aria-label',
+            unreadMessages > 0 ? `Messages: ${unreadMessages} unread` : 'Messages'
+          );
         }
 
-        if(inboxEl){
+        if (inboxEl) {
           const inbox = Array.isArray(data.inbox) ? data.inbox : [];
-          if(!inbox.length){
+          if (!inbox.length) {
             inboxEl.innerHTML = '<div class="inbox-item muted">No pending items.</div>';
           } else {
-            inboxEl.innerHTML = inbox.slice(0, 6).map((item) => {
-              const statusClass = item.status === 'pending_manager_review' || item.status === 'awaiting_headmaster_approval' ? 'review' : item.status === 'final_approved' || item.status === 'approved' ? 'approved' : item.status === 'rejected' ? 'rejected' : 'draft';
-              return `<div class="inbox-item"><strong>${escapeHtml(item.title || 'Untitled item')}</strong><div class="status-badge ${statusClass}">${escapeHtml((item.status || 'updated').replace(/_/g,' '))}</div><div class="muted" style="margin-top:4px;">${escapeHtml(item.category || 'proposal')} • ${escapeHtml(item.priority || 'Medium')} • ${escapeHtml(item.assignedTo || 'Manager')}</div></div>`;
-            }).join('');
+            inboxEl.innerHTML = inbox
+              .slice(0, 6)
+              .map((item) => {
+                const statusClass =
+                  item.status === 'pending_manager_review' ||
+                  item.status === 'awaiting_headmaster_approval'
+                    ? 'review'
+                    : item.status === 'final_approved' || item.status === 'approved'
+                    ? 'approved'
+                    : item.status === 'rejected'
+                    ? 'rejected'
+                    : 'draft';
+                return `<div class="inbox-item"><strong>${escapeHtml(
+                  item.title || 'Untitled item'
+                )}</strong><div class="status-badge ${statusClass}">${escapeHtml(
+                  (item.status || 'updated').replace(/_/g, ' ')
+                )}</div><div class="muted" style="margin-top:4px;">${escapeHtml(
+                  item.category || 'proposal'
+                )} • ${escapeHtml(item.priority || 'Medium')} • ${escapeHtml(
+                  item.assignedTo || 'Manager'
+                )}</div></div>`;
+              })
+              .join('');
           }
         }
 
-        if(activityEl){
+        if (activityEl) {
           const activity = Array.isArray(data.recentActivity) ? data.recentActivity : [];
-          if(!activity.length){
+          if (!activity.length) {
             activityEl.innerHTML = '<div class="activity-item muted">No recent activity.</div>';
           } else {
-            activityEl.innerHTML = activity.slice(0, 6).map((item) => {
-              const statusClass = item.status === 'pending_manager_review' || item.status === 'awaiting_headmaster_approval' ? 'review' : item.status === 'final_approved' || item.status === 'approved' ? 'approved' : item.status === 'rejected' ? 'rejected' : 'draft';
-              return `<div class="activity-item"><strong>${escapeHtml(item.title || 'Untitled item')}</strong><div class="status-badge ${statusClass}">${escapeHtml((item.status || 'updated').replace(/_/g,' '))}</div><div class="muted" style="margin-top:4px;">${escapeHtml(item.category || 'proposal')} • ${escapeHtml(item.updatedAt ? new Date(item.updatedAt).toLocaleString() : 'recently')}</div></div>`;
-            }).join('');
+            activityEl.innerHTML = activity
+              .slice(0, 6)
+              .map((item) => {
+                const statusClass =
+                  item.status === 'pending_manager_review' ||
+                  item.status === 'awaiting_headmaster_approval'
+                    ? 'review'
+                    : item.status === 'final_approved' || item.status === 'approved'
+                    ? 'approved'
+                    : item.status === 'rejected'
+                    ? 'rejected'
+                    : 'draft';
+                return `<div class="activity-item"><strong>${escapeHtml(
+                  item.title || 'Untitled item'
+                )}</strong><div class="status-badge ${statusClass}">${escapeHtml(
+                  (item.status || 'updated').replace(/_/g, ' ')
+                )}</div><div class="muted" style="margin-top:4px;">${escapeHtml(
+                  item.category || 'proposal'
+                )} • ${escapeHtml(
+                  item.updatedAt ? new Date(item.updatedAt).toLocaleString() : 'recently'
+                )}</div></div>`;
+              })
+              .join('');
           }
         }
 
-        if(todayActionsEl){
+        if (todayActionsEl) {
           const inbox = Array.isArray(data.inbox) ? data.inbox : [];
-          if(!inbox.length){
+          if (!inbox.length) {
             todayActionsEl.textContent = 'No action required right now.';
           } else {
             const first = inbox[0];
-            todayActionsEl.textContent = `${first.title || 'An item'} is waiting for ${first.status === 'pending_manager_review' ? 'manager review' : first.status === 'awaiting_headmaster_approval' ? 'headmaster approval' : 'attention'}.`;
+            todayActionsEl.textContent = `${first.title || 'An item'} is waiting for ${
+              first.status === 'pending_manager_review'
+                ? 'manager review'
+                : first.status === 'awaiting_headmaster_approval'
+                ? 'headmaster approval'
+                : 'attention'
+            }.`;
           }
         }
       }
 
-      async function refreshMessageNotification(){
-        if(!token) return;
+      async function refreshMessageNotification() {
         const badge = document.getElementById('messageUnreadBadge');
         const link = document.getElementById('messagesLink');
-        try{
-          const res = await fetch(`${API_BASE}/api/messages`, {
-            method:'GET',
-            headers: { 'Authorization':'Bearer ' + token }
+        try {
+          const res = await authedFetch(`${API_BASE}/api/messages`, {
+            method: 'GET',
           });
-          if(!res.ok) return;
+          if (!res.ok) return;
           const data = await res.json().catch(() => ({}));
           const count = Number(data.unreadCount || 0);
-          if(badge){
+          if (badge) {
             badge.textContent = String(count);
             badge.style.display = count > 0 ? 'inline-block' : 'none';
           }
-          if(link){
+          if (link) {
             link.setAttribute('aria-label', count > 0 ? `Messages: ${count} unread` : 'Messages');
           }
-        }catch(e){
+        } catch (e) {
           // Messaging is supplementary to the dashboard; do not interrupt
           // core calendar/workflow activity if the check is temporarily unavailable.
         }
       }
 
-      function syncModalFormToHidden(){
+      function syncModalFormToHidden() {
         const map = [
           ['m_proposalCategory', 'proposalCategory'],
           ['m_eventDate', 'eventDate'],
@@ -1907,95 +2368,108 @@
           ['m_proposalPriority', 'proposalPriority'],
           ['m_proposalAssignedTo', 'proposalAssignedTo'],
           ['m_eventType', 'eventType'],
-          ['m_eventNotes', 'eventNotes']
+          ['m_eventNotes', 'eventNotes'],
         ];
         map.forEach(([fromId, toId]) => {
           const from = document.getElementById(fromId);
           const to = document.getElementById(toId);
-          if(from && to) to.value = from.value;
+          if (from && to) to.value = from.value;
         });
       }
 
-      function updateModalFormFieldsForCategory(){
+      function updateModalFormFieldsForCategory() {
         const category = document.getElementById('m_proposalCategory')?.value || 'calendar';
         const typeLabel = document.getElementById('m_eventTypeLabel');
         const notesLabel = document.getElementById('m_eventNotesLabel');
         const typeInput = document.getElementById('m_eventType');
         const titleInput = document.getElementById('m_eventTitle');
-        if(!typeInput) return;
+        if (!typeInput) return;
 
-        if(category === 'news'){
-          if(typeLabel) typeLabel.textContent = 'News type';
-          if(notesLabel) notesLabel.textContent = 'Announcement details';
-          typeInput.innerHTML = '<option value="Announcement">Announcement</option><option value="Reminder">Reminder</option><option value="Important">Important</option><option value="Update">Update</option>';
-          if(titleInput) titleInput.placeholder = 'e.g., New school policy / Parent meeting';
-        } else if(category === 'policy'){
-          if(typeLabel) typeLabel.textContent = 'Document type';
-          if(notesLabel) notesLabel.textContent = 'Summary or policy text';
-          typeInput.innerHTML = '<option value="Policy">Policy</option><option value="Meeting minutes">Meeting minutes</option><option value="Guideline">Guideline</option>';
-          if(titleInput) titleInput.placeholder = 'e.g., New attendance policy';
-        } else if(category === 'communication'){
-          if(typeLabel) typeLabel.textContent = 'Communication type';
-          if(notesLabel) notesLabel.textContent = 'Message body';
-          typeInput.innerHTML = '<option value="Parent update">Parent update</option><option value="Student notice">Student notice</option><option value="Teacher memo">Teacher memo</option>';
-          if(titleInput) titleInput.placeholder = 'e.g., Parent meeting request';
-        } else if(category === 'resource'){
-          if(typeLabel) typeLabel.textContent = 'Request type';
-          if(notesLabel) notesLabel.textContent = 'Request details';
-          typeInput.innerHTML = '<option value="Facility">Facility</option><option value="Equipment">Equipment</option><option value="Support">Support</option>';
-          if(titleInput) titleInput.placeholder = 'e.g., Projector booking';
+        if (category === 'news') {
+          if (typeLabel) typeLabel.textContent = 'News type';
+          if (notesLabel) notesLabel.textContent = 'Announcement details';
+          typeInput.innerHTML =
+            '<option value="Announcement">Announcement</option><option value="Reminder">Reminder</option><option value="Important">Important</option><option value="Update">Update</option>';
+          if (titleInput) titleInput.placeholder = 'e.g., New school policy / Parent meeting';
+        } else if (category === 'policy') {
+          if (typeLabel) typeLabel.textContent = 'Document type';
+          if (notesLabel) notesLabel.textContent = 'Summary or policy text';
+          typeInput.innerHTML =
+            '<option value="Policy">Policy</option><option value="Meeting minutes">Meeting minutes</option><option value="Guideline">Guideline</option>';
+          if (titleInput) titleInput.placeholder = 'e.g., New attendance policy';
+        } else if (category === 'communication') {
+          if (typeLabel) typeLabel.textContent = 'Communication type';
+          if (notesLabel) notesLabel.textContent = 'Message body';
+          typeInput.innerHTML =
+            '<option value="Parent update">Parent update</option><option value="Student notice">Student notice</option><option value="Teacher memo">Teacher memo</option>';
+          if (titleInput) titleInput.placeholder = 'e.g., Parent meeting request';
+        } else if (category === 'resource') {
+          if (typeLabel) typeLabel.textContent = 'Request type';
+          if (notesLabel) notesLabel.textContent = 'Request details';
+          typeInput.innerHTML =
+            '<option value="Facility">Facility</option><option value="Equipment">Equipment</option><option value="Support">Support</option>';
+          if (titleInput) titleInput.placeholder = 'e.g., Projector booking';
         } else {
-          if(typeLabel) typeLabel.textContent = 'Type';
-          if(notesLabel) notesLabel.textContent = 'Notes (optional)';
-          typeInput.innerHTML = '<option value="General">General</option><option value="Holiday">Holiday</option><option value="Exams">Exams</option><option value="Sports">Sports</option><option value="Assembly">Assembly</option>';
-          if(titleInput) titleInput.placeholder = 'e.g., Term begins / Sports Day';
+          if (typeLabel) typeLabel.textContent = 'Type';
+          if (notesLabel) notesLabel.textContent = 'Notes (optional)';
+          typeInput.innerHTML =
+            '<option value="General">General</option><option value="Holiday">Holiday</option><option value="Exams">Exams</option><option value="Sports">Sports</option><option value="Assembly">Assembly</option>';
+          if (titleInput) titleInput.placeholder = 'e.g., Term begins / Sports Day';
         }
         // keep hidden form category options in sync for saveProposal
         updateFormFieldsForCategory();
       }
 
-      function updateFormFieldsForCategory(){
-        const category = document.getElementById('proposalCategory')?.value || document.getElementById('m_proposalCategory')?.value || 'calendar';
+      function updateFormFieldsForCategory() {
+        const category =
+          document.getElementById('proposalCategory')?.value ||
+          document.getElementById('m_proposalCategory')?.value ||
+          'calendar';
         const typeLabel = document.getElementById('eventTypeLabel');
         const notesLabel = document.getElementById('eventNotesLabel');
         const typeInput = document.getElementById('eventType');
-        if(!typeInput) return;
+        if (!typeInput) return;
 
         // Sync category select if modal is source
         const hiddenCat = document.getElementById('proposalCategory');
         const modalCat = document.getElementById('m_proposalCategory');
-        if(hiddenCat && modalCat && document.activeElement === modalCat){
+        if (hiddenCat && modalCat && document.activeElement === modalCat) {
           hiddenCat.value = modalCat.value;
         }
 
-        if(category === 'news'){
-          if(typeLabel) typeLabel.textContent = 'News type';
-          if(notesLabel) notesLabel.textContent = 'Announcement details';
-          typeInput.innerHTML = '<option value="Announcement">Announcement</option><option value="Reminder">Reminder</option><option value="Important">Important</option><option value="Update">Update</option>';
-        } else if(category === 'policy'){
-          if(typeLabel) typeLabel.textContent = 'Document type';
-          if(notesLabel) notesLabel.textContent = 'Summary or policy text';
-          typeInput.innerHTML = '<option value="Policy">Policy</option><option value="Meeting minutes">Meeting minutes</option><option value="Guideline">Guideline</option>';
-        } else if(category === 'communication'){
-          if(typeLabel) typeLabel.textContent = 'Communication type';
-          if(notesLabel) notesLabel.textContent = 'Message body';
-          typeInput.innerHTML = '<option value="Parent update">Parent update</option><option value="Student notice">Student notice</option><option value="Teacher memo">Teacher memo</option>';
-        } else if(category === 'resource'){
-          if(typeLabel) typeLabel.textContent = 'Request type';
-          if(notesLabel) notesLabel.textContent = 'Request details';
-          typeInput.innerHTML = '<option value="Facility">Facility</option><option value="Equipment">Equipment</option><option value="Support">Support</option>';
+        if (category === 'news') {
+          if (typeLabel) typeLabel.textContent = 'News type';
+          if (notesLabel) notesLabel.textContent = 'Announcement details';
+          typeInput.innerHTML =
+            '<option value="Announcement">Announcement</option><option value="Reminder">Reminder</option><option value="Important">Important</option><option value="Update">Update</option>';
+        } else if (category === 'policy') {
+          if (typeLabel) typeLabel.textContent = 'Document type';
+          if (notesLabel) notesLabel.textContent = 'Summary or policy text';
+          typeInput.innerHTML =
+            '<option value="Policy">Policy</option><option value="Meeting minutes">Meeting minutes</option><option value="Guideline">Guideline</option>';
+        } else if (category === 'communication') {
+          if (typeLabel) typeLabel.textContent = 'Communication type';
+          if (notesLabel) notesLabel.textContent = 'Message body';
+          typeInput.innerHTML =
+            '<option value="Parent update">Parent update</option><option value="Student notice">Student notice</option><option value="Teacher memo">Teacher memo</option>';
+        } else if (category === 'resource') {
+          if (typeLabel) typeLabel.textContent = 'Request type';
+          if (notesLabel) notesLabel.textContent = 'Request details';
+          typeInput.innerHTML =
+            '<option value="Facility">Facility</option><option value="Equipment">Equipment</option><option value="Support">Support</option>';
         } else {
-          if(typeLabel) typeLabel.textContent = 'Type';
-          if(notesLabel) notesLabel.textContent = 'Notes (optional)';
-          typeInput.innerHTML = '<option value="General">General</option><option value="Holiday">Holiday</option><option value="Exams">Exams</option><option value="Sports">Sports</option><option value="Assembly">Assembly</option>';
+          if (typeLabel) typeLabel.textContent = 'Type';
+          if (notesLabel) notesLabel.textContent = 'Notes (optional)';
+          typeInput.innerHTML =
+            '<option value="General">General</option><option value="Holiday">Holiday</option><option value="Exams">Exams</option><option value="Sports">Sports</option><option value="Assembly">Assembly</option>';
         }
       }
 
-      async function saveProposal(action = 'save'){
-        if(!token) return;
+      async function saveProposal(action = 'save') {
+        if (!getAuthToken()) return;
         // Prefer modal values when modal is open
         const modalOpen = document.getElementById('newProposalModal')?.classList.contains('open');
-        if(modalOpen) syncModalFormToHidden();
+        if (modalOpen) syncModalFormToHidden();
 
         const categoryInput = document.getElementById('proposalCategory');
         const dateInput = document.getElementById('eventDate');
@@ -2005,9 +2479,9 @@
         const priorityInput = document.getElementById('proposalPriority');
         const assignedToInput = document.getElementById('proposalAssignedTo');
 
-        if(!dateInput.value || !titleInput.value.trim()){
+        if (!dateInput.value || !titleInput.value.trim()) {
           const statusEl = document.getElementById('proposalStatus');
-          if(statusEl){
+          if (statusEl) {
             statusEl.textContent = 'Select a date and title before saving a proposal.';
             statusEl.style.color = '#b11f2e';
           }
@@ -2022,31 +2496,31 @@
             date: dateInput.value,
             title: titleInput.value.trim(),
             type: typeInput.value,
-            notes: notesInput.value.trim()
+            notes: notesInput.value.trim(),
           },
-          notes: `Submitted by ${activeRole || 'Secretary'}`
+          notes: `Submitted by ${activeRole || 'Secretary'}`,
         };
 
-        const res = await fetch(`${API_BASE}/api/proposals`, {
+        const res = await authedFetch(`${API_BASE}/api/proposals`, {
           method: 'POST',
-          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
-          body: JSON.stringify(proposalPayload)
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(proposalPayload),
         });
 
-        if(!res.ok){
-          const t = await res.text().catch(()=>null);
+        if (!res.ok) {
+          const t = await res.text().catch(() => null);
           throw new Error('Proposal save failed' + (t ? ': ' + t : ''));
         }
 
         const data = await res.json();
         const proposal = data.proposal;
-        if(action === 'submit') {
-          const submitRes = await fetch(`${API_BASE}/api/proposals/${proposal.id}`, {
-            method:'PUT',
-            headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
-            body: JSON.stringify({ action: 'submit' })
+        if (action === 'submit') {
+          const submitRes = await authedFetch(`${API_BASE}/api/proposals/${proposal.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'submit' }),
           });
-          if(!submitRes.ok) throw new Error('Proposal submission failed');
+          if (!submitRes.ok) throw new Error('Proposal submission failed');
         }
 
         await fetchProposalsFromBackend();
@@ -2054,18 +2528,18 @@
         return data;
       }
 
-      async function handleProposalAction(id, action){
-        const res = await fetch(`${API_BASE}/api/proposals/${id}`, {
-          method:'PUT',
-          headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
-          body: JSON.stringify({ action })
+      async function handleProposalAction(id, action) {
+        const res = await authedFetch(`${API_BASE}/api/proposals/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action }),
         });
-        if(!res.ok) throw new Error('Proposal action failed');
+        if (!res.ok) throw new Error('Proposal action failed');
         const data = await res.json().catch(() => ({}));
         // After final headmaster approval the shared term calendar is updated
         // server-side; refresh so admin + public calendars show the same events.
-        if(action === 'approve'){
-          if(data.termCalendar && data.termCalendar.events){
+        if (action === 'approve') {
+          if (data.termCalendar && data.termCalendar.events) {
             state.events = { ...structuredClone(DEFAULT_EVENTS), ...data.termCalendar.events };
           } else {
             await fetchEventsFromBackend();
@@ -2075,64 +2549,74 @@
         }
         await fetchProposalsFromBackend();
         await fetchDashboardFromBackend();
-        if(document.getElementById('proposalModal')?.classList.contains('open')){
+        if (document.getElementById('proposalModal')?.classList.contains('open')) {
           openProposalModal(id);
         }
       }
 
-      function setRole(role){
+      function setRole(role) {
         activeRole = role;
         syncActiveRoleUI();
         syncProposalToolbar();
-        if(token) {
+        if (token) {
           renderProposalList();
           applyRoleVisibility();
         }
       }
 
-      function applyRoleVisibility(){
+      function applyRoleVisibility() {
         const appsPanel = document.getElementById('applicationsPanel');
         const clearMonth = document.getElementById('clearMonthBtn');
         const rolePill = document.getElementById('rolePill');
-        if(rolePill && activeRole) rolePill.textContent = activeRole + ' dashboard';
+        if (rolePill && activeRole) rolePill.textContent = activeRole + ' dashboard';
 
-        if(appsPanel){
-          appsPanel.style.display = (activeRole === 'Secretary' || activeRole === 'Manager' || activeRole === 'Headmaster') ? '' : 'none';
+        if (appsPanel) {
+          appsPanel.style.display =
+            activeRole === 'Secretary' || activeRole === 'Manager' || activeRole === 'Headmaster'
+              ? ''
+              : 'none';
         }
-        if(clearMonth){
+        if (clearMonth) {
           clearMonth.style.display = activeRole === 'Headmaster' ? '' : 'none';
         }
         syncProposalToolbar();
       }
 
-      async function init(){
+      async function init() {
         const serverUp = await checkServer();
-        if(!serverUp){
+        if (!serverUp) {
           setAuthUI(false);
           syncActiveRoleUI();
-          if(authMsg){
-            authMsg.textContent = 'Admin server is not reachable. Start the host server (npm start) to continue.';
+          if (authMsg) {
+            authMsg.textContent =
+              'Admin server is not reachable. Start the host server (npm start) to continue.';
             authMsg.className = 'danger';
           }
           disableAdminUI();
           return;
         }
 
-        if(!token){
+        const session = getSession();
+        if (!session) {
           setAuthUI(false);
           syncActiveRoleUI();
           if (isEmbedded || urlRoleHint) {
             goToLogin();
             return;
           }
-          if(authMsg){
+          if (authMsg) {
             authMsg.textContent = 'Not signed in.';
             authMsg.className = 'danger';
           }
           return;
         }
 
-        try{ setSignedInUserFromToken(token); }catch(e){/* ignore */}
+        try {
+          token = session.token;
+          setSignedInUserFromToken(token);
+        } catch (e) {
+          /* ignore */
+        }
         if (urlRoleHint && activeRole && urlRoleHint !== activeRole) {
           const dest = './' + String(activeRole).toLowerCase() + '.html';
           try {
@@ -2140,13 +2624,15 @@
               window.top.location.href = dest;
               return;
             }
-          } catch(e){/* ignore */}
+          } catch (e) {
+            /* ignore */
+          }
           window.location.href = dest;
           return;
         }
 
         setAuthUI(true);
-        try{
+        try {
           await fetchEventsFromBackend();
           render();
           await fetchProposalsFromBackend();
@@ -2159,63 +2645,70 @@
           const dateInput = document.getElementById('eventDate');
           const mDate = document.getElementById('m_eventDate');
           const today = toISODate(new Date());
-          if(dateInput) dateInput.value = today;
-          if(mDate) mDate.value = today;
-        }catch(e){
+          if (dateInput) dateInput.value = today;
+          if (mDate) mDate.value = today;
+        } catch (e) {
           token = '';
           localStorage.removeItem(JWT_STORAGE_KEY);
           setAuthUI(false);
-          if(authMsg){
+          if (authMsg) {
             authMsg.textContent = 'Session expired. Please login again.';
             authMsg.className = 'danger';
           }
         }
       }
 
-      function doLogout(){
-        token = '';
-        localStorage.removeItem(JWT_STORAGE_KEY);
-        try{ document.getElementById('signedInUser').textContent = ''; }catch(e){}
+      function doLogout() {
+        clearSession();
+        try {
+          document.getElementById('signedInUser').textContent = '';
+        } catch (e) {}
         goToLogin();
       }
 
-      function b64UrlDecode(input){
-        let s = input.replace(/-/g,'+').replace(/_/g,'/');
-        while(s.length % 4) s += '=';
-        try{
+      function b64UrlDecode(input) {
+        let s = input.replace(/-/g, '+').replace(/_/g, '/');
+        while (s.length % 4) s += '=';
+        try {
           return decodeURIComponent(escape(window.atob(s)));
-        }catch(e){
+        } catch (e) {
           return null;
         }
       }
 
-      function parseJwt(tok){
-        if(!tok) return null;
+      function parseJwt(tok) {
+        if (!tok) return null;
         const parts = tok.split('.');
-        if(parts.length < 2) return null;
-        try{
+        if (parts.length < 2) return null;
+        try {
           const json = b64UrlDecode(parts[1]);
           return json ? JSON.parse(json) : null;
-        }catch(e){ return null; }
+        } catch (e) {
+          return null;
+        }
       }
 
-      function setSignedInUserFromToken(tok){
-        try{
+      function setSignedInUserFromToken(tok) {
+        try {
           const p = parseJwt(tok);
-          if(!p) return;
+          if (!p) return;
           const el = document.getElementById('signedInUser');
-          if(el) el.textContent = `${p.username || p.user || ''} (${p.role || ''})`;
-          if(p.role){
+          if (el) el.textContent = `${p.username || p.user || ''} (${p.role || ''})`;
+          if (p.role) {
             setRole(p.role);
           }
-        }catch(e){/* ignore */}
+        } catch (e) {
+          /* ignore */
+        }
       }
 
       /* ---- Event wiring ---- */
       document.getElementById('retryBtn')?.addEventListener('click', () => retryConnection());
       document.getElementById('logoutBtn')?.addEventListener('click', doLogout);
       document.getElementById('logoutBtnTop')?.addEventListener('click', doLogout);
-      setInterval(() => { refreshMessageNotification(); }, 30000);
+      setInterval(() => {
+        refreshMessageNotification();
+      }, 30000);
 
       // Tabs
       document.querySelectorAll('.tab-btn').forEach((btn) => {
@@ -2224,20 +2717,20 @@
 
       document.addEventListener('click', (e) => {
         const goto = e.target.closest('[data-goto-tab]');
-        if(goto){
+        if (goto) {
           switchTab(goto.getAttribute('data-goto-tab'));
           closeAllMenus();
           return;
         }
 
         const menuToggle = e.target.closest('[data-menu-toggle]');
-        if(menuToggle){
+        if (menuToggle) {
           e.stopPropagation();
           const id = menuToggle.getAttribute('data-menu-toggle');
           const menu = document.getElementById(id) || menuToggle.closest('.menu');
           const wasOpen = menu?.classList.contains('open');
           closeAllMenus();
-          if(menu && !wasOpen){
+          if (menu && !wasOpen) {
             menu.classList.add('open');
             menuToggle.setAttribute('aria-expanded', 'true');
           }
@@ -2245,91 +2738,108 @@
         }
 
         // user menu button
-        if(e.target.closest('#userMenuBtn')){
+        if (e.target.closest('#userMenuBtn')) {
           e.stopPropagation();
           const menu = document.getElementById('userMenu');
           const open = menu.classList.toggle('open');
-          document.getElementById('userMenuBtn').setAttribute('aria-expanded', open ? 'true' : 'false');
+          document
+            .getElementById('userMenuBtn')
+            .setAttribute('aria-expanded', open ? 'true' : 'false');
           return;
         }
 
-        if(e.target.closest('#calendarToolsBtn')){
+        if (e.target.closest('#calendarToolsBtn')) {
           e.stopPropagation();
           const menu = document.getElementById('calendarToolsMenu');
           menu.classList.toggle('open');
           return;
         }
 
-        if(!e.target.closest('.menu')){
+        if (!e.target.closest('.menu')) {
           closeAllMenus();
         }
 
         const closeBtn = e.target.closest('[data-close-modal]');
-        if(closeBtn){
+        if (closeBtn) {
           closeModal(closeBtn.getAttribute('data-close-modal'));
         }
 
         // Click outside modal content closes
-        if(e.target.classList && e.target.classList.contains('modal-backdrop')){
+        if (e.target.classList && e.target.classList.contains('modal-backdrop')) {
           closeModal(e.target.id);
         }
 
         const viewApp = e.target.closest('[data-view-app]');
-        if(viewApp){
+        if (viewApp) {
           openApplicationModal(viewApp.getAttribute('data-view-app'));
           closeAllMenus();
         }
 
         const viewProp = e.target.closest('[data-view-proposal]');
-        if(viewProp){
+        if (viewProp) {
           openProposalModal(viewProp.getAttribute('data-view-proposal'));
           closeAllMenus();
         }
       });
 
       document.addEventListener('keydown', (e) => {
-        if(e.key === 'Escape'){
+        if (e.key === 'Escape') {
           closeAllModals();
           closeAllMenus();
         }
       });
 
-      document.getElementById('refreshApplicationsBtn')?.addEventListener('click', async ()=>{
-        try{ await fetchApplicationsFromBackend(); }catch(e){/* ignore */}
+      document.getElementById('refreshApplicationsBtn')?.addEventListener('click', async () => {
+        try {
+          await fetchApplicationsFromBackend();
+        } catch (e) {
+          /* ignore */
+        }
       });
 
-      document.getElementById('refreshProposalsBtn')?.addEventListener('click', async ()=>{
-        try{ await fetchProposalsFromBackend(); await fetchDashboardFromBackend(); }catch(e){/* ignore */}
+      document.getElementById('refreshProposalsBtn')?.addEventListener('click', async () => {
+        try {
+          await fetchProposalsFromBackend();
+          await fetchDashboardFromBackend();
+        } catch (e) {
+          /* ignore */
+        }
       });
 
-      document.getElementById('refreshOverviewBtn')?.addEventListener('click', async ()=>{
-        try{
+      document.getElementById('refreshOverviewBtn')?.addEventListener('click', async () => {
+        try {
           await fetchDashboardFromBackend();
           await fetchApplicationsFromBackend();
           await fetchProposalsFromBackend();
-        }catch(e){/* ignore */}
+        } catch (e) {
+          /* ignore */
+        }
       });
 
-      ['appTypeFilter','appStatusFilter'].forEach((id) => {
+      ['appTypeFilter', 'appStatusFilter'].forEach((id) => {
         document.getElementById(id)?.addEventListener('change', () => renderApplicationsList());
       });
-      document.getElementById('appSearch')?.addEventListener('input', () => renderApplicationsList());
-      document.getElementById('proposalStatusFilter')?.addEventListener('change', () => renderProposalList());
+      document
+        .getElementById('appSearch')
+        ?.addEventListener('input', () => renderApplicationsList());
+      document
+        .getElementById('proposalStatusFilter')
+        ?.addEventListener('change', () => renderProposalList());
 
       // Application actions (list + modal)
-      document.addEventListener('click', async (e)=>{
+      document.addEventListener('click', async (e) => {
         const btn = e.target.closest('[data-app-action]');
-        if(!btn) return;
+        if (!btn) return;
         const id = btn.getAttribute('data-app-id');
         const action = btn.getAttribute('data-app-action');
-        if(!id || !action) return;
-        try{
+        if (!id || !action) return;
+        try {
           btn.disabled = true;
           await updateApplicationStatus(id, action);
           closeAllMenus();
-        }catch(err){
+        } catch (err) {
           alert(err.message || 'Could not update application');
-        }finally{
+        } finally {
           btn.disabled = false;
         }
       });
@@ -2338,148 +2848,206 @@
       document.addEventListener('click', async (event) => {
         const actionBtn = event.target.closest('button[data-action]');
         const commentBtn = event.target.closest('button[data-comment-submit]');
-        if(!token) return;
+        if (!getAuthToken()) return;
         const statusEl = document.getElementById('proposalStatus');
 
-        if(actionBtn && actionBtn.dataset.id && actionBtn.dataset.action){
+        if (actionBtn && actionBtn.dataset.id && actionBtn.dataset.action) {
           // ignore menu toggles etc.
-          if(!['submit','approve','reject','request-revisions'].includes(actionBtn.dataset.action)) return;
-          try{
-            if(statusEl){ statusEl.textContent = 'Updating proposal...'; statusEl.style.color = '#5a3e72'; }
+          if (
+            !['submit', 'approve', 'reject', 'request-revisions'].includes(actionBtn.dataset.action)
+          )
+            return;
+          try {
+            if (statusEl) {
+              statusEl.textContent = 'Updating proposal...';
+              statusEl.style.color = '#5a3e72';
+            }
             await handleProposalAction(actionBtn.dataset.id, actionBtn.dataset.action);
-            if(statusEl){ statusEl.textContent = `Proposal ${actionBtn.dataset.action.replace(/-/g, ' ')}.`; statusEl.style.color = '#5a3e72'; }
+            if (statusEl) {
+              statusEl.textContent = `Proposal ${actionBtn.dataset.action.replace(/-/g, ' ')}.`;
+              statusEl.style.color = '#5a3e72';
+            }
             closeAllMenus();
-          }catch(err){
-            if(statusEl){ statusEl.textContent = err.message || 'Proposal update failed'; statusEl.style.color = '#b11f2e'; }
+          } catch (err) {
+            if (statusEl) {
+              statusEl.textContent = err.message || 'Proposal update failed';
+              statusEl.style.color = '#b11f2e';
+            }
           }
           return;
         }
 
-        if(commentBtn){
+        if (commentBtn) {
           const message =
             document.getElementById('modalCommentInput')?.value?.trim() ||
-            commentBtn.closest('.proposal-item')?.querySelector('textarea[data-comment-input]')?.value?.trim() ||
+            commentBtn
+              .closest('.proposal-item')
+              ?.querySelector('textarea[data-comment-input]')
+              ?.value?.trim() ||
             '';
-          if(!message){
-            if(statusEl){ statusEl.textContent = 'Please enter a note before sending.'; statusEl.style.color = '#b11f2e'; }
+          if (!message) {
+            if (statusEl) {
+              statusEl.textContent = 'Please enter a note before sending.';
+              statusEl.style.color = '#b11f2e';
+            }
             return;
           }
-          try{
-            if(statusEl){ statusEl.textContent = 'Saving note...'; statusEl.style.color = '#5a3e72'; }
-            const res = await fetch(`${API_BASE}/api/proposals/${commentBtn.dataset.id}/comments`, {
-              method:'POST',
-              headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
-              body: JSON.stringify({ message })
+          try {
+            if (statusEl) {
+              statusEl.textContent = 'Saving note...';
+              statusEl.style.color = '#5a3e72';
+            }
+            const res = await authedFetch(`${API_BASE}/api/proposals/${commentBtn.dataset.id}/comments`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message }),
             });
-            if(!res.ok) throw new Error('Could not save note');
+            if (!res.ok) throw new Error('Could not save note');
             await fetchProposalsFromBackend();
             await fetchDashboardFromBackend();
             openProposalModal(commentBtn.dataset.id);
-            if(statusEl){ statusEl.textContent = 'Note added.'; statusEl.style.color = '#5a3e72'; }
-          }catch(err){
-            if(statusEl){ statusEl.textContent = err.message || 'Note save failed'; statusEl.style.color = '#b11f2e'; }
+            if (statusEl) {
+              statusEl.textContent = 'Note added.';
+              statusEl.style.color = '#5a3e72';
+            }
+          } catch (err) {
+            if (statusEl) {
+              statusEl.textContent = err.message || 'Note save failed';
+              statusEl.style.color = '#b11f2e';
+            }
           }
         }
       });
 
-      document.getElementById('prevBtn')?.addEventListener('click', ()=>{
-        if(state.currentMonth === 0){ state.currentMonth = 11; state.currentYear--; }
-        else state.currentMonth--;
+      document.getElementById('prevBtn')?.addEventListener('click', () => {
+        if (state.currentMonth === 0) {
+          state.currentMonth = 11;
+          state.currentYear--;
+        } else state.currentMonth--;
         render();
       });
 
-      document.getElementById('nextBtn')?.addEventListener('click', ()=>{
-        if(state.currentMonth === 11){ state.currentMonth = 0; state.currentYear++; }
-        else state.currentMonth++;
+      document.getElementById('nextBtn')?.addEventListener('click', () => {
+        if (state.currentMonth === 11) {
+          state.currentMonth = 0;
+          state.currentYear++;
+        } else state.currentMonth++;
         render();
       });
 
-      document.getElementById('openNewProposalBtn')?.addEventListener('click', ()=>{
+      document.getElementById('openNewProposalBtn')?.addEventListener('click', () => {
         const today = toISODate(new Date());
         const mDate = document.getElementById('m_eventDate');
-        if(mDate && !mDate.value) mDate.value = today;
-        if(selectedDayIso) {
-          if(mDate) mDate.value = selectedDayIso;
+        if (mDate && !mDate.value) mDate.value = today;
+        if (selectedDayIso) {
+          if (mDate) mDate.value = selectedDayIso;
         }
         updateModalFormFieldsForCategory();
         openModal('newProposalModal');
       });
 
-      document.getElementById('dayModalProposeBtn')?.addEventListener('click', ()=>{
+      document.getElementById('dayModalProposeBtn')?.addEventListener('click', () => {
         closeModal('dayModal');
         switchTab('proposals');
         const mDate = document.getElementById('m_eventDate');
-        if(mDate && selectedDayIso) mDate.value = selectedDayIso;
+        if (mDate && selectedDayIso) mDate.value = selectedDayIso;
         updateModalFormFieldsForCategory();
         openModal('newProposalModal');
       });
 
-      document.getElementById('m_proposalCategory')?.addEventListener('change', updateModalFormFieldsForCategory);
-      document.getElementById('proposalCategory')?.addEventListener('change', updateFormFieldsForCategory);
+      document
+        .getElementById('m_proposalCategory')
+        ?.addEventListener('change', updateModalFormFieldsForCategory);
+      document
+        .getElementById('proposalCategory')
+        ?.addEventListener('change', updateFormFieldsForCategory);
 
-      async function runProposalFromModal(action){
+      async function runProposalFromModal(action) {
         const statusEl = document.getElementById('proposalStatus');
-        try{
+        try {
           syncModalFormToHidden();
-          if(statusEl){ statusEl.textContent = action === 'submit' ? 'Submitting proposal...' : 'Saving proposal...'; statusEl.style.color = '#5a3e72'; }
+          if (statusEl) {
+            statusEl.textContent =
+              action === 'submit' ? 'Submitting proposal...' : 'Saving proposal...';
+            statusEl.style.color = '#5a3e72';
+          }
           await saveProposal(action);
-          if(statusEl){
-            statusEl.textContent = action === 'submit'
-              ? 'Proposal submitted to the Manager for review.'
-              : 'Proposal saved. It can be submitted when ready.';
+          if (statusEl) {
+            statusEl.textContent =
+              action === 'submit'
+                ? 'Proposal submitted to the Manager for review.'
+                : 'Proposal saved. It can be submitted when ready.';
             statusEl.style.color = '#5a3e72';
           }
           closeModal('newProposalModal');
           // reset title
           const t = document.getElementById('m_eventTitle');
-          if(t) t.value = '';
+          if (t) t.value = '';
           const n = document.getElementById('m_eventNotes');
-          if(n) n.value = '';
-        }catch(err){
-          if(statusEl){ statusEl.textContent = err.message || 'Proposal failed'; statusEl.style.color = '#b11f2e'; }
+          if (n) n.value = '';
+        } catch (err) {
+          if (statusEl) {
+            statusEl.textContent = err.message || 'Proposal failed';
+            statusEl.style.color = '#b11f2e';
+          }
           alert(err.message || 'Proposal failed');
         }
       }
 
-      document.getElementById('modalSaveDraftBtn')?.addEventListener('click', () => runProposalFromModal('save'));
-      document.getElementById('modalSubmitProposalBtn')?.addEventListener('click', () => runProposalFromModal('submit'));
-      document.getElementById('saveProposalBtn')?.addEventListener('click', () => runProposalFromModal('save'));
-      document.getElementById('submitProposalBtn')?.addEventListener('click', () => runProposalFromModal('submit'));
+      document
+        .getElementById('modalSaveDraftBtn')
+        ?.addEventListener('click', () => runProposalFromModal('save'));
+      document
+        .getElementById('modalSubmitProposalBtn')
+        ?.addEventListener('click', () => runProposalFromModal('submit'));
+      document
+        .getElementById('saveProposalBtn')
+        ?.addEventListener('click', () => runProposalFromModal('save'));
+      document
+        .getElementById('submitProposalBtn')
+        ?.addEventListener('click', () => runProposalFromModal('submit'));
 
-      document.getElementById('eventForm')?.addEventListener('submit', async (e)=>{
+      document.getElementById('eventForm')?.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if(activeRole !== 'Secretary') return;
+        if (activeRole !== 'Secretary') return;
         await runProposalFromModal('save');
       });
 
-      document.getElementById('clearMonthBtn')?.addEventListener('click', async ()=>{
-        if(!token) return;
-        if(activeRole !== 'Headmaster') return;
-        if(!confirm('Clear ALL events for the displayed month? This cannot be undone easily.')) return;
+      document.getElementById('clearMonthBtn')?.addEventListener('click', async () => {
+        if (!getAuthToken()) return;
+        if (activeRole !== 'Headmaster') return;
+        if (!confirm('Clear ALL events for the displayed month? This cannot be undone easily.'))
+          return;
 
         const year = state.currentYear;
         const month = state.currentMonth;
         const start = new Date(year, month, 1);
         const end = new Date(year, month + 1, 0);
         const keep = {};
-        for(const [iso, evs] of Object.entries(state.events)){
+        for (const [iso, evs] of Object.entries(state.events)) {
           const d = new Date(iso + 'T00:00:00');
-          if(d >= start && d <= end) continue;
+          if (d >= start && d <= end) continue;
           keep[iso] = evs;
         }
         state.events = keep;
         const statusEl = document.getElementById('formStatus');
-        try{
+        try {
           await saveEventsToBackend();
           render();
           closeAllMenus();
-          if(statusEl){ statusEl.textContent = 'Month cleared.'; statusEl.style.color = '#7e628f'; }
-        }catch(err){
-          if(statusEl){ statusEl.textContent = err.message || 'Clear failed'; statusEl.style.color = '#b11f2e'; }
+          if (statusEl) {
+            statusEl.textContent = 'Month cleared.';
+            statusEl.style.color = '#7e628f';
+          }
+        } catch (err) {
+          if (statusEl) {
+            statusEl.textContent = err.message || 'Clear failed';
+            statusEl.style.color = '#b11f2e';
+          }
         }
       });
 
-      if(urlRoleHint){
+      if (urlRoleHint) {
         setRole(urlRoleHint);
       }
 

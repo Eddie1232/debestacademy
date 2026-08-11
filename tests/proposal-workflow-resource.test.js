@@ -11,9 +11,9 @@ test('applyProposalToNews handles resource request proposals as announcements', 
       date: '2026-07-15',
       title: 'Projector request for hall',
       type: 'Facility',
-      notes: 'Needed for parent presentation on Thursday.'
+      notes: 'Needed for parent presentation on Thursday.',
     },
-    reviewedBy: 'Headmaster'
+    reviewedBy: 'Headmaster',
   };
 
   const nextItems = applyProposalToNews(items, proposal);

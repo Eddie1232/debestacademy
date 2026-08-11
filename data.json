@@ -119,6 +119,14 @@
           "notes": "",
           "proposalId": "1784962354915"
         }
+      ],
+      "2026-08-10": [
+        {
+          "title": "Sports Day",
+          "type": "Sports",
+          "notes": "Come and let's be exciting!",
+          "proposalId": "1786401761317"
+        }
       ]
     }
   },
@@ -585,6 +593,52 @@
       "createdAt": "2026-07-25T06:52:34.915Z",
       "updatedAt": "2026-07-25T06:55:06.591Z",
       "reviewedBy": "Comma"
+    },
+    {
+      "id": "1786401761317",
+      "createdBy": "Secretary",
+      "role": "Secretary",
+      "category": "calendar",
+      "status": "final_approved",
+      "assignedTo": "Completed",
+      "priority": "Medium",
+      "event": {
+        "date": "2026-08-10",
+        "title": "Sports Day",
+        "type": "Sports",
+        "notes": "Come and let's be exciting!"
+      },
+      "notes": "Submitted by Secretary",
+      "comments": [],
+      "history": [
+        {
+          "action": "created",
+          "actor": "Secretary",
+          "message": "Draft created",
+          "at": "2026-08-10T22:42:41.318Z"
+        },
+        {
+          "action": "submit",
+          "actor": "Secretary",
+          "message": "Submitted for manager review",
+          "at": "2026-08-10T22:42:41.330Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Manager",
+          "message": "Approved and sent to the Headmaster",
+          "at": "2026-08-10T22:43:18.397Z"
+        },
+        {
+          "action": "approve",
+          "actor": "Comma",
+          "message": "Final approval granted",
+          "at": "2026-08-10T22:44:20.076Z"
+        }
+      ],
+      "createdAt": "2026-08-10T22:42:41.317Z",
+      "updatedAt": "2026-08-10T22:44:20.076Z",
+      "reviewedBy": "Comma"
     }
   ],
   "applications": [
@@ -651,6 +705,234 @@
       "notes": "",
       "reviewedBy": "Secretary",
       "reviewedAt": "2026-07-17T23:51:14.620Z"
+    },
+    {
+      "id": "app-1786392533961",
+      "type": "student",
+      "which": "student-all",
+      "status": "reviewed",
+      "submittedAt": "2026-08-10T20:08:53.961Z",
+      "forms": {
+        "student": {
+          "fullName": "MHE",
+          "dateOfBirth": "",
+          "currentGrade": "",
+          "gender": "",
+          "nationality": "",
+          "campus": "",
+          "homeAddress": ""
+        },
+        "health": {
+          "studentFullName": "",
+          "bloodGroup": "",
+          "allergies": "",
+          "chronicIllness": "",
+          "immunization": "",
+          "doctorNotes": ""
+        },
+        "parent": {
+          "fullName": "",
+          "relationship": "",
+          "phone": "",
+          "email": "",
+          "address": "",
+          "consent": ""
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-08-11T06:48:27.417Z"
+    },
+    {
+      "id": "app-1786392698510",
+      "type": "student",
+      "which": "student-all",
+      "status": "reviewed",
+      "submittedAt": "2026-08-10T20:11:38.510Z",
+      "forms": {
+        "student": {
+          "fullName": "MHE",
+          "dateOfBirth": "",
+          "currentGrade": "",
+          "gender": "",
+          "nationality": "",
+          "campus": "",
+          "homeAddress": ""
+        },
+        "health": {
+          "studentFullName": "",
+          "bloodGroup": "",
+          "allergies": "",
+          "chronicIllness": "",
+          "immunization": "",
+          "doctorNotes": ""
+        },
+        "parent": {
+          "fullName": "",
+          "relationship": "",
+          "phone": "",
+          "email": "",
+          "address": "",
+          "consent": ""
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-08-11T06:48:20.635Z"
+    },
+    {
+      "id": "app-1786394589411",
+      "type": "student",
+      "which": "student-all",
+      "status": "reviewed",
+      "submittedAt": "2026-08-10T20:43:09.411Z",
+      "forms": {
+        "student": {
+          "fullName": "MHE",
+          "dateOfBirth": "",
+          "currentGrade": "",
+          "gender": "",
+          "nationality": "",
+          "campus": "",
+          "homeAddress": ""
+        },
+        "health": {
+          "studentFullName": "",
+          "bloodGroup": "",
+          "allergies": "",
+          "chronicIllness": "",
+          "immunization": "",
+          "doctorNotes": ""
+        },
+        "parent": {
+          "fullName": "",
+          "relationship": "",
+          "phone": "",
+          "email": "",
+          "address": "",
+          "consent": ""
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-08-11T06:48:18.564Z"
+    },
+    {
+      "id": "app-1786394643240",
+      "type": "student",
+      "which": "student-all",
+      "status": "reviewed",
+      "submittedAt": "2026-08-10T20:44:03.240Z",
+      "forms": {
+        "student": {
+          "fullName": "MHE",
+          "dateOfBirth": "",
+          "currentGrade": "",
+          "gender": "",
+          "nationality": "",
+          "campus": "",
+          "homeAddress": ""
+        },
+        "health": {
+          "studentFullName": "",
+          "bloodGroup": "",
+          "allergies": "",
+          "chronicIllness": "",
+          "immunization": "",
+          "doctorNotes": ""
+        },
+        "parent": {
+          "fullName": "",
+          "relationship": "",
+          "phone": "",
+          "email": "",
+          "address": "",
+          "consent": ""
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-08-11T06:48:15.467Z"
+    },
+    {
+      "id": "app-1786395252305",
+      "type": "student",
+      "which": "student-all",
+      "status": "reviewed",
+      "submittedAt": "2026-08-10T20:54:12.327Z",
+      "forms": {
+        "student": {
+          "fullName": "MHE",
+          "dateOfBirth": "",
+          "currentGrade": "",
+          "gender": "",
+          "nationality": "",
+          "campus": "",
+          "homeAddress": ""
+        },
+        "health": {
+          "studentFullName": "",
+          "bloodGroup": "",
+          "allergies": "",
+          "chronicIllness": "",
+          "immunization": "",
+          "doctorNotes": ""
+        },
+        "parent": {
+          "fullName": "",
+          "relationship": "",
+          "phone": "",
+          "email": "",
+          "address": "",
+          "consent": ""
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-08-11T06:48:11.566Z"
+    },
+    {
+      "id": "app-1786400072214",
+      "type": "student",
+      "which": "student-all",
+      "status": "reviewed",
+      "submittedAt": "2026-08-10T22:14:32.214Z",
+      "forms": {
+        "student": {
+          "fullName": "mhe",
+          "dateOfBirth": "",
+          "currentGrade": "",
+          "gender": "",
+          "nationality": "",
+          "campus": "",
+          "homeAddress": ""
+        },
+        "health": {
+          "studentFullName": "",
+          "bloodGroup": "",
+          "allergies": "",
+          "chronicIllness": "",
+          "immunization": "",
+          "doctorNotes": ""
+        },
+        "parent": {
+          "fullName": "",
+          "relationship": "",
+          "phone": "",
+          "email": "",
+          "address": "",
+          "consent": ""
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-08-11T06:48:06.794Z"
     }
   ],
   "messages": [
@@ -1057,7 +1339,7 @@
       "message": "Fiiii",
       "priority": "normal",
       "createdAt": "2026-08-07T05:07:39.912Z",
-      "readAt": null
+      "readAt": "2026-08-10T20:26:29.640Z"
     },
     {
       "id": "msg-1786079316773-tnes4k",
@@ -1087,6 +1369,36 @@
       "message": "You want your job?!",
       "priority": "normal",
       "createdAt": "2026-08-07T05:09:13.875Z",
+      "readAt": "2026-08-10T20:25:29.709Z"
+    },
+    {
+      "id": "msg-1786393583702-we20zy",
+      "threadId": "thread-1785959372197-e1hjnh",
+      "senderId": "sec-1",
+      "senderName": "Secretary",
+      "senderRole": "Secretary",
+      "recipientId": "hm-1",
+      "recipientName": "Headmaster",
+      "recipientRole": "Headmaster",
+      "subject": "",
+      "message": "Yes please :(",
+      "priority": "normal",
+      "createdAt": "2026-08-10T20:26:23.702Z",
+      "readAt": null
+    },
+    {
+      "id": "msg-1786393597056-wwln4h",
+      "threadId": "thread-1785958369089-nt5rjb",
+      "senderId": "sec-1",
+      "senderName": "Secretary",
+      "senderRole": "Secretary",
+      "recipientId": "mgr-1",
+      "recipientName": "Manager",
+      "recipientRole": "Manager",
+      "subject": "",
+      "message": "Ohh!!",
+      "priority": "normal",
+      "createdAt": "2026-08-10T20:26:37.056Z",
       "readAt": null
     }
   ]

@@ -11,39 +11,65 @@ const {
   applyProposalToEvents,
   applyProposalToNews,
   syncApprovedCalendarEvents,
-  calendarEventsEqual
+  calendarEventsEqual,
 } = require('./proposal-workflow');
 
 const app = express();
+app.disable('x-powered-by');
+app.set('trust proxy', process.env.TRUST_PROXY === '1');
+
+const CORS_ALLOWED_ORIGINS = (process.env.CORS_ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 // Helmet defaults break this school site on plain HTTP LAN:
 // - CSP script-src 'self' blocks inline <script> used by login/admin pages
 // - upgrade-insecure-requests forces HTTPS (no TLS on typical school host)
 // - HSTS is inappropriate without HTTPS
-app.use(helmet({
-  contentSecurityPolicy: {
-    useDefaults: false,
-    directives: {
-      defaultSrc: ["'self'"],
-      baseUri: ["'self'"],
-      fontSrc: ["'self'", 'https:', 'data:'],
-      formAction: ["'self'"],
-      frameAncestors: ["'self'"],
-      frameSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:', 'blob:'],
-      objectSrc: ["'none'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrcAttr: ["'unsafe-inline'"],
-      styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
-      connectSrc: ["'self'"],
-      // Do NOT set upgradeInsecureRequests — host is HTTP on the school LAN
-    }
-  },
-  hsts: false
-}));
-app.use(cors({ origin: true, credentials: true }));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: false,
+      directives: {
+        defaultSrc: ["'self'"],
+        baseUri: ["'self'"],
+        fontSrc: ["'self'", 'https:', 'data:'],
+        formAction: ["'self'"],
+        frameAncestors: ["'self'"],
+        frameSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'blob:'],
+        objectSrc: ["'none'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrcAttr: ["'unsafe-inline'"],
+        styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+        connectSrc: ["'self'"],
+        // Do NOT set upgradeInsecureRequests — host is HTTP on the school LAN
+      },
+    },
+    hsts: false,
+    frameguard: { action: 'sameorigin' },
+    referrerPolicy: { policy: 'same-origin' },
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: 'same-origin' },
+  })
+);
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (!CORS_ALLOWED_ORIGINS.length) return callback(null, true);
+      if (CORS_ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+      return callback(new Error('CORS origin not allowed'));
+    },
+    credentials: true,
+    exposedHeaders: ['Authorization'],
+  })
+);
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
+app.use('/api', apiRateLimit);
 
 // ---- Config ----
 const PORT = Number(process.env.PORT) || 5500;
@@ -54,8 +80,33 @@ const ADMIN_IP_ALLOWLIST = (process.env.ADMIN_IP_ALLOWLIST || '')
   .map((s) => s.trim())
   .filter(Boolean);
 
+const JWT_SECRET_MIN_LENGTH = 32;
+
+if (process.env.NODE_ENV === 'production' && JWT_SECRET === 'CHANGE_ME_IN_PROD') {
+  console.error(
+    '[security] JWT_SECRET must be set to a strong value in production. Aborting startup.'
+  );
+  process.exit(1);
+}
+
+if (process.env.NODE_ENV === 'production' && JWT_SECRET.length < JWT_SECRET_MIN_LENGTH) {
+  console.error(
+    '[security] JWT_SECRET must be at least 32 characters in production. Aborting startup.'
+  );
+  process.exit(1);
+}
+
+if (process.env.NODE_ENV === 'production' && !CORS_ALLOWED_ORIGINS.length) {
+  console.error(
+    '[security] CORS_ALLOWED_ORIGINS must be configured in production. Aborting startup.'
+  );
+  process.exit(1);
+}
+
 if (JWT_SECRET === 'CHANGE_ME_IN_PROD') {
-  console.warn('[security] JWT_SECRET is using the default value. Set JWT_SECRET in the environment for production/LAN use.');
+  console.warn(
+    '[security] JWT_SECRET is using the default value. Set JWT_SECRET in the environment for production/LAN use.'
+  );
 }
 
 // Simple file-based storage using lowdb
@@ -70,14 +121,12 @@ const DEFAULT_DB_DATA = {
   news: { items: [] },
   proposals: [],
   applications: [],
-  messages: []
+  messages: [],
 };
 
 const dbFile = path.join(__dirname, 'data.json');
 const adapter = new JSONFile(dbFile);
 const db = new Low(adapter, DEFAULT_DB_DATA);
-
-
 
 /**
  * Ensure finally-approved calendar proposals are present in the shared term calendar
@@ -121,7 +170,6 @@ async function getDB() {
   return db;
 }
 
-
 function signToken(payload) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '8h' });
 }
@@ -129,13 +177,13 @@ function signToken(payload) {
 function authRequired(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
-  if (!token) return res.status(401).json({ error: 'Missing token' });
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     return next();
   } catch (e) {
-    return res.status(401).json({ error: 'Invalid token' });
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 }
 
@@ -183,11 +231,30 @@ function loginRateLimit(req, res, next) {
   return next();
 }
 
+const apiRequestCounts = new Map();
+function apiRateLimit(req, res, next) {
+  const ip = clientIp(req);
+  const now = Date.now();
+  const windowMs = 5 * 60 * 1000;
+  const maxRequests = 200;
+  const entry = apiRequestCounts.get(ip) || { count: 0, start: now };
+  if (now - entry.start > windowMs) {
+    entry.count = 0;
+    entry.start = now;
+  }
+  entry.count += 1;
+  apiRequestCounts.set(ip, entry);
+  if (entry.count > maxRequests) {
+    return res.status(429).json({ error: 'Rate limit exceeded. Try again later.' });
+  }
+  return next();
+}
+
 const ROLE_DASHBOARD = {
   Secretary: '/admin/secretary.html',
   Manager: '/admin/manager.html',
   Headmaster: '/admin/headmaster.html',
-  SuperAdmin: '/admin/superadmin.html'
+  SuperAdmin: '/admin/superadmin.html',
 };
 
 /** Operational school staff roles (not SuperAdmin / IT). */
@@ -207,7 +274,7 @@ function addProposalHistoryEntry(proposal, actor, action, message) {
     action,
     actor: actor || 'System',
     message,
-    at: new Date().toISOString()
+    at: new Date().toISOString(),
   });
   proposal.history = history;
 }
@@ -226,7 +293,7 @@ function summarizeProposal(proposal) {
     event: proposal.event,
     updatedAt: proposal.updatedAt || proposal.createdAt,
     comments: Array.isArray(proposal.comments) ? proposal.comments.slice(-4) : [],
-    history: Array.isArray(proposal.history) ? proposal.history.slice(-4) : []
+    history: Array.isArray(proposal.history) ? proposal.history.slice(-4) : [],
   };
 }
 
@@ -240,7 +307,8 @@ function normalizeProposal(proposal) {
 
   const validAssignees = ['Manager', 'Headmaster', 'Secretary', 'Completed'];
   if (!validAssignees.includes(proposal.assignedTo)) {
-    proposal.assignedTo = proposal.status === PROPOSAL_STATUSES.FINAL_APPROVED ? 'Completed' : 'Manager';
+    proposal.assignedTo =
+      proposal.status === PROPOSAL_STATUSES.FINAL_APPROVED ? 'Completed' : 'Manager';
   }
 
   if (!['Low', 'Medium', 'High'].includes(proposal.priority)) {
@@ -276,39 +344,39 @@ async function ensureDefaultAdmins() {
       id: 'sec-1',
       username: 'Secretary',
       role: 'Secretary',
-      password: process.env.SECRETARY_PASS || 'Secretary123'
+      password: process.env.SECRETARY_PASS || 'Secretary123',
     },
     {
       id: 'mgr-1',
       username: 'Manager',
       role: 'Manager',
-      password: process.env.MANAGER_PASS || 'Manager123'
+      password: process.env.MANAGER_PASS || 'Manager123',
     },
     {
       id: 'hm-1',
       username: 'Headmaster',
       role: 'Headmaster',
-      password: process.env.HEADMASTER_PASS || 'Headmaster123'
+      password: process.env.HEADMASTER_PASS || 'Headmaster123',
     },
     {
       id: 'super-1',
       username: process.env.SUPERADMIN_USER || 'SuperAdmin',
       role: 'SuperAdmin',
-      password: process.env.SUPERADMIN_PASS || 'SuperAdmin123'
+      password: process.env.SUPERADMIN_PASS || 'SuperAdmin123',
     },
     // Legacy / alternate headmaster accounts (still hashed)
     {
       id: 'admin-1',
       username: process.env.ADMIN_USER || 'admin',
       role: 'Headmaster',
-      password: process.env.ADMIN_PASS || 'Admin123'
+      password: process.env.ADMIN_PASS || 'Admin123',
     },
     {
       id: 'hm-comma',
       username: 'Comma',
       role: 'Headmaster',
-      password: process.env.COMMA_PASS || 'comma4711'
-    }
+      password: process.env.COMMA_PASS || 'comma4711',
+    },
   ];
 
   let changed = false;
@@ -319,7 +387,7 @@ async function ensureDefaultAdmins() {
         id: account.id,
         username: account.username,
         role: account.role,
-        passwordHash: bcrypt.hashSync(account.password, 10)
+        passwordHash: bcrypt.hashSync(account.password, 10),
       });
       changed = true;
       console.log(`Admin account ready: ${account.username} (${account.role})`);
@@ -345,7 +413,7 @@ app.post('/api/admin/login', adminIpAllowed, loginRateLimit, async (req, res) =>
   const { username, password } = req.body || {};
 
   if (!username || !password) {
-    return res.status(400).json({ error: 'username and password required' });
+    return res.status(400).json({ error: 'Username and password are required.' });
   }
 
   const d = await getDB();
@@ -367,8 +435,7 @@ app.post('/api/admin/login', adminIpAllowed, loginRateLimit, async (req, res) =>
   return res.json({
     token,
     role,
-    username: admin.username,
-    dashboard: ROLE_DASHBOARD[role] || '/admin/login.html'
+    dashboard: ROLE_DASHBOARD[role] || '/admin/login.html',
   });
 });
 
@@ -377,27 +444,33 @@ app.get('/admin/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin', 'login.html'));
 });
 
-
 app.get('/api/terms-calendar', async (req, res) => {
   const d = await getDB();
-  // Calendars on the public site poll this shared endpoint after an approval.
-  // Do not let an intermediary reuse an older calendar response.
   res.set('Cache-Control', 'no-store');
+  res.set('X-Content-Type-Options', 'nosniff');
+  res.set('X-Frame-Options', 'DENY');
   return res.json(d.data.termCalendar || { events: {} });
 });
 
-app.put('/api/terms-calendar', authRequired, adminIpAllowed, schoolStaffRequired, roleRequired('Headmaster'), async (req, res) => {
-  const d = await getDB();
-  const body = req.body || {};
-  if (!body.events || typeof body.events !== 'object') {
-    return res.status(400).json({ error: 'events must be an object keyed by ISO date' });
-  }
+app.put(
+  '/api/terms-calendar',
+  authRequired,
+  adminIpAllowed,
+  schoolStaffRequired,
+  roleRequired('Headmaster'),
+  async (req, res) => {
+    const d = await getDB();
+    const body = req.body || {};
+    if (!body.events || typeof body.events !== 'object') {
+      return res.status(400).json({ error: 'events must be an object keyed by ISO date' });
+    }
 
-  // Replace (direct edit restricted to Headmaster; normal flow uses proposal final approval)
-  d.data.termCalendar = { events: body.events };
-  await d.write();
-  return res.json({ ok: true });
-});
+    // Replace (direct edit restricted to Headmaster; normal flow uses proposal final approval)
+    d.data.termCalendar = { events: body.events };
+    await d.write();
+    return res.json({ ok: true });
+  }
+);
 
 app.get('/api/proposals', authRequired, adminIpAllowed, schoolStaffRequired, async (req, res) => {
   const d = await getDB();
@@ -405,12 +478,21 @@ app.get('/api/proposals', authRequired, adminIpAllowed, schoolStaffRequired, asy
   const proposals = (d.data.proposals || [])
     .filter((proposal) => {
       if (role === 'Headmaster') return true;
-      if (role === 'Manager') return ['pending_manager_review', 'awaiting_headmaster_approval', 'revisions_requested'].includes(proposal.status);
-      if (role === 'Secretary') return ['draft', 'pending_manager_review', 'revisions_requested'].includes(proposal.status);
+      if (role === 'Manager')
+        return [
+          'pending_manager_review',
+          'awaiting_headmaster_approval',
+          'revisions_requested',
+        ].includes(proposal.status);
+      if (role === 'Secretary')
+        return ['draft', 'pending_manager_review', 'revisions_requested'].includes(proposal.status);
       return false;
     })
     .map(summarizeProposal)
-    .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0)
+    );
   return res.json({ proposals });
 });
 
@@ -420,26 +502,59 @@ app.get('/api/dashboard', authRequired, adminIpAllowed, schoolStaffRequired, asy
   const proposals = (d.data.proposals || [])
     .filter((proposal) => {
       if (role === 'Headmaster') return true;
-      if (role === 'Manager') return ['pending_manager_review', 'awaiting_headmaster_approval', 'revisions_requested'].includes(proposal.status);
-      if (role === 'Secretary') return ['draft', 'pending_manager_review', 'revisions_requested'].includes(proposal.status);
+      if (role === 'Manager')
+        return [
+          'pending_manager_review',
+          'awaiting_headmaster_approval',
+          'revisions_requested',
+        ].includes(proposal.status);
+      if (role === 'Secretary')
+        return ['draft', 'pending_manager_review', 'revisions_requested'].includes(proposal.status);
       return false;
     })
     .map(summarizeProposal)
-    .sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0)
+    );
 
-  const pendingProposals = proposals.filter((proposal) => ['draft', 'pending_manager_review', 'awaiting_headmaster_approval', 'revisions_requested'].includes(proposal.status)).length;
+  const pendingProposals = proposals.filter((proposal) =>
+    [
+      'draft',
+      'pending_manager_review',
+      'awaiting_headmaster_approval',
+      'revisions_requested',
+    ].includes(proposal.status)
+  ).length;
   const itemsNeedingReview = proposals.filter((proposal) => {
     if (role === 'Manager') return proposal.status === 'pending_manager_review';
     if (role === 'Headmaster') return proposal.status === 'awaiting_headmaster_approval';
-    return ['pending_manager_review', 'awaiting_headmaster_approval', 'revisions_requested'].includes(proposal.status);
+    return [
+      'pending_manager_review',
+      'awaiting_headmaster_approval',
+      'revisions_requested',
+    ].includes(proposal.status);
   }).length;
-  const recentApprovals = proposals.filter((proposal) => ['final_approved', 'approved'].includes(proposal.status)).slice(0, 6);
-  const inbox = proposals.filter((proposal) => ['draft', 'pending_manager_review', 'awaiting_headmaster_approval', 'revisions_requested'].includes(proposal.status)).slice(0, 8);
+  const recentApprovals = proposals
+    .filter((proposal) => ['final_approved', 'approved'].includes(proposal.status))
+    .slice(0, 6);
+  const inbox = proposals
+    .filter((proposal) =>
+      [
+        'draft',
+        'pending_manager_review',
+        'awaiting_headmaster_approval',
+        'revisions_requested',
+      ].includes(proposal.status)
+    )
+    .slice(0, 8);
   const recentActivity = proposals.slice(0, 8);
-  const newApplications = (d.data.applications || []).filter((app) => (app.status || 'new') === 'new').length;
-  const unreadMessages = (d.data.messages || []).filter((message) => (
-    messageBelongsToRecipient(message, req.user) && !message.readAt
-  )).length;
+  const newApplications = (d.data.applications || []).filter(
+    (app) => (app.status || 'new') === 'new'
+  ).length;
+  const unreadMessages = (d.data.messages || []).filter(
+    (message) => messageBelongsToRecipient(message, req.user) && !message.readAt
+  ).length;
 
   return res.json({
     summary: {
@@ -447,11 +562,11 @@ app.get('/api/dashboard', authRequired, adminIpAllowed, schoolStaffRequired, asy
       itemsNeedingReview,
       recentApprovals: recentApprovals.length,
       newApplications,
-      unreadMessages
+      unreadMessages,
     },
     inbox,
     recentApprovals,
-    recentActivity
+    recentActivity,
   });
 });
 
@@ -468,15 +583,19 @@ app.post('/api/proposals', authRequired, adminIpAllowed, schoolStaffRequired, as
     id: `${Date.now()}`,
     createdBy: req.user?.username || 'Secretary',
     role,
-    category: ['news', 'policy', 'communication', 'resource'].includes(body.category) ? body.category : 'calendar',
+    category: ['news', 'policy', 'communication', 'resource'].includes(body.category)
+      ? body.category
+      : 'calendar',
     status: PROPOSAL_STATUSES.DRAFT,
-    assignedTo: ['Manager', 'Headmaster', 'Secretary'].includes(body.assignedTo) ? body.assignedTo : 'Manager',
+    assignedTo: ['Manager', 'Headmaster', 'Secretary'].includes(body.assignedTo)
+      ? body.assignedTo
+      : 'Manager',
     priority: ['Low', 'Medium', 'High'].includes(body.priority) ? body.priority : 'Medium',
     event: body.event,
     notes: body.notes || '',
     comments: [],
     history: [],
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   };
 
   addProposalHistoryEntry(proposal, req.user?.username, 'created', 'Draft created');
@@ -485,122 +604,153 @@ app.post('/api/proposals', authRequired, adminIpAllowed, schoolStaffRequired, as
   return res.json({ proposal });
 });
 
-app.put('/api/proposals/:id', authRequired, adminIpAllowed, schoolStaffRequired, async (req, res) => {
-  const d = await getDB();
-  const role = req.user?.role;
-  const proposal = (d.data.proposals || []).find((item) => item.id === req.params.id);
+app.put(
+  '/api/proposals/:id',
+  authRequired,
+  adminIpAllowed,
+  schoolStaffRequired,
+  async (req, res) => {
+    const d = await getDB();
+    const role = req.user?.role;
+    const proposal = (d.data.proposals || []).find((item) => item.id === req.params.id);
 
-  if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
+    if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
 
-  const action = req.body?.action;
-  const currentStatus = proposal.status;
-  const nextStatus = getNextStatus(role, action, currentStatus);
+    const action = req.body?.action;
+    const currentStatus = proposal.status;
+    const nextStatus = getNextStatus(role, action, currentStatus);
 
-  if (role === 'Secretary' && action === 'submit') {
-    proposal.status = nextStatus;
-    proposal.assignedTo = 'Manager';
-    proposal.updatedAt = new Date().toISOString();
-    addProposalHistoryEntry(proposal, req.user?.username, 'submit', 'Submitted for manager review');
-    await d.write();
-    return res.json({ proposal: summarizeProposal(proposal) });
-  }
-
-  if (role === 'Manager' && ['approve', 'reject', 'request-revisions'].includes(action)) {
-    proposal.status = nextStatus;
-    proposal.reviewedBy = req.user?.username;
-    proposal.assignedTo = action === 'approve' ? 'Headmaster' : 'Secretary';
-    proposal.updatedAt = new Date().toISOString();
-    const msg = action === 'approve'
-      ? 'Approved and sent to the Headmaster'
-      : action === 'reject'
-        ? 'Rejected by Manager'
-        : 'Revision requested by Manager';
-    addProposalHistoryEntry(proposal, req.user?.username, action, msg);
-    await d.write();
-    return res.json({ proposal: summarizeProposal(proposal) });
-  }
-
-  if (role === 'Headmaster' && ['approve', 'reject', 'request-revisions'].includes(action)) {
-    proposal.status = nextStatus;
-    proposal.reviewedBy = req.user?.username;
-    proposal.assignedTo = action === 'approve' && nextStatus === PROPOSAL_STATUSES.FINAL_APPROVED ? 'Completed' : 'Secretary';
-    proposal.updatedAt = new Date().toISOString();
-
-    const msg = action === 'approve'
-      ? 'Final approval granted'
-      : action === 'reject'
-        ? 'Rejected by Headmaster'
-        : 'Revision requested by Headmaster';
-    addProposalHistoryEntry(proposal, req.user?.username, action, msg);
-
-    let payload = { proposal: summarizeProposal(proposal) };
-
-    if (action === 'approve' && nextStatus === PROPOSAL_STATUSES.FINAL_APPROVED) {
-      const category = ['news', 'policy', 'communication', 'resource', 'calendar'].includes(proposal.category)
-        ? proposal.category
-        : 'calendar';
-
-      if (category === 'calendar') {
-        // Publish onto the shared term calendar used by every public + admin calendar.
-        d.data.termCalendar = {
-          events: applyProposalToEvents(d.data.termCalendar?.events || {}, proposal)
-        };
-        // Also re-merge any other final approvals so the public store stays complete.
-        ensureApprovedCalendarPublished(d.data);
-        payload.termCalendar = d.data.termCalendar;
-      } else {
-        d.data.news = { items: applyProposalToNews(d.data.news?.items || [], proposal) };
-        payload.news = d.data.news;
-      }
+    if (role === 'Secretary' && action === 'submit') {
+      proposal.status = nextStatus;
+      proposal.assignedTo = 'Manager';
+      proposal.updatedAt = new Date().toISOString();
+      addProposalHistoryEntry(
+        proposal,
+        req.user?.username,
+        'submit',
+        'Submitted for manager review'
+      );
+      await d.write();
+      return res.json({ proposal: summarizeProposal(proposal) });
     }
 
-    await d.write();
-    return res.json(payload);
+    if (role === 'Manager' && ['approve', 'reject', 'request-revisions'].includes(action)) {
+      proposal.status = nextStatus;
+      proposal.reviewedBy = req.user?.username;
+      proposal.assignedTo = action === 'approve' ? 'Headmaster' : 'Secretary';
+      proposal.updatedAt = new Date().toISOString();
+      const msg =
+        action === 'approve'
+          ? 'Approved and sent to the Headmaster'
+          : action === 'reject'
+          ? 'Rejected by Manager'
+          : 'Revision requested by Manager';
+      addProposalHistoryEntry(proposal, req.user?.username, action, msg);
+      await d.write();
+      return res.json({ proposal: summarizeProposal(proposal) });
+    }
+
+    if (role === 'Headmaster' && ['approve', 'reject', 'request-revisions'].includes(action)) {
+      proposal.status = nextStatus;
+      proposal.reviewedBy = req.user?.username;
+      proposal.assignedTo =
+        action === 'approve' && nextStatus === PROPOSAL_STATUSES.FINAL_APPROVED
+          ? 'Completed'
+          : 'Secretary';
+      proposal.updatedAt = new Date().toISOString();
+
+      const msg =
+        action === 'approve'
+          ? 'Final approval granted'
+          : action === 'reject'
+          ? 'Rejected by Headmaster'
+          : 'Revision requested by Headmaster';
+      addProposalHistoryEntry(proposal, req.user?.username, action, msg);
+
+      let payload = { proposal: summarizeProposal(proposal) };
+
+      if (action === 'approve' && nextStatus === PROPOSAL_STATUSES.FINAL_APPROVED) {
+        const category = ['news', 'policy', 'communication', 'resource', 'calendar'].includes(
+          proposal.category
+        )
+          ? proposal.category
+          : 'calendar';
+
+        if (category === 'calendar') {
+          // Publish onto the shared term calendar used by every public + admin calendar.
+          d.data.termCalendar = {
+            events: applyProposalToEvents(d.data.termCalendar?.events || {}, proposal),
+          };
+          // Also re-merge any other final approvals so the public store stays complete.
+          ensureApprovedCalendarPublished(d.data);
+          payload.termCalendar = d.data.termCalendar;
+        } else {
+          d.data.news = { items: applyProposalToNews(d.data.news?.items || [], proposal) };
+          payload.news = d.data.news;
+        }
+      }
+
+      await d.write();
+      return res.json(payload);
+    }
+
+    return res.status(403).json({ error: 'Action not allowed for your role' });
   }
+);
 
-  return res.status(403).json({ error: 'Action not allowed for your role' });
-});
+app.post(
+  '/api/proposals/:id/comments',
+  authRequired,
+  adminIpAllowed,
+  schoolStaffRequired,
+  async (req, res) => {
+    const d = await getDB();
+    const proposal = (d.data.proposals || []).find((item) => item.id === req.params.id);
 
-app.post('/api/proposals/:id/comments', authRequired, adminIpAllowed, schoolStaffRequired, async (req, res) => {
-  const d = await getDB();
-  const proposal = (d.data.proposals || []).find((item) => item.id === req.params.id);
+    if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
 
-  if (!proposal) return res.status(404).json({ error: 'Proposal not found' });
+    const message = `${req.body?.message || ''}`.trim();
+    if (!message) return res.status(400).json({ error: 'message is required' });
 
-  const message = `${req.body?.message || ''}`.trim();
-  if (!message) return res.status(400).json({ error: 'message is required' });
+    proposal.comments = Array.isArray(proposal.comments) ? proposal.comments : [];
+    const comment = {
+      id: `${Date.now()}`,
+      author: req.user?.username || 'Admin',
+      role: req.user?.role || 'Admin',
+      message,
+      createdAt: new Date().toISOString(),
+    };
 
-  proposal.comments = Array.isArray(proposal.comments) ? proposal.comments : [];
-  const comment = {
-    id: `${Date.now()}`,
-    author: req.user?.username || 'Admin',
-    role: req.user?.role || 'Admin',
-    message,
-    createdAt: new Date().toISOString()
-  };
-
-  proposal.comments.push(comment);
-  addProposalHistoryEntry(proposal, req.user?.username, 'comment', message);
-  proposal.updatedAt = new Date().toISOString();
-  await d.write();
-  return res.json({ proposal: summarizeProposal(proposal), comment });
-});
+    proposal.comments.push(comment);
+    addProposalHistoryEntry(proposal, req.user?.username, 'comment', message);
+    proposal.updatedAt = new Date().toISOString();
+    await d.write();
+    return res.json({ proposal: summarizeProposal(proposal), comment });
+  }
+);
 
 app.get('/api/news', async (req, res) => {
   const d = await getDB();
   return res.json(d.data.news || { items: [] });
 });
 
-app.put('/api/news', authRequired, adminIpAllowed, schoolStaffRequired, roleRequired('Headmaster'), async (req, res) => {
-  const d = await getDB();
-  const body = req.body || {};
-  const items = body.items;
-  if (!Array.isArray(items)) return res.status(400).json({ error: 'items must be an array' });
+app.put(
+  '/api/news',
+  authRequired,
+  adminIpAllowed,
+  schoolStaffRequired,
+  roleRequired('Headmaster'),
+  async (req, res) => {
+    const d = await getDB();
+    const body = req.body || {};
+    const items = body.items;
+    if (!Array.isArray(items)) return res.status(400).json({ error: 'items must be an array' });
 
-  d.data.news = { items };
-  await d.write();
-  return res.json({ ok: true });
-});
+    d.data.news = { items };
+    await d.write();
+    return res.json({ ok: true });
+  }
+);
 
 // ---- Application forms (student + staff; public submit; secretary/admin inbox) ----
 const APPLICATION_TYPES = new Set(['student', 'teaching-staff', 'non-teaching-staff']);
@@ -656,7 +806,7 @@ function summarizeApplication(app) {
     parentName: contactName,
     parentPhone: contactPhone,
     position: teaching.position || nonTeaching.position || student.currentGrade || '',
-    which: app.which || 'all-3'
+    which: app.which || 'all-3',
   };
 }
 
@@ -698,7 +848,7 @@ app.post('/api/applications', async (req, res) => {
     forms: { ...forms },
     // Assigned to secretary inbox by default
     assignedTo: 'Secretary',
-    notes: body.notes || ''
+    notes: body.notes || '',
   };
 
   d.data.applications = Array.isArray(d.data.applications) ? d.data.applications : [];
@@ -707,49 +857,67 @@ app.post('/api/applications', async (req, res) => {
 
   return res.status(201).json({
     ok: true,
-    application: summarizeApplication(application)
+    application: summarizeApplication(application),
   });
 });
 
-app.get('/api/applications', authRequired, adminIpAllowed, schoolStaffRequired, async (req, res) => {
-  const d = await getDB();
+app.get(
+  '/api/applications',
+  authRequired,
+  adminIpAllowed,
+  schoolStaffRequired,
+  async (req, res) => {
+    const d = await getDB();
 
-  const applications = (d.data.applications || [])
-    .slice()
-    .sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
+    const applications = (d.data.applications || [])
+      .slice()
+      .sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
 
-  return res.json({ applications });
-});
-
-app.get('/api/applications/:id', authRequired, adminIpAllowed, schoolStaffRequired, async (req, res) => {
-  const d = await getDB();
-
-  const application = (d.data.applications || []).find((item) => item.id === req.params.id);
-  if (!application) return res.status(404).json({ error: 'Application not found' });
-  return res.json({ application });
-});
-
-app.put('/api/applications/:id', authRequired, adminIpAllowed, schoolStaffRequired, async (req, res) => {
-  const d = await getDB();
-  const role = req.user?.role;
-
-  const application = (d.data.applications || []).find((item) => item.id === req.params.id);
-  if (!application) return res.status(404).json({ error: 'Application not found' });
-
-  const nextStatus = req.body?.status;
-  if (nextStatus && ['new', 'reviewed', 'archived'].includes(nextStatus)) {
-    application.status = nextStatus;
-    application.reviewedBy = req.user?.username || role;
-    application.reviewedAt = new Date().toISOString();
+    return res.json({ applications });
   }
+);
 
-  if (typeof req.body?.notes === 'string') {
-    application.notes = req.body.notes;
+app.get(
+  '/api/applications/:id',
+  authRequired,
+  adminIpAllowed,
+  schoolStaffRequired,
+  async (req, res) => {
+    const d = await getDB();
+
+    const application = (d.data.applications || []).find((item) => item.id === req.params.id);
+    if (!application) return res.status(404).json({ error: 'Application not found' });
+    return res.json({ application });
   }
+);
 
-  await d.write();
-  return res.json({ application });
-});
+app.put(
+  '/api/applications/:id',
+  authRequired,
+  adminIpAllowed,
+  schoolStaffRequired,
+  async (req, res) => {
+    const d = await getDB();
+    const role = req.user?.role;
+
+    const application = (d.data.applications || []).find((item) => item.id === req.params.id);
+    if (!application) return res.status(404).json({ error: 'Application not found' });
+
+    const nextStatus = req.body?.status;
+    if (nextStatus && ['new', 'reviewed', 'archived'].includes(nextStatus)) {
+      application.status = nextStatus;
+      application.reviewedBy = req.user?.username || role;
+      application.reviewedAt = new Date().toISOString();
+    }
+
+    if (typeof req.body?.notes === 'string') {
+      application.notes = req.body.notes;
+    }
+
+    await d.write();
+    return res.json({ application });
+  }
+);
 
 // ---- Private admin messaging ----
 // Messages are intentionally direct (one sender, one recipient). The API, not
@@ -758,7 +926,7 @@ function messageAdminSummary(admin) {
   return {
     id: admin.id,
     username: admin.username,
-    role: admin.role
+    role: admin.role,
   };
 }
 
@@ -769,8 +937,8 @@ function isMessageParticipant(message, adminId) {
 // The extra Headmaster logins are legacy/recovery accounts. Keep direct staff
 // messaging focused on the official role account rather than showing duplicates.
 function isMessageDirectoryAdmin(admin) {
-  return admin && admin.id && admin.username && (
-    admin.role !== 'Headmaster' || admin.id === 'hm-1'
+  return (
+    admin && admin.id && admin.username && (admin.role !== 'Headmaster' || admin.id === 'hm-1')
   );
 }
 
@@ -820,22 +988,26 @@ app.get('/api/messages', authRequired, adminIpAllowed, async (req, res) => {
     return copy;
   });
 
-  let messages = normalizedMessages.filter((message) => (
-    messageBelongsToSender(message, req.user) || messageBelongsToRecipient(message, req.user)
-  ));
+  let messages = normalizedMessages.filter(
+    (message) =>
+      messageBelongsToSender(message, req.user) || messageBelongsToRecipient(message, req.user)
+  );
   if (requestedPeer) {
-    messages = messages.filter((message) => (
-      (messageBelongsToSender(message, req.user) && message.recipientId === requestedPeer) ||
-      (messageBelongsToRecipient(message, req.user) && message.senderId === requestedPeer)
-    ));
+    messages = messages.filter(
+      (message) =>
+        (messageBelongsToSender(message, req.user) && message.recipientId === requestedPeer) ||
+        (messageBelongsToRecipient(message, req.user) && message.senderId === requestedPeer)
+    );
   }
 
   messages.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
-  const unreadCount = normalizedMessages.filter((message) => message.recipientId === currentId && !message.readAt).length;
+  const unreadCount = normalizedMessages.filter(
+    (message) => message.recipientId === currentId && !message.readAt
+  ).length;
   return res.json({
     recipients: otherAdmins,
     messages: messages.slice(-150),
-    unreadCount
+    unreadCount,
   });
 });
 
@@ -848,25 +1020,37 @@ app.post('/api/messages', authRequired, adminIpAllowed, async (req, res) => {
   const messageText = String(body.message || '').trim();
 
   if (!recipientId) return res.status(400).json({ error: 'Choose a recipient' });
-  if (recipientId === currentId) return res.status(400).json({ error: 'You cannot send a message to yourself' });
+  if (recipientId === currentId)
+    return res.status(400).json({ error: 'You cannot send a message to yourself' });
   if (!messageText) return res.status(400).json({ error: 'Message text is required' });
-  if (subject.length > 140) return res.status(400).json({ error: 'Subject must be 140 characters or fewer' });
-  if (messageText.length > 5000) return res.status(400).json({ error: 'Message must be 5,000 characters or fewer' });
+  if (subject.length > 140)
+    return res.status(400).json({ error: 'Subject must be 140 characters or fewer' });
+  if (messageText.length > 5000)
+    return res.status(400).json({ error: 'Message must be 5,000 characters or fewer' });
 
   const allAdmins = d.data.admins || [];
   const sender = allAdmins.find((admin) => admin.id === currentId);
-  const recipient = allAdmins.find((admin) => admin.id === recipientId && isMessageDirectoryAdmin(admin));
+  const recipient = allAdmins.find(
+    (admin) => admin.id === recipientId && isMessageDirectoryAdmin(admin)
+  );
   if (!sender || !recipient) return res.status(404).json({ error: 'Recipient admin not found' });
 
   const priority = ['normal', 'high', 'urgent'].includes(body.priority) ? body.priority : 'normal';
   const suppliedThread = String(body.threadId || '').trim();
-  const threadExists = suppliedThread && (d.data.messages || []).some((item) => (
-    item.threadId === suppliedThread && isMessageParticipant(item, currentId) && isMessageParticipant(item, recipientId)
-  ));
+  const threadExists =
+    suppliedThread &&
+    (d.data.messages || []).some(
+      (item) =>
+        item.threadId === suppliedThread &&
+        isMessageParticipant(item, currentId) &&
+        isMessageParticipant(item, recipientId)
+    );
   const now = new Date().toISOString();
   const message = {
     id: `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    threadId: threadExists ? suppliedThread : `thread-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    threadId: threadExists
+      ? suppliedThread
+      : `thread-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     senderId: sender.id,
     senderName: sender.username,
     senderRole: sender.role,
@@ -877,7 +1061,7 @@ app.post('/api/messages', authRequired, adminIpAllowed, async (req, res) => {
     message: messageText,
     priority,
     createdAt: now,
-    readAt: null
+    readAt: null,
   };
 
   d.data.messages.push(message);
@@ -889,7 +1073,8 @@ app.patch('/api/messages/:id', authRequired, adminIpAllowed, async (req, res) =>
   const d = await getDB();
   const message = (d.data.messages || []).find((item) => item.id === req.params.id);
   if (!message) return res.status(404).json({ error: 'Message not found' });
-  if (!messageBelongsToRecipient(message, req.user)) return res.status(403).json({ error: 'Only the recipient can update this message' });
+  if (!messageBelongsToRecipient(message, req.user))
+    return res.status(403).json({ error: 'Only the recipient can update this message' });
 
   if (req.body?.read === true && !message.readAt) {
     message.readAt = new Date().toISOString();
@@ -903,7 +1088,7 @@ function publicAdminSummary(admin) {
   return {
     id: admin.id,
     username: admin.username,
-    role: admin.role
+    role: admin.role,
   };
 }
 
@@ -920,101 +1105,129 @@ function pickManagedAdmins(admins) {
   }).filter(Boolean);
 }
 
-app.get('/api/super/admins', authRequired, adminIpAllowed, roleRequired('SuperAdmin'), async (req, res) => {
-  const d = await getDB();
-  return res.json({ admins: pickManagedAdmins(d.data.admins) });
-});
-
-app.put('/api/super/admins/:id', authRequired, adminIpAllowed, roleRequired('SuperAdmin'), async (req, res) => {
-  const d = await getDB();
-  const admin = (d.data.admins || []).find((a) => a.id === req.params.id);
-
-  if (!admin) {
-    return res.status(404).json({ error: 'Admin account not found' });
+app.get(
+  '/api/super/admins',
+  authRequired,
+  adminIpAllowed,
+  roleRequired('SuperAdmin'),
+  async (req, res) => {
+    const d = await getDB();
+    return res.json({ admins: pickManagedAdmins(d.data.admins) });
   }
-  if (!MANAGED_ADMIN_ROLES.includes(admin.role)) {
-    return res.status(403).json({ error: 'Only Secretary, Manager, and Headmaster credentials can be changed here' });
-  }
+);
 
-  const body = req.body || {};
-  let changed = false;
+app.put(
+  '/api/super/admins/:id',
+  authRequired,
+  adminIpAllowed,
+  roleRequired('SuperAdmin'),
+  async (req, res) => {
+    const d = await getDB();
+    const admin = (d.data.admins || []).find((a) => a.id === req.params.id);
 
-  if (body.username !== undefined) {
-    const nextUsername = String(body.username || '').trim();
-    if (!nextUsername) {
-      return res.status(400).json({ error: 'username cannot be empty' });
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin account not found' });
     }
-    if (nextUsername.length < 3) {
-      return res.status(400).json({ error: 'username must be at least 3 characters' });
+    if (!MANAGED_ADMIN_ROLES.includes(admin.role)) {
+      return res
+        .status(403)
+        .json({ error: 'Only Secretary, Manager, and Headmaster credentials can be changed here' });
     }
-    const clash = (d.data.admins || []).find(
-      (a) => a.id !== admin.id && a.username && a.username.toLowerCase() === nextUsername.toLowerCase()
-    );
-    if (clash) {
-      return res.status(409).json({ error: 'That username is already in use' });
+
+    const body = req.body || {};
+    let changed = false;
+
+    if (body.username !== undefined) {
+      const nextUsername = String(body.username || '').trim();
+      if (!nextUsername) {
+        return res.status(400).json({ error: 'username cannot be empty' });
+      }
+      if (nextUsername.length < 3) {
+        return res.status(400).json({ error: 'username must be at least 3 characters' });
+      }
+      const clash = (d.data.admins || []).find(
+        (a) =>
+          a.id !== admin.id && a.username && a.username.toLowerCase() === nextUsername.toLowerCase()
+      );
+      if (clash) {
+        return res.status(409).json({ error: 'That username is already in use' });
+      }
+      if (admin.username !== nextUsername) {
+        admin.username = nextUsername;
+        changed = true;
+      }
     }
-    if (admin.username !== nextUsername) {
-      admin.username = nextUsername;
+
+    if (body.password !== undefined) {
+      const nextPassword = String(body.password || '');
+      if (nextPassword.length < 8) {
+        return res.status(400).json({ error: 'password must be at least 8 characters' });
+      }
+      admin.passwordHash = bcrypt.hashSync(nextPassword, 10);
       changed = true;
     }
-  }
 
-  if (body.password !== undefined) {
-    const nextPassword = String(body.password || '');
-    if (nextPassword.length < 8) {
-      return res.status(400).json({ error: 'password must be at least 8 characters' });
+    if (!changed) {
+      return res.status(400).json({ error: 'Provide username and/or password to update' });
     }
-    admin.passwordHash = bcrypt.hashSync(nextPassword, 10);
-    changed = true;
+
+    // Role is never changeable via this endpoint
+    await d.write();
+    return res.json({ ok: true, admin: publicAdminSummary(admin) });
   }
+);
 
-  if (!changed) {
-    return res.status(400).json({ error: 'Provide username and/or password to update' });
+app.get(
+  '/api/super/health',
+  authRequired,
+  adminIpAllowed,
+  roleRequired('SuperAdmin'),
+  async (req, res) => {
+    const d = await getDB();
+    const events = d.data.termCalendar?.events || {};
+    const newsItems = d.data.news?.items || [];
+
+    return res.json({
+      ok: true,
+      uptime: process.uptime(),
+      host: HOST,
+      port: PORT,
+      node: process.version,
+      dbFile,
+      counts: {
+        admins: (d.data.admins || []).length,
+        proposals: (d.data.proposals || []).length,
+        applications: (d.data.applications || []).length,
+        newsItems: Array.isArray(newsItems) ? newsItems.length : 0,
+        calendarDates: Object.keys(events).length,
+      },
+    });
   }
+);
 
-  // Role is never changeable via this endpoint
-  await d.write();
-  return res.json({ ok: true, admin: publicAdminSummary(admin) });
-});
-
-app.get('/api/super/health', authRequired, adminIpAllowed, roleRequired('SuperAdmin'), async (req, res) => {
-  const d = await getDB();
-  const events = d.data.termCalendar?.events || {};
-  const newsItems = d.data.news?.items || [];
-
-  return res.json({
-    ok: true,
-    uptime: process.uptime(),
-    host: HOST,
-    port: PORT,
-    node: process.version,
-    dbFile,
-    counts: {
-      admins: (d.data.admins || []).length,
-      proposals: (d.data.proposals || []).length,
-      applications: (d.data.applications || []).length,
-      newsItems: Array.isArray(newsItems) ? newsItems.length : 0,
-      calendarDates: Object.keys(events).length
-    }
-  });
-});
-
-app.get('/api/super/backup', authRequired, adminIpAllowed, roleRequired('SuperAdmin'), async (req, res) => {
-  const d = await getDB();
-  // Re-read ensures we send the latest on-disk snapshot after any concurrent writes
-  await d.read();
-  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.setHeader('Content-Disposition', `attachment; filename="debest-data-backup-${stamp}.json"`);
-  return res.send(JSON.stringify(d.data || {}, null, 2));
-});
+app.get(
+  '/api/super/backup',
+  authRequired,
+  adminIpAllowed,
+  roleRequired('SuperAdmin'),
+  async (req, res) => {
+    const d = await getDB();
+    // Re-read ensures we send the latest on-disk snapshot after any concurrent writes
+    await d.read();
+    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="debest-data-backup-${stamp}.json"`);
+    return res.send(JSON.stringify(d.data || {}, null, 2));
+  }
+);
 
 // ---- Static content (optional) ----
 app.use(express.static(__dirname));
 
-app.listen(PORT, HOST, async () => {
+const BIND_PORT = 5501;
+app.listen(BIND_PORT, HOST, async () => {
   await ensureDefaultAdmins();
-  console.log(`Server running on http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
-  console.log(`LAN: open http://<this-computer-ip>:${PORT}/debest.html from other school PCs`);
-  console.log(`Admin login: http://<this-computer-ip>:${PORT}/admin/login.html`);
+  console.log(`Server running on http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${BIND_PORT}`);
+  console.log(`LAN: open http://<this-computer-ip>:${BIND_PORT}/debest.html from other school PCs`);
+  console.log(`Admin login: http://<this-computer-ip>:${BIND_PORT}/admin/login.html`);
 });

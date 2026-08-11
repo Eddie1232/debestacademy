@@ -5,7 +5,7 @@ const PROPOSAL_STATUSES = Object.freeze({
   APPROVED: 'approved',
   REJECTED: 'rejected',
   REVISIONS_REQUESTED: 'revisions_requested',
-  FINAL_APPROVED: 'final_approved'
+  FINAL_APPROVED: 'final_approved',
 });
 
 function getNextStatus(role, action, currentStatus) {
@@ -24,7 +24,10 @@ function getNextStatus(role, action, currentStatus) {
     if (action === 'reject' && currentStatus === PROPOSAL_STATUSES.PENDING_MANAGER_REVIEW) {
       return PROPOSAL_STATUSES.REJECTED;
     }
-    if (action === 'request-revisions' && currentStatus === PROPOSAL_STATUSES.PENDING_MANAGER_REVIEW) {
+    if (
+      action === 'request-revisions' &&
+      currentStatus === PROPOSAL_STATUSES.PENDING_MANAGER_REVIEW
+    ) {
       return PROPOSAL_STATUSES.REVISIONS_REQUESTED;
     }
     return currentStatus;
@@ -37,7 +40,10 @@ function getNextStatus(role, action, currentStatus) {
     if (action === 'reject' && currentStatus !== PROPOSAL_STATUSES.APPROVED) {
       return PROPOSAL_STATUSES.REJECTED;
     }
-    if (action === 'request-revisions' && currentStatus === PROPOSAL_STATUSES.AWAITING_HEADMASTER_APPROVAL) {
+    if (
+      action === 'request-revisions' &&
+      currentStatus === PROPOSAL_STATUSES.AWAITING_HEADMASTER_APPROVAL
+    ) {
       return PROPOSAL_STATUSES.REVISIONS_REQUESTED;
     }
     return currentStatus;
@@ -67,7 +73,7 @@ function applyProposalToEvents(events, proposal) {
     title: proposal.event.title || 'Activity',
     type: proposal.event.type || 'General',
     notes: proposal.event.notes || '',
-    proposalId: proposal.id || undefined
+    proposalId: proposal.id || undefined,
   };
 
   // Copy the day array so we never mutate the caller's stored events in place.
@@ -121,7 +127,7 @@ function applyProposalToNews(items, proposal) {
     body: proposal.event.notes || '',
     date: proposal.event.date || new Date().toISOString().slice(0, 10),
     category: proposal.event.type || 'Announcement',
-    publishedBy: proposal.reviewedBy || proposal.createdBy || 'Secretary'
+    publishedBy: proposal.reviewedBy || proposal.createdBy || 'Secretary',
   };
 
   const existingIndex = nextItems.findIndex((entry) => entry.id === item.id);
@@ -142,5 +148,5 @@ module.exports = {
   applyProposalToEvents,
   applyProposalToNews,
   syncApprovedCalendarEvents,
-  calendarEventsEqual
+  calendarEventsEqual,
 };

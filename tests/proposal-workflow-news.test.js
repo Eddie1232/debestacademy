@@ -11,9 +11,9 @@ test('applyProposalToNews adds a news item when a proposal is approved', () => {
       date: '2026-07-10',
       title: 'New school announcement',
       type: 'Announcement',
-      notes: 'The library opens at 8 AM.'
+      notes: 'The library opens at 8 AM.',
     },
-    reviewedBy: 'Headmaster'
+    reviewedBy: 'Headmaster',
   };
 
   const nextItems = applyProposalToNews(items, proposal);

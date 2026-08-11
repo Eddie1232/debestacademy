@@ -17,25 +17,25 @@ One host PC runs `npm start`. Secretary, Manager, Headmaster, and Super Admin co
 
 ## URLs
 
-| Page | Path |
-|------|------|
-| Public website | `/debest.html` |
-| Staff login | `/admin/login.html` or `/admin/login` |
-| Secretary dashboard | `/admin/secretary.html` |
-| Manager dashboard | `/admin/manager.html` |
-| Headmaster dashboard | `/admin/headmaster.html` |
-| Super Admin dashboard | `/admin/superadmin.html` |
+| Page                  | Path                                  |
+| --------------------- | ------------------------------------- |
+| Public website        | `/debest.html`                        |
+| Staff login           | `/admin/login.html` or `/admin/login` |
+| Secretary dashboard   | `/admin/secretary.html`               |
+| Manager dashboard     | `/admin/manager.html`                 |
+| Headmaster dashboard  | `/admin/headmaster.html`              |
+| Super Admin dashboard | `/admin/superadmin.html`              |
 
 ## Demo credentials (change in production)
 
-| Username | Password | Role |
-|----------|----------|------|
-| `Secretary` | `Secretary123` | Secretary |
-| `Manager` | `Manager123` | Manager |
-| `Headmaster` | `Headmaster123` | Headmaster |
-| `SuperAdmin` | `SuperAdmin123` | SuperAdmin (IT) |
-| `admin` | `Admin123` | Headmaster (legacy) |
-| `Comma` | `comma4711` | Headmaster (legacy) |
+| Username     | Password        | Role                |
+| ------------ | --------------- | ------------------- |
+| `Secretary`  | `Secretary123`  | Secretary           |
+| `Manager`    | `Manager123`    | Manager             |
+| `Headmaster` | `Headmaster123` | Headmaster          |
+| `SuperAdmin` | `SuperAdmin123` | SuperAdmin (IT)     |
+| `admin`      | `Admin123`      | Headmaster (legacy) |
+| `Comma`      | `comma4711`     | Headmaster (legacy) |
 
 Optional env overrides for Super Admin: `SUPERADMIN_USER`, `SUPERADMIN_PASS` (applied only when the account is first created).
 
@@ -76,12 +76,12 @@ Do **not** run three separate servers on three PCs — data will not stay in syn
 
 ### SuperAdmin-only
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| `GET` | `/api/super/admins` | List Secretary / Manager / Headmaster accounts (no password hashes) |
-| `PUT` | `/api/super/admins/:id` | Update `username` and/or `password` for a managed role account |
-| `GET` | `/api/super/health` | Server uptime, host/port, record counts |
-| `GET` | `/api/super/backup` | Download full `data.json` backup |
+| Method | Path                    | Purpose                                                             |
+| ------ | ----------------------- | ------------------------------------------------------------------- |
+| `GET`  | `/api/super/admins`     | List Secretary / Manager / Headmaster accounts (no password hashes) |
+| `PUT`  | `/api/super/admins/:id` | Update `username` and/or `password` for a managed role account      |
+| `GET`  | `/api/super/health`     | Server uptime, host/port, record counts                             |
+| `GET`  | `/api/super/backup`     | Download full `data.json` backup                                    |
 
 ## Resetting a password
 

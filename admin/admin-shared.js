@@ -9,15 +9,22 @@
     Secretary: '/admin/secretary.html',
     Manager: '/admin/manager.html',
     Headmaster: '/admin/headmaster.html',
-    SuperAdmin: '/admin/superadmin.html'
+    SuperAdmin: '/admin/superadmin.html',
   };
 
   function getApiBase() {
     try {
       const o = localStorage.getItem('debest_admin_api_base');
       if (o && (o.startsWith('http://') || o.startsWith('https://'))) return o;
-    } catch (e) { /* ignore */ }
-    if (typeof location !== 'undefined' && location.protocol && location.protocol.startsWith('http') && location.host) {
+    } catch (e) {
+      /* ignore */
+    }
+    if (
+      typeof location !== 'undefined' &&
+      location.protocol &&
+      location.protocol.startsWith('http') &&
+      location.host
+    ) {
       return location.origin;
     }
     return 'http://127.0.0.1:5500';
@@ -35,7 +42,9 @@
     try {
       if (token) localStorage.setItem(JWT_STORAGE_KEY, token);
       else localStorage.removeItem(JWT_STORAGE_KEY);
-    } catch (e) { /* ignore */ }
+    } catch (e) {
+      /* ignore */
+    }
   }
 
   function clearSession() {
@@ -72,7 +81,10 @@
     const token = getToken();
     if (!token) return null;
     const payload = parseJwt(token);
-    if (!payload) return null;
+    if (!payload) {
+      clearSession();
+      return null;
+    }
     // exp is seconds since epoch
     if (payload.exp && Date.now() >= payload.exp * 1000) {
       clearSession();
@@ -82,7 +94,7 @@
       token,
       username: payload.username || payload.user || '',
       role: payload.role || '',
-      sub: payload.sub
+      sub: payload.sub,
     };
   }
 
@@ -93,7 +105,8 @@
     if (relative.startsWith('/')) return relative;
     // Resolve against /admin/ so login from nested paths still works
     try {
-      return new URL(relative, (typeof location !== 'undefined' ? location.origin : '') + '/admin/').pathname;
+      return new URL(relative, (typeof location !== 'undefined' ? location.origin : '') + '/admin/')
+        .pathname;
     } catch (e) {
       return relative;
     }
@@ -138,7 +151,7 @@
     const res = await fetch(`${API_BASE}/api/admin/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password }),
     });
     const rawText = await res.text().catch(() => '');
     let data = {};
@@ -157,7 +170,7 @@
       token: data.token,
       role,
       username: data.username || username,
-      dashboard: data.dashboard || dashboardForRole(role)
+      dashboard: data.dashboard || dashboardForRole(role),
     };
   }
 
@@ -170,14 +183,50 @@
 
   async function checkServer(timeout = 2000) {
     const API_BASE = getApiBase();
-    try {
+    const result = {
+      ok: false,
+      endpoint: '/health',
+      status: '',
+      message: 'Server unreachable',
+    };
+
+    async function fetchEndpoint(path) {
       const ctl = new AbortController();
       const id = setTimeout(() => ctl.abort(), timeout);
-      const res = await fetch(`${API_BASE}/health`, { method: 'GET', signal: ctl.signal });
-      clearTimeout(id);
-      return res && res.ok;
+      try {
+        const res = await fetch(`${API_BASE}${path}`, { method: 'GET', signal: ctl.signal });
+        clearTimeout(id);
+        return res;
+      } catch (e) {
+        clearTimeout(id);
+        throw e;
+      }
+    }
+
+    try {
+      const health = await fetchEndpoint('/health');
+      if (!health.ok) {
+        result.endpoint = '/health';
+        result.status = `${health.status}`;
+        result.message = 'Health endpoint returned an error.';
+        return result;
+      }
+
+      const calendar = await fetchEndpoint('/api/terms-calendar');
+      if (!calendar.ok) {
+        result.endpoint = '/api/terms-calendar';
+        result.status = `${calendar.status}`;
+        result.message = 'Calendar endpoint returned an error.';
+        return result;
+      }
+
+      result.ok = true;
+      result.endpoint = '/health and /api/terms-calendar';
+      result.message = 'Backend is reachable.';
+      return result;
     } catch (e) {
-      return false;
+      result.message = e.name === 'AbortError' ? 'Request timed out.' : e.message || result.message;
+      return result;
     }
   }
 
@@ -196,6 +245,6 @@
     redirectIfLoggedIn,
     login,
     logout,
-    checkServer
+    checkServer,
   };
 })(typeof window !== 'undefined' ? window : globalThis);

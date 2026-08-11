@@ -21,10 +21,28 @@
         <div>
           <h2 class="forms-title">Application Forms</h2>
           <div class="small">
-            Choose a form below. Fill the single A4 sheet, press <b>Submit</b>, then <b>Print</b> for the school office.
+            Choose a form below. Fill the single A4 sheet, press <b>Submit</b>, then
+            <b>Print</b> for the school office.
           </div>
         </div>
         <div class="pill" aria-label="Important note">One A4 sheet · Submit first, then print</div>
+      </div>
+
+      <div
+        id="submitCheckmark"
+        class="submit-checkmark"
+        aria-live="polite"
+        role="status"
+        aria-hidden="true"
+      >
+        <div class="checkmark-ring" aria-hidden="true">
+          <svg viewBox="0 0 100 100" class="checkmark-svg" preserveAspectRatio="xMidYMid meet">
+            <circle cx="50" cy="50" r="42" class="checkmark-circle" />
+            <path d="M28 52 L42 66 L72 36" class="checkmark-path" />
+          </svg>
+        </div>
+        <div class="checkmark-label">Submitted successfully</div>
+        <div class="interview-message" aria-hidden="true"></div>
       </div>
 
       <nav class="form-tabs no-print" role="tablist" aria-label="Form categories">
@@ -72,7 +90,8 @@
         data-form-set="student"
       >
         <p class="set-intro no-print">
-          For parents/guardians enrolling a child from Creche through Junior High School. Everything prints on one A4 sheet.
+          For parents/guardians enrolling a child from Creche through Junior High School. Everything
+          prints on one A4 sheet.
         </p>
 
         <article class="a4-sheet" data-a4-sheet="student" data-form-set="student">
@@ -90,7 +109,12 @@
             <div class="form-field-grid">
               <label>
                 Student Full Name *
-                <input type="text" name="student-full-name" placeholder="e.g., John Doe" autocomplete="name" />
+                <input
+                  type="text"
+                  name="student-full-name"
+                  placeholder="e.g., John Doe"
+                  autocomplete="name"
+                />
               </label>
               <label>
                 Date of Birth
@@ -123,7 +147,11 @@
               </label>
               <label class="span-2">
                 Home Address
-                <textarea name="student-home-address" rows="2" placeholder="Write full home address"></textarea>
+                <textarea
+                  name="student-home-address"
+                  rows="2"
+                  placeholder="Write full home address"
+                ></textarea>
               </label>
             </div>
           </section>
@@ -154,11 +182,19 @@
               </label>
               <label class="span-2">
                 Allergies (if any)
-                <textarea name="health-allergies" rows="2" placeholder="List allergies or write 'None'"></textarea>
+                <textarea
+                  name="health-allergies"
+                  rows="2"
+                  placeholder="List allergies or write 'None'"
+                ></textarea>
               </label>
               <label class="span-2">
                 Doctor / Clinic Notes
-                <textarea name="health-doctor-notes" rows="2" placeholder="Add any relevant notes"></textarea>
+                <textarea
+                  name="health-doctor-notes"
+                  rows="2"
+                  placeholder="Add any relevant notes"
+                ></textarea>
               </label>
             </div>
           </section>
@@ -168,7 +204,12 @@
             <div class="form-field-grid">
               <label>
                 Parent/Guardian Full Name
-                <input type="text" name="parent-full-name" placeholder="e.g., Mary Doe" autocomplete="name" />
+                <input
+                  type="text"
+                  name="parent-full-name"
+                  placeholder="e.g., Mary Doe"
+                  autocomplete="name"
+                />
               </label>
               <label>
                 Relationship to Student
@@ -184,11 +225,19 @@
               </label>
               <label class="span-2">
                 Address
-                <textarea name="parent-address" rows="2" placeholder="Write full address"></textarea>
+                <textarea
+                  name="parent-address"
+                  rows="2"
+                  placeholder="Write full address"
+                ></textarea>
               </label>
               <label class="span-2">
                 Consent (brief)
-                <textarea name="parent-consent" rows="2" placeholder="Write consent statement or any notes"></textarea>
+                <textarea
+                  name="parent-consent"
+                  rows="2"
+                  placeholder="Write consent statement or any notes"
+                ></textarea>
               </label>
             </div>
           </section>
@@ -210,8 +259,12 @@
         </article>
 
         <div class="form-actions no-print">
-          <button class="btn" type="button" data-action="submit" data-form-set="student">Submit</button>
-          <button class="btn btn-outline" type="button" data-action="print" data-form-set="student">Print A4 sheet</button>
+          <button class="btn" type="button" data-action="submit" data-form-set="student">
+            Submit
+          </button>
+          <button class="btn btn-outline" type="button" data-action="print" data-form-set="student">
+            Print A4 sheet
+          </button>
         </div>
       </div>
 
@@ -243,7 +296,12 @@
             <div class="form-field-grid">
               <label>
                 Full Name *
-                <input type="text" name="teach-full-name" placeholder="e.g., Ama Mensah" autocomplete="name" />
+                <input
+                  type="text"
+                  name="teach-full-name"
+                  placeholder="e.g., Ama Mensah"
+                  autocomplete="name"
+                />
               </label>
               <label>
                 Date of Birth
@@ -263,11 +321,21 @@
               </label>
               <label>
                 Phone Number *
-                <input type="tel" name="teach-phone" placeholder="e.g., 0244 000 000" autocomplete="tel" />
+                <input
+                  type="tel"
+                  name="teach-phone"
+                  placeholder="e.g., 0244 000 000"
+                  autocomplete="tel"
+                />
               </label>
               <label>
                 Email
-                <input type="email" name="teach-email" placeholder="you@example.com" autocomplete="email" />
+                <input
+                  type="email"
+                  name="teach-email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                />
               </label>
               <label>
                 Position Applied For
@@ -293,7 +361,11 @@
               </label>
               <label>
                 Subjects / Classes
-                <input type="text" name="teach-subjects" placeholder="e.g., Mathematics, Science — JHS" />
+                <input
+                  type="text"
+                  name="teach-subjects"
+                  placeholder="e.g., Mathematics, Science — JHS"
+                />
               </label>
               <label>
                 Availability
@@ -306,7 +378,11 @@
               </label>
               <label class="span-2">
                 Residential Address
-                <textarea name="teach-address" rows="2" placeholder="Write full residential address"></textarea>
+                <textarea
+                  name="teach-address"
+                  rows="2"
+                  placeholder="Write full residential address"
+                ></textarea>
               </label>
             </div>
           </section>
@@ -316,11 +392,19 @@
             <div class="form-field-grid">
               <label>
                 Highest Academic Qualification
-                <input type="text" name="teach-qualification" placeholder="e.g., B.Ed Basic Education" />
+                <input
+                  type="text"
+                  name="teach-qualification"
+                  placeholder="e.g., B.Ed Basic Education"
+                />
               </label>
               <label>
                 Institution Attended
-                <input type="text" name="teach-institution" placeholder="e.g., University of Education, Winneba" />
+                <input
+                  type="text"
+                  name="teach-institution"
+                  placeholder="e.g., University of Education, Winneba"
+                />
               </label>
               <label>
                 Year Completed
@@ -336,15 +420,27 @@
               </label>
               <label>
                 Current / Last Employer
-                <input type="text" name="teach-employer" placeholder="School or organisation name" />
+                <input
+                  type="text"
+                  name="teach-employer"
+                  placeholder="School or organisation name"
+                />
               </label>
               <label class="span-2">
                 Previous Roles &amp; Responsibilities
-                <textarea name="teach-experience" rows="2" placeholder="Summarise recent teaching roles and achievements"></textarea>
+                <textarea
+                  name="teach-experience"
+                  rows="2"
+                  placeholder="Summarise recent teaching roles and achievements"
+                ></textarea>
               </label>
               <label class="span-2">
                 Why do you want to teach at DEBEST ACADEMY?
-                <textarea name="teach-motivation" rows="2" placeholder="Brief statement of interest"></textarea>
+                <textarea
+                  name="teach-motivation"
+                  rows="2"
+                  placeholder="Brief statement of interest"
+                ></textarea>
               </label>
             </div>
           </section>
@@ -362,7 +458,11 @@
               </label>
               <label>
                 Referee 1 — Relationship
-                <input type="text" name="teach-ref1-relation" placeholder="e.g., Former headteacher" />
+                <input
+                  type="text"
+                  name="teach-ref1-relation"
+                  placeholder="e.g., Former headteacher"
+                />
               </label>
               <label>
                 Referee 2 — Full Name
@@ -378,11 +478,17 @@
               </label>
               <label class="span-2">
                 Emergency Contact Name &amp; Phone
-                <input type="text" name="teach-emergency" placeholder="e.g., Kofi Mensah — 0244 000 000" />
+                <input
+                  type="text"
+                  name="teach-emergency"
+                  placeholder="e.g., Kofi Mensah — 0244 000 000"
+                />
               </label>
               <label class="span-2">
                 Declaration
-                <textarea name="teach-declaration" rows="2">I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea>
+                <textarea name="teach-declaration" rows="2">
+I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea
+                >
               </label>
             </div>
           </section>
@@ -404,8 +510,17 @@
         </article>
 
         <div class="form-actions no-print">
-          <button class="btn" type="button" data-action="submit" data-form-set="teaching-staff">Submit</button>
-          <button class="btn btn-outline" type="button" data-action="print" data-form-set="teaching-staff">Print A4 sheet</button>
+          <button class="btn" type="button" data-action="submit" data-form-set="teaching-staff">
+            Submit
+          </button>
+          <button
+            class="btn btn-outline"
+            type="button"
+            data-action="print"
+            data-form-set="teaching-staff"
+          >
+            Print A4 sheet
+          </button>
         </div>
       </div>
 
@@ -419,10 +534,15 @@
         hidden
       >
         <p class="set-intro no-print">
-          For non-teaching roles (admin, finance, security, catering, transport, facilities). One A4 sheet.
+          For non-teaching roles (admin, finance, security, catering, transport, facilities). One A4
+          sheet.
         </p>
 
-        <article class="a4-sheet" data-a4-sheet="non-teaching-staff" data-form-set="non-teaching-staff">
+        <article
+          class="a4-sheet"
+          data-a4-sheet="non-teaching-staff"
+          data-form-set="non-teaching-staff"
+        >
           <header class="a4-header">
             <img src="./debestcrest.jpg" alt="" class="a4-crest" />
             <div class="a4-header-text">
@@ -437,7 +557,12 @@
             <div class="form-field-grid">
               <label>
                 Full Name *
-                <input type="text" name="nonteach-full-name" placeholder="e.g., Kwame Asante" autocomplete="name" />
+                <input
+                  type="text"
+                  name="nonteach-full-name"
+                  placeholder="e.g., Kwame Asante"
+                  autocomplete="name"
+                />
               </label>
               <label>
                 Date of Birth
@@ -457,11 +582,21 @@
               </label>
               <label>
                 Phone Number *
-                <input type="tel" name="nonteach-phone" placeholder="e.g., 0244 000 000" autocomplete="tel" />
+                <input
+                  type="tel"
+                  name="nonteach-phone"
+                  placeholder="e.g., 0244 000 000"
+                  autocomplete="tel"
+                />
               </label>
               <label>
                 Email
-                <input type="email" name="nonteach-email" placeholder="you@example.com" autocomplete="email" />
+                <input
+                  type="email"
+                  name="nonteach-email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                />
               </label>
               <label>
                 Position Applied For
@@ -504,7 +639,11 @@
               </label>
               <label class="span-2">
                 Residential Address
-                <textarea name="nonteach-address" rows="2" placeholder="Write full residential address"></textarea>
+                <textarea
+                  name="nonteach-address"
+                  rows="2"
+                  placeholder="Write full residential address"
+                ></textarea>
               </label>
             </div>
           </section>
@@ -514,11 +653,19 @@
             <div class="form-field-grid">
               <label>
                 Highest Education Level
-                <input type="text" name="nonteach-education" placeholder="e.g., SHS, Diploma, Degree" />
+                <input
+                  type="text"
+                  name="nonteach-education"
+                  placeholder="e.g., SHS, Diploma, Degree"
+                />
               </label>
               <label>
                 Relevant Certificates / Training
-                <input type="text" name="nonteach-certificates" placeholder="e.g., First aid, driving licence" />
+                <input
+                  type="text"
+                  name="nonteach-certificates"
+                  placeholder="e.g., First aid, driving licence"
+                />
               </label>
               <label>
                 Years of Relevant Experience
@@ -530,15 +677,27 @@
               </label>
               <label class="span-2">
                 Key Skills
-                <textarea name="nonteach-skills" rows="2" placeholder="e.g., Record keeping, customer service, computer skills"></textarea>
+                <textarea
+                  name="nonteach-skills"
+                  rows="2"
+                  placeholder="e.g., Record keeping, customer service, computer skills"
+                ></textarea>
               </label>
               <label class="span-2">
                 Work Experience Summary
-                <textarea name="nonteach-experience" rows="2" placeholder="Describe recent roles and duties"></textarea>
+                <textarea
+                  name="nonteach-experience"
+                  rows="2"
+                  placeholder="Describe recent roles and duties"
+                ></textarea>
               </label>
               <label class="span-2">
                 Why do you want to work at DEBEST ACADEMY?
-                <textarea name="nonteach-motivation" rows="2" placeholder="Brief statement of interest"></textarea>
+                <textarea
+                  name="nonteach-motivation"
+                  rows="2"
+                  placeholder="Brief statement of interest"
+                ></textarea>
               </label>
             </div>
           </section>
@@ -556,7 +715,11 @@
               </label>
               <label>
                 Referee 1 — Relationship
-                <input type="text" name="nonteach-ref1-relation" placeholder="e.g., Former supervisor" />
+                <input
+                  type="text"
+                  name="nonteach-ref1-relation"
+                  placeholder="e.g., Former supervisor"
+                />
               </label>
               <label>
                 Referee 2 — Full Name
@@ -572,11 +735,17 @@
               </label>
               <label class="span-2">
                 Emergency Contact Name &amp; Phone
-                <input type="text" name="nonteach-emergency" placeholder="e.g., Ama Boateng — 0244 000 000" />
+                <input
+                  type="text"
+                  name="nonteach-emergency"
+                  placeholder="e.g., Ama Boateng — 0244 000 000"
+                />
               </label>
               <label class="span-2">
                 Declaration
-                <textarea name="nonteach-declaration" rows="2">I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea>
+                <textarea name="nonteach-declaration" rows="2">
+I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea
+                >
               </label>
             </div>
           </section>
@@ -598,14 +767,23 @@
         </article>
 
         <div class="form-actions no-print">
-          <button class="btn" type="button" data-action="submit" data-form-set="non-teaching-staff">Submit</button>
-          <button class="btn btn-outline" type="button" data-action="print" data-form-set="non-teaching-staff">Print A4 sheet</button>
+          <button class="btn" type="button" data-action="submit" data-form-set="non-teaching-staff">
+            Submit
+          </button>
+          <button
+            class="btn btn-outline"
+            type="button"
+            data-action="print"
+            data-form-set="non-teaching-staff"
+          >
+            Print A4 sheet
+          </button>
         </div>
       </div>
 
       <p class="small forms-footer-note no-print">
-        After filling the form, press <b>Submit</b> first. Printing is only available after you submit.
-        Bring the signed A4 printout to the school office within one week where required.
+        After filling the form, press <b>Submit</b> first. Printing is only available after you
+        submit. Bring the signed A4 printout to the school office within one week where required.
       </p>
     </main>
 

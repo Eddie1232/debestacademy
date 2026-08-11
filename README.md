@@ -86,24 +86,24 @@ npm run dev
 
 ### Staff URLs
 
-| Page | Path |
-|------|------|
-| Public site | `/debest.html` |
-| Staff login | `/admin/login.html` |
-| Secretary | `/admin/secretary.html` |
-| Manager | `/admin/manager.html` |
-| Headmaster | `/admin/headmaster.html` |
+| Page             | Path                     |
+| ---------------- | ------------------------ |
+| Public site      | `/debest.html`           |
+| Staff login      | `/admin/login.html`      |
+| Secretary        | `/admin/secretary.html`  |
+| Manager          | `/admin/manager.html`    |
+| Headmaster       | `/admin/headmaster.html` |
 | Super Admin (IT) | `/admin/superadmin.html` |
 
 ### Demo login credentials
 
-| Username | Password | Role |
-|----------|----------|------|
-| `Secretary` | `Secretary123` | Secretary |
-| `Manager` | `Manager123` | Manager |
-| `Headmaster` | `Headmaster123` | Headmaster |
+| Username     | Password        | Role                                          |
+| ------------ | --------------- | --------------------------------------------- |
+| `Secretary`  | `Secretary123`  | Secretary                                     |
+| `Manager`    | `Manager123`    | Manager                                       |
+| `Headmaster` | `Headmaster123` | Headmaster                                    |
 | `SuperAdmin` | `SuperAdmin123` | SuperAdmin (IT — credentials + tech ops only) |
-| `admin` | `Admin123` | Headmaster (legacy) |
+| `admin`      | `Admin123`      | Headmaster (legacy)                           |
 
 Passwords are bcrypt-hashed in `data.json` (not stored in the frontend). See [README_ADMIN_LOGIN.md](README_ADMIN_LOGIN.md) for LAN setup and password resets.
 

@@ -16,6 +16,12 @@
     authMsg.className = 'danger';
   }
 
+  function showInfo(message) {
+    if (!authMsg) return;
+    authMsg.textContent = message || 'Checking server...';
+    authMsg.className = 'muted';
+  }
+
   function showSuccess(message) {
     if (!authMsg) return;
     authMsg.textContent = message || 'OK';
@@ -37,22 +43,60 @@
   // Already signed in → go to role dashboard
   if (DebestAdmin.redirectIfLoggedIn()) return;
 
+  async function verifyExistingToken() {
+    const session = DebestAdmin.getSession();
+    if (!session) return false;
+    const API_BASE = DebestAdmin.getApiBase();
+    try {
+      const res = await fetch(`${API_BASE}/api/dashboard`, {
+        method: 'GET',
+        headers: { Authorization: 'Bearer ' + session.token },
+      });
+      if (res.ok) {
+        return true;
+      }
+      if (res.status === 401 || res.status === 403) {
+        DebestAdmin.clearSession();
+        showError('Session expired or invalid. Please sign in again.');
+      }
+    } catch (e) {
+      // ignore here; server connectivity is checked separately
+    }
+    return false;
+  }
+
   async function ensureServer() {
-    const up = await DebestAdmin.checkServer(3000);
-    if (!up) {
-      const base = DebestAdmin.getApiBase();
+    showInfo('Testing backend connectivity...');
+    if (retryBtn) retryBtn.style.display = 'none';
+
+    const result = await DebestAdmin.checkServer(3000);
+    if (!result.ok) {
       showError(
-        'Admin server is not reachable at ' +
-          base +
-          '. On the host PC run: npm start — then open this page via that host URL (not Live Server alone).'
+        'Backend check failed at ' +
+          result.endpoint +
+          (result.status ? ` (HTTP ${result.status})` : '') +
+          ': ' +
+          result.message +
+          ' Please start the server with npm start on the host PC and open this page from that host URL.'
       );
       if (retryBtn) retryBtn.style.display = 'block';
       if (loginBtn) loginBtn.disabled = true;
       return false;
     }
-    clearMessage();
+
     if (retryBtn) retryBtn.style.display = 'none';
     if (loginBtn) loginBtn.disabled = false;
+
+    const hasToken = await verifyExistingToken();
+    if (hasToken) {
+      const session = DebestAdmin.getSession();
+      if (session && session.role) {
+        window.location.replace(DebestAdmin.dashboardForRole(session.role));
+        return true;
+      }
+    }
+
+    showSuccess('Backend reachable. Enter credentials to continue.');
     return true;
   }
 
@@ -85,7 +129,6 @@
     try {
       const up = await ensureServer();
       if (!up) {
-        // ensureServer already disabled the button and showed a message
         return false;
       }
 
@@ -93,18 +136,14 @@
       showSuccess('Login successful. Redirecting…');
 
       // Prefer absolute path from API when present; fall back to relative role map
-      const path =
-        result.dashboard ||
-        DebestAdmin.dashboardForRole(result.role) ||
-        './login.html';
+      const path = result.dashboard || DebestAdmin.dashboardForRole(result.role) || './login.html';
 
       window.location.replace(path);
     } catch (err) {
       const msg = err && err.message ? err.message : 'Login failed';
-      const friendly =
-        /fetch|Failed to fetch|NetworkError|Load failed/i.test(msg)
-          ? 'Unable to reach the admin server. Start it with npm start on the host PC, then try again.'
-          : msg;
+      const friendly = /fetch|Failed to fetch|NetworkError|Load failed/i.test(msg)
+        ? 'Unable to reach the admin server. Start it with npm start on the host PC, then try again.'
+        : msg;
       showError(friendly);
       if (loginBtn) loginBtn.disabled = false;
       if (passwordInput) {

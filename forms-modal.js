@@ -1,4 +1,5 @@
 // Forms must be submitted before they can be printed.
+/* exported collectApplicationForms, printAndSubmit, printAndSubmitAll, printFilledForm */
 var formsSubmitted = {
   all: false,
   byWhich: Object.create(null),
@@ -9,12 +10,20 @@ const FORMS_API_BASE = (() => {
   try {
     const o = localStorage.getItem('debest_admin_api_base');
     if (o && (o.startsWith('http://') || o.startsWith('https://'))) return o;
-  } catch (e) { /* ignore */ }
-  // Same-origin when served by the site server; fallback for local file / other hosts.
-  if (typeof location !== 'undefined' && location.protocol.startsWith('http') && location.host) {
-    return location.origin;
+  } catch (e) {
+    /* ignore */
   }
-  return 'http://127.0.0.1:5500';
+
+  // Use the backend server when the page is served from the actual site host.
+  if (typeof location !== 'undefined' && location.protocol.startsWith('http') && location.host) {
+    const currentPort = location.port || (location.protocol === 'https:' ? '443' : '80');
+    if (currentPort === '5501') {
+      return location.origin;
+    }
+  }
+
+  // When the form is opened via a static dev server or local file, use the backend default port.
+  return 'http://127.0.0.1:5501';
 })();
 
 const FORM_SETS = {
@@ -37,7 +46,11 @@ const FORM_SETS = {
 
 function hasSubmitted(which) {
   if (which === 'all-3' || which === 'all' || which === 'student-all') {
-    return !!(formsSubmitted.all || formsSubmitted.bySet.student || formsSubmitted.byWhich['student-all']);
+    return !!(
+      formsSubmitted.all ||
+      formsSubmitted.bySet.student ||
+      formsSubmitted.byWhich['student-all']
+    );
   }
   if (which === 'teaching-all') return !!formsSubmitted.bySet['teaching-staff'];
   if (which === 'non-teaching-all') return !!formsSubmitted.bySet['non-teaching-staff'];
@@ -179,12 +192,18 @@ function collectFormsForSet(formSet) {
 function validateFormsForSet(formSet, forms) {
   if (formSet === 'teaching-staff') {
     const name = forms.teaching?.fullName || '';
-    if (!name) throw new Error('Please enter your full name on the teaching application form before submitting.');
+    if (!name)
+      throw new Error(
+        'Please enter your full name on the teaching application form before submitting.'
+      );
     return;
   }
   if (formSet === 'non-teaching-staff') {
     const name = forms.nonTeaching?.fullName || '';
-    if (!name) throw new Error('Please enter your full name on the non-teaching application form before submitting.');
+    if (!name)
+      throw new Error(
+        'Please enter your full name on the non-teaching application form before submitting.'
+      );
     return;
   }
   const studentName = forms.student?.fullName || '';
@@ -233,6 +252,86 @@ function printForm(which) {
   return printFormSet('student');
 }
 
+function getNextInterviewSlot(now = new Date()) {
+  const date = new Date(now);
+
+  const normalizeToBusinessDay = () => {
+    while (date.getDay() === 0 || date.getDay() === 6) {
+      date.setDate(date.getDate() + 1);
+    }
+  };
+
+  normalizeToBusinessDay();
+
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const second = date.getSeconds();
+  const millisecond = date.getMilliseconds();
+
+  const atExactTime = (targetHour) =>
+    hour === targetHour && minute === 0 && second === 0 && millisecond === 0;
+
+  if (hour < 9 || atExactTime(9)) {
+    date.setHours(9, 0, 0, 0);
+  } else if (hour < 11 || atExactTime(11)) {
+    date.setHours(11, 0, 0, 0);
+  } else if (hour < 13 || atExactTime(13)) {
+    date.setHours(13, 0, 0, 0);
+  } else {
+    date.setDate(date.getDate() + 1);
+    normalizeToBusinessDay();
+    date.setHours(9, 0, 0, 0);
+  }
+
+  return date;
+}
+
+function formatInterviewInvitationText(interviewDate) {
+  const dateText = interviewDate.toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+  const timeText = interviewDate.toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+
+  const content = `Interview invitation: Please come to the office on ${dateText} at ${timeText}.`;
+  return `<span class="notice-prefix">IMPORTANT NOTICE:</span> <span class="notice-content">${content}</span>`;
+}
+
+function showSubmitAnimation(message, interviewText) {
+  const el = document.getElementById('submitCheckmark');
+  if (!el) return;
+
+  const label = el.querySelector('.checkmark-label');
+  const interviewEl = el.querySelector('.interview-message');
+
+  if (label) label.textContent = message || 'Submitted successfully';
+  if (interviewEl) {
+    interviewEl.innerHTML = interviewText || '';
+    interviewEl.classList.remove('is-visible');
+  }
+
+  el.setAttribute('aria-hidden', 'false');
+  el.classList.remove('is-active');
+  void el.offsetWidth;
+  el.classList.add('is-active');
+
+  window.setTimeout(() => {
+    if (interviewEl && interviewText) {
+      interviewEl.classList.add('is-visible');
+    }
+  }, 900);
+
+  window.setTimeout(() => {
+    el.classList.remove('is-active');
+    if (interviewEl) interviewEl.classList.remove('is-visible');
+    el.setAttribute('aria-hidden', 'true');
+  }, 6000);
+}
+
 async function submitForm(which) {
   try {
     await sendApplicationToSecretary(which, 'student');
@@ -240,7 +339,8 @@ async function submitForm(which) {
     document.dispatchEvent(
       new CustomEvent('forms:submitted', { detail: { which, at: Date.now() } })
     );
-    alert('Submitted. The secretary has received the form. You can now print.');
+    const interviewSlot = getNextInterviewSlot(new Date());
+    showSubmitAnimation('Student form submitted', formatInterviewInvitationText(interviewSlot));
   } catch (err) {
     const msg = err && err.message ? err.message : 'Submit failed';
     const friendly =
@@ -294,9 +394,14 @@ async function submitFormSet(formSet) {
         detail: { which: meta.which, formSet, at: Date.now() },
       })
     );
-    alert(
-      `Submitted. The secretary has received the ${meta.label} forms. You can now print.`
+    const interviewSlot = getNextInterviewSlot(new Date());
+    showSubmitAnimation(
+      `${meta.label.charAt(0).toUpperCase() + meta.label.slice(1)} form submitted`,
+      formatInterviewInvitationText(interviewSlot)
     );
+    window.setTimeout(() => {
+      alert(`Submitted. The secretary has received the ${meta.label} forms. You can now print.`);
+    }, 1100);
   } catch (err) {
     const msg = err && err.message ? err.message : 'Submit failed';
     const friendly =
@@ -350,7 +455,9 @@ function switchFormSet(formSet) {
     } else {
       history.replaceState(null, '', location.pathname + location.search);
     }
-  } catch (_) { /* ignore */ }
+  } catch (_) {
+    /* ignore */
+  }
 }
 
 function initFormTabs() {
@@ -386,6 +493,13 @@ function initFormTabs() {
   } else if (hash === 'non-teaching' || hash === 'staff') {
     switchFormSet('non-teaching-staff');
   }
+}
+
+if (typeof window !== 'undefined') {
+  window.collectApplicationForms = collectApplicationForms;
+  window.printAndSubmit = printAndSubmit;
+  window.printAndSubmitAll = printAndSubmitAll;
+  window.printFilledForm = printFilledForm;
 }
 
 if (document.readyState === 'loading') {
