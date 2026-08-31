@@ -64,6 +64,14 @@ You can also run the server in development mode with:
 npm run dev
 ```
 
+## Website assistant
+
+Public pages include a floating **DEBEST Assistant** for admissions, hours, contact details, and other school questions.
+
+- The widget posts to `/api/assistant`. The API key stays on the server.
+- Set `XAI_API_KEY` (from https://console.x.ai) to answer with SpaceXAI / Grok. Optional: `XAI_MODEL` (default `grok-4.5`).
+- If no key is set, or the model is unreachable, the assistant still answers from the school FAQ knowledge on this site.
+
 ## Project Structure
 
 ```text
@@ -75,6 +83,8 @@ npm run dev
 ├── debest.html             # Main public homepage
 ├── debest.css              # Main stylesheet
 ├── debest.js               # Frontend scripts
+├── assistant.js            # Public AI assistant chat widget
+├── assistant-service.js    # Assistant API, school knowledge, and FAQ fallback
 ├── proposal-workflow.js    # Proposal status and calendar update logic
 ├── server.ts               # TypeScript Express server and REST API
 ├── docker-compose.yml      # Local PostgreSQL service

@@ -19,6 +19,7 @@ const {
   applyApplicationStatusChange,
   statusLabel,
 } = require('./employment-offer-workflow');
+const { assistantRateLimit, handleAssistantChat } = require('./assistant-service');
 
 const app = express();
 app.disable('x-powered-by');
@@ -773,6 +774,26 @@ app.post(
 app.get('/api/news', async (req, res) => {
   const d = await getDB();
   return res.json(d.data.news || { items: [] });
+});
+
+app.post('/api/assistant', assistantRateLimit, async (req, res) => {
+  try {
+    const d = await getDB();
+    const result = await handleAssistantChat(req.body, {
+      news: d.data.news,
+      termCalendar: d.data.termCalendar,
+    });
+    if (result.error) {
+      return res.status(result.status || 400).json({ error: result.error });
+    }
+    return res.json({ reply: result.reply, source: result.source });
+  } catch (err) {
+    console.error('[assistant]', err);
+    return res.status(500).json({
+      error:
+        'The assistant is unavailable right now. Please try again or call the school office on 0244 669 383.',
+    });
+  }
 });
 
 app.put(

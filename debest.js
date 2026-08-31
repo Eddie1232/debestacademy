@@ -24,10 +24,34 @@
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', makeCrestLink, { once: true });
-  } else {
+  function loadAssistantWidget() {
+    if (window.__debestAssistantLoader) return;
+    window.__debestAssistantLoader = true;
+    const path = window.location.pathname || '';
+    if (path.includes('/admin/')) return;
+    if (document.querySelector('script[src*="assistant.js"]')) return;
+
+    const current = document.querySelector('script[src*="debest.js"]');
+    const base = current
+      ? current.src.replace(/debest\.js(\?.*)?$/, '')
+      : path.includes('/student/')
+        ? '../'
+        : './';
+    const script = document.createElement('script');
+    script.src = base + 'assistant.js';
+    script.defer = true;
+    (document.body || document.documentElement).appendChild(script);
+  }
+
+  function bootSharedUi() {
     makeCrestLink();
+    loadAssistantWidget();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootSharedUi, { once: true });
+  } else {
+    bootSharedUi();
   }
 })();
 
