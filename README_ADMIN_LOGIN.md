@@ -11,9 +11,9 @@ Public site (debest.html)  →  Staff login (/admin/login.html)
       dashboard       dashboard  dashboard    dashboard (IT only)
 ```
 
-One host PC runs `npm start`. Secretary, Manager, Headmaster, and Super Admin computers open the **same** site URL in a browser and sign in with their own accounts. All data is shared in `data.json` on the host.
+One host PC runs `npm start`. Secretary, Manager, Headmaster, and Super Admin computers open the **same** site URL in a browser and sign in with their own accounts. All data is shared in PostgreSQL on the host.
 
-**SuperAdmin** is for technical recovery only: reset the three school admins’ usernames/passwords, view server health, and download a `data.json` backup. SuperAdmin **cannot** edit calendar, news, proposals, or applications.
+**SuperAdmin** is for technical recovery only: reset the three school admins’ usernames/passwords, view server health, and download a PostgreSQL data backup. SuperAdmin **cannot** edit calendar, news, proposals, or applications.
 
 ## URLs
 
@@ -39,7 +39,7 @@ One host PC runs `npm start`. Secretary, Manager, Headmaster, and Super Admin co
 
 Optional env overrides for Super Admin: `SUPERADMIN_USER`, `SUPERADMIN_PASS` (applied only when the account is first created).
 
-Passwords are stored as bcrypt hashes in `data.json`. They are **not** embedded in the frontend.
+Passwords are stored as bcrypt hashes in PostgreSQL. They are **not** embedded in the frontend.
 
 ## School LAN setup
 
@@ -57,13 +57,13 @@ Passwords are stored as bcrypt hashes in `data.json`. They are **not** embedded 
    hostname -I
    ```
 
-3. Allow TCP port **5500** through the host firewall if needed.
+3. Allow TCP port **5501** through the host firewall if needed.
 
 4. On each admin PC browser, open:
 
    ```text
-   http://192.168.1.50:5500/debest.html
-   http://192.168.1.50:5500/admin/login.html
+   http://192.168.1.50:5501/debest.html
+   http://192.168.1.50:5501/admin/login.html
    ```
 
 Do **not** run three separate servers on three PCs — data will not stay in sync.

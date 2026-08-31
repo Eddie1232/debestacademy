@@ -13,6 +13,12 @@ const {
   syncApprovedCalendarEvents,
   calendarEventsEqual,
 } = require('./proposal-workflow');
+const {
+  isEmploymentApplication,
+  normalizeApplicationStatus,
+  applyApplicationStatusChange,
+  statusLabel,
+} = require('./employment-offer-workflow');
 
 const app = express();
 app.disable('x-powered-by');
@@ -122,6 +128,9 @@ const DEFAULT_DB_DATA = {
   proposals: [],
   applications: [],
   messages: [],
+  computerHealth: {},
+  loginHistory: [],
+  knownOfficeDevices: {},
 };
 
 const dbFile = path.join(__dirname, 'data.json');
@@ -431,10 +440,39 @@ app.post('/api/admin/login', adminIpAllowed, loginRateLimit, async (req, res) =>
   }
 
   const role = admin.role || 'Headmaster';
+  const suppliedDeviceId = String(req.body?.deviceId || '').trim().slice(0, 160);
+  const deviceId = suppliedDeviceId || 'unidentified-browser';
+  const deviceLabel = String(req.body?.deviceLabel || `${role}-PC`)
+    .trim()
+    .slice(0, 100) || `${role}-PC`;
+  if (!d.data.knownOfficeDevices || typeof d.data.knownOfficeDevices !== 'object') {
+    d.data.knownOfficeDevices = {};
+  }
+  if (!Array.isArray(d.data.loginHistory)) d.data.loginHistory = [];
+
+  const knownDeviceId = d.data.knownOfficeDevices[role];
+  // The first successful login establishes the office browser for that role.
+  // Later logins from another browser are retained as security alerts.
+  const unexpectedDevice = Boolean(knownDeviceId && knownDeviceId !== deviceId);
+  if (!knownDeviceId) d.data.knownOfficeDevices[role] = deviceId;
+
+  d.data.loginHistory.push({
+    id: `login-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    at: new Date().toISOString(),
+    role,
+    username: admin.username,
+    computer: deviceLabel,
+    ip: clientIp(req).replace(/^::ffff:/, ''),
+    unexpectedDevice,
+  });
+  d.data.loginHistory = d.data.loginHistory.slice(-200);
+  await d.write();
+
   const token = signToken({ sub: admin.id, username: admin.username, role });
   return res.json({
     token,
     role,
+    unexpectedDevice,
     dashboard: ROLE_DASHBOARD[role] || '/admin/login.html',
   });
 });
@@ -549,9 +587,12 @@ app.get('/api/dashboard', authRequired, adminIpAllowed, schoolStaffRequired, asy
     )
     .slice(0, 8);
   const recentActivity = proposals.slice(0, 8);
-  const newApplications = (d.data.applications || []).filter(
-    (app) => (app.status || 'new') === 'new'
-  ).length;
+  const newApplications = (d.data.applications || []).filter((app) => {
+    const type = app.type || 'student';
+    const status = normalizeApplicationStatus(type, app.status);
+    if (isEmploymentApplication(type)) return status === 'applied';
+    return status === 'new';
+  }).length;
   const unreadMessages = (d.data.messages || []).filter(
     (message) => messageBelongsToRecipient(message, req.user) && !message.readAt
   ).length;
@@ -782,6 +823,7 @@ function summarizeApplication(app) {
   const teaching = forms.teaching || {};
   const nonTeaching = forms.nonTeaching || {};
   const type = app.type || 'student';
+  const status = normalizeApplicationStatus(type, app.status);
 
   let contactName = '';
   let contactPhone = '';
@@ -799,7 +841,9 @@ function summarizeApplication(app) {
   return {
     id: app.id,
     type,
-    status: app.status || 'new',
+    status,
+    statusLabel: statusLabel(status),
+    isEmployment: isEmploymentApplication(type),
     submittedAt: app.submittedAt,
     applicantName: applicantDisplayName(app),
     studentName: student.fullName || student['student-full-name'] || applicantDisplayName(app),
@@ -807,7 +851,60 @@ function summarizeApplication(app) {
     parentPhone: contactPhone,
     position: teaching.position || nonTeaching.position || student.currentGrade || '',
     which: app.which || 'all-3',
+    registrationStartedAt: app.registrationStartedAt || null,
+    offerAcceptedAt: app.offerAcceptedAt || null,
   };
+}
+
+function appendApplicationStatusHistory(application, status, by, role) {
+  if (!Array.isArray(application.statusHistory)) application.statusHistory = [];
+  application.statusHistory.push({
+    status,
+    at: new Date().toISOString(),
+    by: by || '',
+    role: role || '',
+  });
+}
+
+function canUpdateStudentAdmission(role, fromStatus, nextStatus) {
+  if (nextStatus === 'archived') return true;
+  if (fromStatus === 'new' && nextStatus === 'manager_approved') return role === 'Manager';
+  if (fromStatus === 'manager_approved' && nextStatus === 'headmaster_approved') {
+    return role === 'Headmaster';
+  }
+  if (fromStatus === 'headmaster_approved' && nextStatus === 'admission_letter_printed') {
+    return role === 'Secretary';
+  }
+  return false;
+}
+
+function normalizeStoredApplication(app) {
+  if (!app || typeof app !== 'object') return app;
+  const type = app.type || 'student';
+  const status = normalizeApplicationStatus(type, app.status);
+  if (app.status !== status) app.status = status;
+  if (!Array.isArray(app.statusHistory) || !app.statusHistory.length) {
+    const initialStatus = isEmploymentApplication(type) ? 'applied' : 'new';
+    const registeredAt = app.submittedAt || new Date().toISOString();
+    app.statusHistory = [
+      {
+        status: initialStatus,
+        at: registeredAt,
+        by: 'system',
+        role: 'system',
+      },
+    ];
+    // Preserve the current stage of old records that predate activity logging.
+    if (status !== initialStatus) {
+      app.statusHistory.push({
+        status,
+        at: app.reviewedAt || registeredAt,
+        by: app.reviewedBy || 'system',
+        role: 'system',
+      });
+    }
+  }
+  return app;
 }
 
 app.post('/api/applications', async (req, res) => {
@@ -839,16 +936,26 @@ app.post('/api/applications', async (req, res) => {
     }
   }
 
+  const initialStatus = isEmploymentApplication(type) ? 'applied' : 'new';
+  const submittedAt = new Date().toISOString();
   const application = {
     id: `app-${Date.now()}`,
     type,
     which: body.which || (type === 'student' ? 'all-3' : `${type}-all`),
-    status: 'new',
-    submittedAt: new Date().toISOString(),
+    status: initialStatus,
+    submittedAt,
     forms: { ...forms },
     // Assigned to secretary inbox by default
     assignedTo: 'Secretary',
     notes: body.notes || '',
+    statusHistory: [
+      {
+        status: initialStatus,
+        at: submittedAt,
+        by: 'applicant',
+        role: 'applicant',
+      },
+    ],
   };
 
   d.data.applications = Array.isArray(d.data.applications) ? d.data.applications : [];
@@ -868,10 +975,20 @@ app.get(
   schoolStaffRequired,
   async (req, res) => {
     const d = await getDB();
+    let dirty = false;
 
     const applications = (d.data.applications || [])
+      .map((app) => {
+        const before = app.status;
+        const beforeHistoryLength = Array.isArray(app.statusHistory) ? app.statusHistory.length : 0;
+        normalizeStoredApplication(app);
+        if (app.status !== before || app.statusHistory.length !== beforeHistoryLength) dirty = true;
+        return app;
+      })
       .slice()
       .sort((a, b) => new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0));
+
+    if (dirty) await d.write();
 
     return res.json({ applications });
   }
@@ -887,6 +1004,7 @@ app.get(
 
     const application = (d.data.applications || []).find((item) => item.id === req.params.id);
     if (!application) return res.status(404).json({ error: 'Application not found' });
+    normalizeStoredApplication(application);
     return res.json({ application });
   }
 );
@@ -899,15 +1017,43 @@ app.put(
   async (req, res) => {
     const d = await getDB();
     const role = req.user?.role;
+    const actor = req.user?.username || role || '';
 
     const application = (d.data.applications || []).find((item) => item.id === req.params.id);
     if (!application) return res.status(404).json({ error: 'Application not found' });
+    normalizeStoredApplication(application);
 
     const nextStatus = req.body?.status;
-    if (nextStatus && ['new', 'reviewed', 'archived'].includes(nextStatus)) {
-      application.status = nextStatus;
-      application.reviewedBy = req.user?.username || role;
+    if (nextStatus) {
+      const type = application.type || 'student';
+      const currentStatus = normalizeApplicationStatus(type, application.status);
+      if (
+        !isEmploymentApplication(type) &&
+        !canUpdateStudentAdmission(role, currentStatus, nextStatus)
+      ) {
+        return res.status(403).json({ error: 'This admission step is not available for your role' });
+      }
+      const result = applyApplicationStatusChange(
+        type,
+        application.status,
+        nextStatus
+      );
+      if (!result.ok) {
+        return res.status(400).json({ error: result.error || 'Invalid status change' });
+      }
+
+      application.status = result.status;
+      application.reviewedBy = actor;
       application.reviewedAt = new Date().toISOString();
+      appendApplicationStatusHistory(application, result.status, actor, role);
+
+      if (result.status === 'accepted') {
+        application.offerAcceptedAt = application.reviewedAt;
+      }
+      if (result.registrationStarted) {
+        application.registrationStartedAt = application.reviewedAt;
+        application.registrationStartedBy = actor;
+      }
     }
 
     if (typeof req.body?.notes === 'string') {
@@ -1083,6 +1229,34 @@ app.patch('/api/messages/:id', authRequired, adminIpAllowed, async (req, res) =>
   return res.json({ ok: true, message });
 });
 
+// ---- Office computer health ----
+// A signed-in role dashboard sends a small heartbeat while it is open.  This is
+// intentionally a dashboard-presence signal, not a network scan: it accurately
+// answers whether the designated office computer can currently reach the school
+// server without exposing IP addresses to the Super Admin UI.
+app.post(
+  '/api/computer-health/heartbeat',
+  authRequired,
+  adminIpAllowed,
+  schoolStaffRequired,
+  async (req, res) => {
+    const d = await getDB();
+    const role = req.user?.role;
+    if (!MANAGED_ADMIN_ROLES.includes(role)) {
+      return res.status(403).json({ error: 'Computer health is only tracked for office roles' });
+    }
+    if (!d.data.computerHealth || typeof d.data.computerHealth !== 'object') {
+      d.data.computerHealth = {};
+    }
+    d.data.computerHealth[role] = {
+      lastSeenAt: new Date().toISOString(),
+      username: req.user?.username || role,
+    };
+    await d.write();
+    return res.json({ ok: true });
+  }
+);
+
 // ---- SuperAdmin: credential recovery + technical ops (no school workflows) ----
 function publicAdminSummary(admin) {
   return {
@@ -1093,6 +1267,24 @@ function publicAdminSummary(admin) {
 }
 
 const PRIMARY_ADMIN_IDS = { Secretary: 'sec-1', Manager: 'mgr-1', Headmaster: 'hm-1' };
+const COMPUTER_HEALTH_ROLES = ['Secretary', 'Manager', 'Headmaster'];
+const COMPUTER_ONLINE_WINDOW_MS = 90 * 1000;
+
+function officeComputerHealth(computerHealth) {
+  const now = Date.now();
+  const heartbeats = computerHealth && typeof computerHealth === 'object' ? computerHealth : {};
+  return COMPUTER_HEALTH_ROLES.map((role) => {
+    const record = heartbeats[role] || {};
+    const lastSeenAt = record.lastSeenAt || null;
+    const lastSeenMs = lastSeenAt ? new Date(lastSeenAt).getTime() : 0;
+    return {
+      role,
+      label: `${role} PC`,
+      online: Number.isFinite(lastSeenMs) && now - lastSeenMs <= COMPUTER_ONLINE_WINDOW_MS,
+      lastSeenAt,
+    };
+  });
+}
 
 function pickManagedAdmins(admins) {
   const list = Array.isArray(admins) ? admins : [];
@@ -1194,6 +1386,7 @@ app.get(
       port: PORT,
       node: process.version,
       dbFile,
+      officeComputers: officeComputerHealth(d.data.computerHealth),
       counts: {
         admins: (d.data.admins || []).length,
         proposals: (d.data.proposals || []).length,
@@ -1201,6 +1394,26 @@ app.get(
         newsItems: Array.isArray(newsItems) ? newsItems.length : 0,
         calendarDates: Object.keys(events).length,
       },
+    });
+  }
+);
+
+app.get(
+  '/api/super/login-history',
+  authRequired,
+  adminIpAllowed,
+  roleRequired('SuperAdmin'),
+  async (req, res) => {
+    const d = await getDB();
+    const history = Array.isArray(d.data.loginHistory) ? d.data.loginHistory : [];
+    const events = history
+      .filter((entry) => MANAGED_ADMIN_ROLES.includes(entry.role))
+      .slice()
+      .sort((a, b) => new Date(b.at || 0) - new Date(a.at || 0))
+      .slice(0, 20);
+    return res.json({
+      events,
+      unexpectedDeviceCount: events.filter((entry) => entry.unexpectedDevice).length,
     });
   }
 );

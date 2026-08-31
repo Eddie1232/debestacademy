@@ -1,9 +1,9 @@
 # TODO
 
-- [ ] Create `student/parent_platform.html` with relevant Student/Parent platform content.
-- [ ] Update the Students/Parents Platform button in `debest.html` to navigate to `student/parent_platform.html`.
+- [x] Create `student/parent_platform.html` with relevant Student/Parent platform content.
+- [x] Update the Students/Parents Platform button in `debest.html` to navigate to `student/parent_platform.html`.
 - [x] Align `students-and-parents-platforms.html` links/targets for consistency (optional step confirmed as yes).
-- [ ] Verify by opening `debest.html` and clicking the button.
+- [x] Verify the Students/Parents Platform button points to `student/parent_platform.html`.
 - [x] Add Terms Calendar to Student/Parent platform page.
 - [x] Add “ADMINS ONLY” button to open calendar editor.
 - [x] Admin login + restricted calendar editing (backend).

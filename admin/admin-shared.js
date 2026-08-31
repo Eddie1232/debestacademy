@@ -27,7 +27,7 @@
     ) {
       return location.origin;
     }
-    return 'http://127.0.0.1:5500';
+    return 'http://127.0.0.1:5501';
   }
 
   function getToken() {
@@ -44,6 +44,23 @@
       else localStorage.removeItem(JWT_STORAGE_KEY);
     } catch (e) {
       /* ignore */
+    }
+  }
+
+  function getDeviceId() {
+    const key = 'debest_office_device_id_v1';
+    try {
+      let id = localStorage.getItem(key);
+      if (!id) {
+        id =
+          typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+            ? crypto.randomUUID()
+            : `browser-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        localStorage.setItem(key, id);
+      }
+      return id;
+    } catch (e) {
+      return `browser-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     }
   }
 
@@ -151,7 +168,7 @@
     const res = await fetch(`${API_BASE}/api/admin/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({ username, password, deviceId: getDeviceId() }),
     });
     const rawText = await res.text().catch(() => '');
     let data = {};
@@ -235,6 +252,7 @@
     ROLE_DASHBOARD,
     getApiBase,
     getToken,
+    getDeviceId,
     setToken,
     clearSession,
     parseJwt,

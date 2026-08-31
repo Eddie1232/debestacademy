@@ -166,6 +166,74 @@
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
         gap: 10px;
       }
+      .computer-list {
+        display: grid;
+        gap: 10px;
+      }
+      .computer-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        padding: 12px 14px;
+        border: 1px solid #e8dcf2;
+        border-radius: 10px;
+        background: #fdf9fb;
+      }
+      .computer-name {
+        font-weight: 900;
+        color: #341f4d;
+      }
+      .computer-seen {
+        margin-top: 3px;
+        color: #6d587a;
+        font-size: 0.84rem;
+        font-weight: 600;
+      }
+      .computer-status {
+        flex: 0 0 auto;
+        font-weight: 900;
+        font-size: 0.9rem;
+      }
+      .computer-status.online {
+        color: #1f7a3d;
+      }
+      .computer-status.offline {
+        color: #b11f2e;
+      }
+      .login-history-list {
+        display: grid;
+        gap: 9px;
+      }
+      .login-event {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px 14px;
+        align-items: center;
+        padding: 11px 13px;
+        border: 1px solid #e8dcf2;
+        border-radius: 10px;
+        background: #fdf9fb;
+      }
+      .login-event.alert {
+        border-color: #e6a7ae;
+        background: #fff0f1;
+      }
+      .login-event-title {
+        color: #341f4d;
+        font-weight: 900;
+      }
+      .login-event-meta {
+        color: #6d587a;
+        font-weight: 600;
+        font-size: 0.84rem;
+        margin-top: 3px;
+      }
+      .login-alert {
+        color: #b11f2e;
+        font-weight: 900;
+        font-size: 0.82rem;
+      }
       .stat {
         background: #f5eef9;
         border-radius: 10px;
@@ -247,6 +315,24 @@
         </div>
       </section>
 
+      <section class="card" aria-labelledby="computer-health-title">
+        <h2 id="computer-health-title">Office computer health</h2>
+        <p class="hint">
+          A computer is online when its signed-in office dashboard has checked in within the last
+          90 seconds. This refreshes automatically.
+        </p>
+        <div id="computerHealthList" class="computer-list">Loading office computers…</div>
+      </section>
+
+      <section class="card" aria-labelledby="login-history-title">
+        <h2 id="login-history-title">Login history</h2>
+        <p class="hint">
+          Recent office logins, including the computer label and the IP address seen by the school
+          server. New browsers for an office role are highlighted as alerts.
+        </p>
+        <div id="loginHistoryList" class="login-history-list">Loading login history…</div>
+      </section>
+
       <section class="card" aria-labelledby="backup-title">
         <h2 id="backup-title">Data backup</h2>
         <p class="hint">
@@ -271,6 +357,8 @@
         const pageMsg = document.getElementById('pageMsg');
         const adminsList = document.getElementById('adminsList');
         const healthGrid = document.getElementById('healthGrid');
+        const computerHealthList = document.getElementById('computerHealthList');
+        const loginHistoryList = document.getElementById('loginHistoryList');
         const backupMsg = document.getElementById('backupMsg');
 
         document.getElementById('shellLogout')?.addEventListener('click', function (e) {
@@ -450,6 +538,38 @@
               );
             })
             .join('');
+          renderComputerHealth(data.officeComputers || []);
+        }
+
+        function formatLastSeen(value) {
+          if (!value) return 'No check-in yet';
+          const date = new Date(value);
+          return Number.isNaN(date.getTime()) ? 'No check-in yet' : 'Last check-in: ' + date.toLocaleString();
+        }
+
+        function renderComputerHealth(computers) {
+          const roles = ['Secretary', 'Manager', 'Headmaster'];
+          const byRole = {};
+          (Array.isArray(computers) ? computers : []).forEach(function (computer) {
+            byRole[computer.role] = computer;
+          });
+          computerHealthList.innerHTML = roles
+            .map(function (role) {
+              const computer = byRole[role] || { label: role + ' PC', online: false, lastSeenAt: null };
+              const online = computer.online === true;
+              return (
+                '<div class="computer-row"><div><div class="computer-name">' +
+                escapeHtml(computer.label || role + ' PC') +
+                '</div><div class="computer-seen">' +
+                escapeHtml(formatLastSeen(computer.lastSeenAt)) +
+                '</div></div><div class="computer-status ' +
+                (online ? 'online' : 'offline') +
+                '">' +
+                (online ? '● Online' : '● Offline') +
+                '</div></div>'
+              );
+            })
+            .join('');
         }
 
         function escapeHtml(str) {
@@ -474,6 +594,54 @@
               '<div class="stat"><div class="k">Error</div><div class="v">' +
               escapeHtml(err.message || 'Failed') +
               '</div></div>';
+          }
+        }
+
+        function renderLoginHistory(events) {
+          if (!events.length) {
+            loginHistoryList.textContent = 'No staff login activity recorded yet.';
+            return;
+          }
+          loginHistoryList.innerHTML = events
+            .map(function (event) {
+              const when = event.at ? new Date(event.at) : null;
+              const timestamp = when && !Number.isNaN(when.getTime()) ? when.toLocaleString() : 'Unknown time';
+              return (
+                '<div class="login-event' +
+                (event.unexpectedDevice ? ' alert' : '') +
+                '"><div><div class="login-event-title">' +
+                escapeHtml(event.role || 'Staff') +
+                ' · ' +
+                escapeHtml(event.username || 'Unknown user') +
+                '</div><div class="login-event-meta">' +
+                escapeHtml(timestamp) +
+                ' · Computer: ' +
+                escapeHtml(event.computer || 'Unknown') +
+                ' · IP: ' +
+                escapeHtml(event.ip || 'Unavailable') +
+                '</div></div>' +
+                (event.unexpectedDevice
+                  ? '<div class="login-alert">Unexpected device</div>'
+                  : '<div class="computer-status online">● Verified</div>') +
+                '</div>'
+              );
+            })
+            .join('');
+        }
+
+        async function loadLoginHistory() {
+          loginHistoryList.textContent = 'Loading login history…';
+          try {
+            const res = await fetch(apiBase() + '/api/super/login-history', {
+              headers: authHeaders(),
+            });
+            const data = await res.json().catch(function () {
+              return {};
+            });
+            if (!res.ok) throw new Error(data.error || 'Could not load login history');
+            renderLoginHistory(Array.isArray(data.events) ? data.events : []);
+          } catch (err) {
+            loginHistoryList.textContent = err.message || 'Could not load login history.';
           }
         }
 
@@ -518,6 +686,9 @@
 
         loadAdmins();
         loadHealth();
+        loadLoginHistory();
+        window.setInterval(loadHealth, 30000);
+        window.setInterval(loadLoginHistory, 30000);
       })();
     </script>
   </body>

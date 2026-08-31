@@ -147,6 +147,33 @@
         "date": "2026-07-27",
         "category": "Announcement",
         "publishedBy": "Comma"
+      },
+      {
+        "id": "permanent-sports-day",
+        "title": "Annual Sports Day Scheduled",
+        "body": "Join us on May 30th for our exciting Annual Sports Day, fostering sportsmanship and teamwork.",
+        "date": "2024-04-15",
+        "category": "Announcement",
+        "permanent": true,
+        "publishedBy": "DEBEST Academy"
+      },
+      {
+        "id": "permanent-library-opening",
+        "title": "New Library Opens",
+        "body": "We are delighted to announce the opening of our new state-of-the-art library facility to support learning.",
+        "date": "2024-03-20",
+        "category": "Announcement",
+        "permanent": true,
+        "publishedBy": "DEBEST Academy"
+      },
+      {
+        "id": "permanent-scholarships",
+        "title": "Scholarship Applications Now Open",
+        "body": "Apply today for scholarships for exceptional students spanning from Creche to JHS levels.",
+        "date": "2024-03-10",
+        "category": "Announcement",
+        "permanent": true,
+        "publishedBy": "DEBEST Academy"
       }
     ]
   },
@@ -645,7 +672,7 @@
     {
       "id": "app-1783640931185",
       "which": "all-3",
-      "status": "reviewed",
+      "status": "manager_approved",
       "submittedAt": "2026-07-09T23:48:51.185Z",
       "forms": {
         "student": {
@@ -666,13 +693,27 @@
       "assignedTo": "Secretary",
       "notes": "",
       "reviewedBy": "Comma",
-      "reviewedAt": "2026-07-16T01:31:10.073Z"
+      "reviewedAt": "2026-07-16T01:31:10.073Z",
+      "statusHistory": [
+        {
+          "status": "new",
+          "at": "2026-07-09T23:48:51.185Z",
+          "by": "system",
+          "role": "system"
+        },
+        {
+          "status": "manager_approved",
+          "at": "2026-07-16T01:31:10.073Z",
+          "by": "Comma",
+          "role": "system"
+        }
+      ]
     },
     {
       "id": "app-1784166190038",
       "type": "student",
       "which": "student-all",
-      "status": "reviewed",
+      "status": "manager_approved",
       "submittedAt": "2026-07-16T01:43:10.038Z",
       "forms": {
         "student": {
@@ -704,13 +745,27 @@
       "assignedTo": "Secretary",
       "notes": "",
       "reviewedBy": "Secretary",
-      "reviewedAt": "2026-07-17T23:51:14.620Z"
+      "reviewedAt": "2026-07-17T23:51:14.620Z",
+      "statusHistory": [
+        {
+          "status": "new",
+          "at": "2026-07-16T01:43:10.038Z",
+          "by": "system",
+          "role": "system"
+        },
+        {
+          "status": "manager_approved",
+          "at": "2026-07-17T23:51:14.620Z",
+          "by": "Secretary",
+          "role": "system"
+        }
+      ]
     },
     {
       "id": "app-1786392533961",
       "type": "student",
       "which": "student-all",
-      "status": "reviewed",
+      "status": "manager_approved",
       "submittedAt": "2026-08-10T20:08:53.961Z",
       "forms": {
         "student": {
@@ -742,13 +797,27 @@
       "assignedTo": "Secretary",
       "notes": "",
       "reviewedBy": "Secretary",
-      "reviewedAt": "2026-08-11T06:48:27.417Z"
+      "reviewedAt": "2026-08-11T06:48:27.417Z",
+      "statusHistory": [
+        {
+          "status": "new",
+          "at": "2026-08-10T20:08:53.961Z",
+          "by": "system",
+          "role": "system"
+        },
+        {
+          "status": "manager_approved",
+          "at": "2026-08-11T06:48:27.417Z",
+          "by": "Secretary",
+          "role": "system"
+        }
+      ]
     },
     {
       "id": "app-1786392698510",
       "type": "student",
       "which": "student-all",
-      "status": "reviewed",
+      "status": "manager_approved",
       "submittedAt": "2026-08-10T20:11:38.510Z",
       "forms": {
         "student": {
@@ -780,13 +849,27 @@
       "assignedTo": "Secretary",
       "notes": "",
       "reviewedBy": "Secretary",
-      "reviewedAt": "2026-08-11T06:48:20.635Z"
+      "reviewedAt": "2026-08-11T06:48:20.635Z",
+      "statusHistory": [
+        {
+          "status": "new",
+          "at": "2026-08-10T20:11:38.510Z",
+          "by": "system",
+          "role": "system"
+        },
+        {
+          "status": "manager_approved",
+          "at": "2026-08-11T06:48:20.635Z",
+          "by": "Secretary",
+          "role": "system"
+        }
+      ]
     },
     {
       "id": "app-1786394589411",
       "type": "student",
       "which": "student-all",
-      "status": "reviewed",
+      "status": "manager_approved",
       "submittedAt": "2026-08-10T20:43:09.411Z",
       "forms": {
         "student": {
@@ -818,13 +901,27 @@
       "assignedTo": "Secretary",
       "notes": "",
       "reviewedBy": "Secretary",
-      "reviewedAt": "2026-08-11T06:48:18.564Z"
+      "reviewedAt": "2026-08-11T06:48:18.564Z",
+      "statusHistory": [
+        {
+          "status": "new",
+          "at": "2026-08-10T20:43:09.411Z",
+          "by": "system",
+          "role": "system"
+        },
+        {
+          "status": "manager_approved",
+          "at": "2026-08-11T06:48:18.564Z",
+          "by": "Secretary",
+          "role": "system"
+        }
+      ]
     },
     {
       "id": "app-1786394643240",
       "type": "student",
       "which": "student-all",
-      "status": "reviewed",
+      "status": "manager_approved",
       "submittedAt": "2026-08-10T20:44:03.240Z",
       "forms": {
         "student": {
@@ -856,13 +953,27 @@
       "assignedTo": "Secretary",
       "notes": "",
       "reviewedBy": "Secretary",
-      "reviewedAt": "2026-08-11T06:48:15.467Z"
+      "reviewedAt": "2026-08-11T06:48:15.467Z",
+      "statusHistory": [
+        {
+          "status": "new",
+          "at": "2026-08-10T20:44:03.240Z",
+          "by": "system",
+          "role": "system"
+        },
+        {
+          "status": "manager_approved",
+          "at": "2026-08-11T06:48:15.467Z",
+          "by": "Secretary",
+          "role": "system"
+        }
+      ]
     },
     {
       "id": "app-1786395252305",
       "type": "student",
       "which": "student-all",
-      "status": "reviewed",
+      "status": "manager_approved",
       "submittedAt": "2026-08-10T20:54:12.327Z",
       "forms": {
         "student": {
@@ -894,13 +1005,27 @@
       "assignedTo": "Secretary",
       "notes": "",
       "reviewedBy": "Secretary",
-      "reviewedAt": "2026-08-11T06:48:11.566Z"
+      "reviewedAt": "2026-08-11T06:48:11.566Z",
+      "statusHistory": [
+        {
+          "status": "new",
+          "at": "2026-08-10T20:54:12.327Z",
+          "by": "system",
+          "role": "system"
+        },
+        {
+          "status": "manager_approved",
+          "at": "2026-08-11T06:48:11.566Z",
+          "by": "Secretary",
+          "role": "system"
+        }
+      ]
     },
     {
       "id": "app-1786400072214",
       "type": "student",
       "which": "student-all",
-      "status": "reviewed",
+      "status": "manager_approved",
       "submittedAt": "2026-08-10T22:14:32.214Z",
       "forms": {
         "student": {
@@ -932,7 +1057,211 @@
       "assignedTo": "Secretary",
       "notes": "",
       "reviewedBy": "Secretary",
-      "reviewedAt": "2026-08-11T06:48:06.794Z"
+      "reviewedAt": "2026-08-11T06:48:06.794Z",
+      "statusHistory": [
+        {
+          "status": "new",
+          "at": "2026-08-10T22:14:32.214Z",
+          "by": "system",
+          "role": "system"
+        },
+        {
+          "status": "manager_approved",
+          "at": "2026-08-11T06:48:06.794Z",
+          "by": "Secretary",
+          "role": "system"
+        }
+      ]
+    },
+    {
+      "id": "app-1786529786331",
+      "type": "teaching-staff",
+      "which": "teaching-all",
+      "status": "registered",
+      "submittedAt": "2026-08-12T10:16:26.331Z",
+      "forms": {
+        "teaching": {
+          "fullName": "MHE",
+          "dateOfBirth": "",
+          "gender": "",
+          "nationality": "",
+          "phone": "",
+          "email": "",
+          "position": "",
+          "campus": "",
+          "subjects": "",
+          "availability": "",
+          "address": ""
+        },
+        "teachingQualifications": {
+          "highestQualification": "",
+          "institution": "",
+          "yearCompleted": "",
+          "licence": "",
+          "yearsExperience": "",
+          "employer": "",
+          "experience": "",
+          "motivation": ""
+        },
+        "teachingReferees": {
+          "referee1Name": "",
+          "referee1Contact": "",
+          "referee1Relation": "",
+          "referee2Name": "",
+          "referee2Contact": "",
+          "referee2Relation": "",
+          "emergencyContact": "",
+          "declaration": "I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal."
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "statusHistory": [
+        {
+          "status": "applied",
+          "at": "2026-08-12T10:16:26.331Z",
+          "by": "applicant"
+        },
+        {
+          "status": "interviewed",
+          "at": "2026-08-12T10:17:50.943Z",
+          "by": "Secretary"
+        },
+        {
+          "status": "selected",
+          "at": "2026-08-12T10:18:42.127Z",
+          "by": "Secretary"
+        },
+        {
+          "status": "accepted",
+          "at": "2026-08-12T10:19:32.724Z",
+          "by": "Secretary"
+        },
+        {
+          "status": "registered",
+          "at": "2026-08-12T10:19:36.141Z",
+          "by": "Secretary"
+        }
+      ],
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-08-12T10:19:36.141Z",
+      "offerAcceptedAt": "2026-08-12T10:19:32.724Z",
+      "registrationStartedAt": "2026-08-12T10:19:36.141Z",
+      "registrationStartedBy": "Secretary"
+    },
+    {
+      "id": "app-1786533335128",
+      "type": "non-teaching-staff",
+      "which": "non-teaching-all",
+      "status": "registered",
+      "submittedAt": "2026-08-12T11:15:35.128Z",
+      "forms": {
+        "nonTeaching": {
+          "fullName": "Hehe",
+          "dateOfBirth": "",
+          "gender": "",
+          "nationality": "",
+          "phone": "",
+          "email": "",
+          "position": "",
+          "campus": "",
+          "availability": "",
+          "startDate": "",
+          "address": ""
+        },
+        "nonTeachingExperience": {
+          "education": "",
+          "certificates": "",
+          "yearsExperience": "",
+          "employer": "",
+          "skills": "",
+          "experience": "",
+          "motivation": ""
+        },
+        "nonTeachingReferees": {
+          "referee1Name": "",
+          "referee1Contact": "",
+          "referee1Relation": "",
+          "referee2Name": "",
+          "referee2Contact": "",
+          "referee2Relation": "",
+          "emergencyContact": "",
+          "declaration": "I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal."
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "statusHistory": [
+        {
+          "status": "applied",
+          "at": "2026-08-12T11:15:35.128Z",
+          "by": "applicant",
+          "role": "applicant"
+        },
+        {
+          "status": "interviewed",
+          "at": "2026-08-12T11:23:56.739Z",
+          "by": "Secretary",
+          "role": "Secretary"
+        },
+        {
+          "status": "selected",
+          "at": "2026-08-12T11:24:00.222Z",
+          "by": "Secretary",
+          "role": "Secretary"
+        },
+        {
+          "status": "accepted",
+          "at": "2026-08-12T11:24:01.834Z",
+          "by": "Secretary",
+          "role": "Secretary"
+        },
+        {
+          "status": "registered",
+          "at": "2026-08-12T11:24:03.508Z",
+          "by": "Secretary",
+          "role": "Secretary"
+        }
+      ],
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-08-12T11:24:03.508Z",
+      "offerAcceptedAt": "2026-08-12T11:24:01.834Z",
+      "registrationStartedAt": "2026-08-12T11:24:03.508Z",
+      "registrationStartedBy": "Secretary"
+    },
+    {
+      "id": "app-1786554176604",
+      "type": "student",
+      "which": "all-3",
+      "status": "archived",
+      "submittedAt": "2026-08-12T17:02:56.604Z",
+      "forms": {
+        "student": {
+          "fullName": "Test Student"
+        },
+        "parent": {
+          "fullName": "Parent",
+          "phone": "123"
+        }
+      },
+      "assignedTo": "Secretary",
+      "notes": "",
+      "statusHistory": [
+        {
+          "status": "new",
+          "at": "2026-08-12T17:02:56.604Z",
+          "by": "applicant",
+          "role": "applicant"
+        },
+        {
+          "status": "archived",
+          "at": "2026-08-13T14:51:57.959Z",
+          "by": "Secretary",
+          "role": "Secretary"
+        }
+      ],
+      "reviewedBy": "Secretary",
+      "reviewedAt": "2026-08-13T14:51:57.959Z"
     }
   ],
   "messages": [
@@ -1401,5 +1730,61 @@
       "createdAt": "2026-08-10T20:26:37.056Z",
       "readAt": null
     }
-  ]
+  ],
+  "knownOfficeDevices": {
+    "Secretary": "7520b842-4aa9-49bc-b8cd-5338dc078180"
+  },
+  "loginHistory": [
+    {
+      "id": "login-1786533396788-qtwfot",
+      "at": "2026-08-12T11:16:36.788Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": false
+    },
+    {
+      "id": "login-1786533787499-7mjsyd",
+      "at": "2026-08-12T11:23:07.499Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1786535189630-rltr5v",
+      "at": "2026-08-12T11:46:29.630Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1786536287321-nibtd9",
+      "at": "2026-08-12T12:04:47.321Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1786632690351-4d2xd4",
+      "at": "2026-08-13T14:51:30.351Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    }
+  ],
+  "computerHealth": {
+    "Secretary": {
+      "lastSeenAt": "2026-08-13T14:52:00.579Z",
+      "username": "Secretary"
+    }
+  }
 }

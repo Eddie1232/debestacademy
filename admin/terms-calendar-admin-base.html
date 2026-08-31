@@ -521,6 +521,127 @@
         color: #a42323;
       }
 
+      .status-badge.applied {
+        background: #e8f4ff;
+        color: #1c5aa6;
+      }
+
+      .status-badge.interviewed {
+        background: #efe8ff;
+        color: #5a3e72;
+      }
+
+      .status-badge.selected {
+        background: #fff3d6;
+        color: #8a5a00;
+      }
+
+      .status-badge.accepted {
+        background: #e6f7ec;
+        color: #1f7a3d;
+      }
+
+      .status-badge.registered {
+        background: #d9f5e5;
+        color: #0f5c2e;
+      }
+
+      .status-badge.declined {
+        background: #fde8e8;
+        color: #a42323;
+      }
+
+      /* Employment offer pipeline */
+      .offer-pipeline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 10px 0 14px;
+        padding: 10px 12px;
+        background: var(--admin-soft);
+        border: 1px solid var(--admin-border);
+        border-radius: 12px;
+      }
+
+      .offer-step {
+        flex: 1 1 90px;
+        min-width: 90px;
+        text-align: center;
+        padding: 8px 6px;
+        border-radius: 10px;
+        border: 1px dashed #d7cbe3;
+        background: #fff;
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: var(--admin-muted);
+        position: relative;
+      }
+
+      .offer-step .step-num {
+        display: block;
+        font-size: 0.65rem;
+        font-weight: 700;
+        margin-bottom: 2px;
+        opacity: 0.75;
+      }
+
+      .offer-step.done {
+        border-style: solid;
+        border-color: #9ed9b3;
+        background: #eefaf2;
+        color: #1f7a3d;
+      }
+
+      .offer-step.current {
+        border-style: solid;
+        border-color: var(--admin-accent);
+        background: #f3eafb;
+        color: var(--admin-accent);
+        box-shadow: 0 0 0 2px rgba(90, 62, 114, 0.12);
+      }
+
+      .offer-gate-note {
+        margin: 0 0 12px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: #fff8e8;
+        border: 1px solid #f0d9a0;
+        color: #6b4e12;
+        font-size: 0.88rem;
+        font-weight: 700;
+        line-height: 1.35;
+      }
+
+      .offer-gate-note.ready {
+        background: #eefaf2;
+        border-color: #9ed9b3;
+        color: #1f7a3d;
+      }
+
+      .offer-gate-note.done {
+        background: #e8f4ff;
+        border-color: #a8c8ea;
+        color: #1c5aa6;
+      }
+
+      .offer-history {
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid var(--admin-border);
+      }
+
+      .offer-history h4 {
+        margin: 0 0 8px;
+        font-size: 0.9rem;
+        color: var(--admin-accent);
+      }
+
+      .offer-history li {
+        margin: 4px 0;
+        font-size: 0.85rem;
+        color: var(--admin-muted);
+      }
+
       .danger {
         color: #b11f2e;
         font-weight: 900;
@@ -743,6 +864,63 @@
         </p>
       </div>
 
+      <!-- Create headline modal -->
+      <div
+        class="modal-backdrop"
+        id="createHeadlineModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="createHeadlineTitle"
+        hidden
+      >
+        <div class="modal">
+          <div class="modal-head">
+            <div>
+              <h3 id="createHeadlineTitle">Publish a school update</h3>
+              <p class="muted" style="margin: 4px 0 0">Share a clear, time-sensitive update with students and families.</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" data-close-modal="createHeadlineModal">
+              Close
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="field">
+                <label for="ch_title">Headline</label>
+                <input
+                  type="text"
+                  id="ch_title"
+                  maxlength="120"
+                  placeholder="e.g. Mid-term examinations begin Monday, 15 September"
+                  required
+                />
+              </div>
+            </div>
+            <div class="row" style="margin-top: 12px">
+              <div class="field">
+                <label for="ch_date">Publish date</label>
+                <input type="date" id="ch_date" />
+              </div>
+              <div class="field">
+                <label for="ch_expiresAt">Display until</label>
+                <input type="date" id="ch_expiresAt" required />
+                <small class="muted">The headline is hidden after this date.</small>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 12px">
+              <div class="field">
+                <label for="ch_body">Additional details <span class="muted">(optional)</span></label>
+                <textarea id="ch_body" rows="4" maxlength="500" placeholder="Include the affected classes, times, location, or any action families should take."></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-foot">
+            <button type="button" class="btn btn-sm" id="createHeadlineSubmit">Publish to news feed</button>
+            <button type="button" class="btn btn-ghost btn-sm" data-close-modal="createHeadlineModal">Cancel</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Main admin UI -->
       <div id="adminView" style="display: none">
         <header class="topbar">
@@ -759,6 +937,7 @@
               Messages
               <span class="tab-count" id="messageUnreadBadge" style="display: none">0</span>
             </a>
+            <button class="btn btn-sm" type="button" id="createHeadlineBtn" style="display: none">+ Create headline</button>
             <div class="menu" id="userMenu">
               <button
                 class="btn btn-ghost btn-sm"
@@ -857,7 +1036,7 @@
               <button type="button" class="dash-card" data-goto-tab="applications">
                 <h4>New applications</h4>
                 <div id="dashApplications" class="dash-value">0</div>
-                <div class="hint">Open applications →</div>
+                <div class="hint">New admissions + applied offers →</div>
               </button>
             </div>
 
@@ -893,7 +1072,11 @@
             <div class="panel-head">
               <div>
                 <h2>Applications inbox</h2>
-                <p>Student admission, teaching staff, and non-teaching staff submissions.</p>
+                <p>
+                  Student admissions plus employment offers. Staff hiring:
+                  <strong>Applied → Interviewed → Selected → Accepted → Registered</strong>.
+                  Registration starts only after the offer is accepted.
+                </p>
               </div>
               <div class="toolbar">
                 <label class="sr-only" for="appTypeFilter">Type</label>
@@ -906,8 +1089,21 @@
                 <label class="sr-only" for="appStatusFilter">Status</label>
                 <select id="appStatusFilter" title="Filter by status">
                   <option value="all">All statuses</option>
-                  <option value="new">New</option>
-                  <option value="reviewed">Reviewed</option>
+                  <optgroup label="Employment offer">
+                    <option value="applied">Applied</option>
+                    <option value="interviewed">Interviewed</option>
+                    <option value="selected">Selected</option>
+                    <option value="accepted">Accepted offer</option>
+                    <option value="registered">Registered</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="declined">Declined offer</option>
+                  </optgroup>
+                  <optgroup label="Student admission">
+                    <option value="new">Registered</option>
+                    <option value="manager_approved">Manager approved</option>
+                    <option value="headmaster_approved">Headmaster approved</option>
+                    <option value="admission_letter_printed">Admission letter printed</option>
+                  </optgroup>
                   <option value="archived">Archived</option>
                 </select>
                 <input type="search" id="appSearch" placeholder="Search name…" />
@@ -1299,7 +1495,7 @@
           /* ignore */
         }
         if (location.protocol.startsWith('http') && location.host) return location.origin;
-        return 'http://127.0.0.1:5500';
+        return 'http://127.0.0.1:5501';
       })();
 
       function clearSession() {
@@ -1387,6 +1583,17 @@
           return res && res.ok;
         } catch (e) {
           return false;
+        }
+      }
+
+      async function sendComputerHeartbeat() {
+        if (!activeRole || !getAuthToken()) return;
+        try {
+          await authedFetch(`${API_BASE}/api/computer-health/heartbeat`, {
+            method: 'POST',
+          });
+        } catch (e) {
+          // Health reporting must never interrupt normal dashboard work.
         }
       }
 
@@ -1648,6 +1855,15 @@
         if (el) el.textContent = activeRole || '—';
         const title = document.getElementById('pageTitle');
         if (title) title.textContent = `${activeRole || 'Admin'} dashboard`;
+        // Show create headline button for any school admin role
+        const createBtn = document.getElementById('createHeadlineBtn');
+        if (createBtn) {
+          if (activeRole === 'Secretary' || activeRole === 'Manager' || activeRole === 'Headmaster') {
+            createBtn.style.display = '';
+          } else {
+            createBtn.style.display = 'none';
+          }
+        }
       }
 
       function syncProposalToolbar() {
@@ -1923,6 +2139,220 @@
         return 'Student admission';
       }
 
+      function isEmploymentApp(appOrType) {
+        const type =
+          typeof appOrType === 'string' ? appOrType : appOrType?.type || 'student';
+        return type === 'teaching-staff' || type === 'non-teaching-staff';
+      }
+
+      const EMPLOYMENT_STAGES = [
+        'applied',
+        'interviewed',
+        'selected',
+        'accepted',
+        'registered',
+      ];
+
+      const APP_STATUS_LABELS = {
+        applied: 'Applied',
+        interviewed: 'Interviewed',
+        selected: 'Selected',
+        accepted: 'Accepted offer',
+        registered: 'Registered',
+        rejected: 'Rejected',
+        declined: 'Declined offer',
+        archived: 'Archived',
+        new: 'Registered',
+        manager_approved: 'Manager approved',
+        headmaster_approved: 'Headmaster approved',
+        admission_letter_printed: 'Admission letter printed',
+      };
+
+      function normalizeAppStatus(app) {
+        const type = app?.type || 'student';
+        let status = String(app?.status || '').trim();
+        if (isEmploymentApp(type)) {
+          if (!status || status === 'new') return 'applied';
+          if (status === 'reviewed') return 'interviewed';
+          return status;
+        }
+        if (status === 'reviewed') return 'manager_approved';
+        return status || 'new';
+      }
+
+      function applicationStatusLabel(status) {
+        return APP_STATUS_LABELS[status] || status || 'Unknown';
+      }
+
+      function applicationStatusClass(status) {
+        if (
+          ['manager_approved', 'headmaster_approved', 'admission_letter_printed', 'accepted', 'registered'].includes(
+            status
+          )
+        )
+          return 'approved';
+        if (status === 'rejected' || status === 'declined') return 'rejected';
+        if (status === 'archived' || status === 'draft') return 'draft';
+        if (status === 'selected') return 'selected';
+        if (status === 'interviewed') return 'interviewed';
+        if (status === 'applied' || status === 'new') return 'applied';
+        return status || 'review';
+      }
+
+      /** Primary next-step action for employment offers (one clear forward move). */
+      function getEmploymentNextAction(status) {
+        const map = {
+          applied: { status: 'interviewed', label: 'Mark interviewed' },
+          interviewed: { status: 'selected', label: 'Mark selected' },
+          selected: { status: 'accepted', label: 'Record offer accepted' },
+          accepted: { status: 'registered', label: 'Begin registration' },
+        };
+        return map[status] || null;
+      }
+
+      function employmentExitActions(status) {
+        if (status === 'registered' || status === 'archived' || status === 'rejected') {
+          return status === 'archived'
+            ? [{ status: 'applied', label: 'Re-open as Applied' }]
+            : [];
+        }
+        const actions = [
+          { status: 'rejected', label: 'Reject candidate' },
+          { status: 'archived', label: 'Archive' },
+        ];
+        if (status === 'selected' || status === 'accepted') {
+          actions.unshift({ status: 'declined', label: 'Offer declined' });
+        }
+        return actions;
+      }
+
+      function renderEmploymentPipeline(status) {
+        const currentIdx = EMPLOYMENT_STAGES.indexOf(status);
+        const isExit = ['rejected', 'declined', 'archived'].includes(status);
+        return `
+          <div class="offer-pipeline" role="list" aria-label="Employment offer progress">
+            ${EMPLOYMENT_STAGES.map((stage, index) => {
+              let state = 'upcoming';
+              if (!isExit && currentIdx >= 0) {
+                if (index < currentIdx) state = 'done';
+                else if (index === currentIdx) state = 'current';
+              } else if (isExit && index === 0) {
+                state = 'done';
+              }
+              return `<div class="offer-step ${state}" role="listitem">
+                <span class="step-num">${index + 1}</span>
+                ${escapeHtml(applicationStatusLabel(stage))}
+              </div>`;
+            }).join('')}
+          </div>
+        `;
+      }
+
+      function renderEmploymentGateNote(status) {
+        if (status === 'registered') {
+          return `<p class="offer-gate-note done">Registration is complete for this candidate.</p>`;
+        }
+        if (status === 'accepted') {
+          return `<p class="offer-gate-note ready">Offer accepted. You may now begin staff registration / onboarding.</p>`;
+        }
+        if (['rejected', 'declined', 'archived'].includes(status)) {
+          return `<p class="offer-gate-note">This employment offer is closed (${escapeHtml(
+            applicationStatusLabel(status)
+          )}). Registration does not apply.</p>`;
+        }
+        return `<p class="offer-gate-note">Registration begins only after the candidate accepts the offer. Current step: <strong>${escapeHtml(
+          applicationStatusLabel(status)
+        )}</strong>.</p>`;
+      }
+
+      function activityTimelineLabel(app, entry) {
+        const status = entry.status;
+        if (!isEmploymentApp(app) && status === 'new') return 'Registered';
+        return applicationStatusLabel(status);
+      }
+
+      function renderStatusHistory(app) {
+        const history = Array.isArray(app.statusHistory) ? app.statusHistory : [];
+        if (!history.length) {
+          return '<div class="offer-history"><h4>Activity timeline</h4><p class="muted">No activity recorded yet.</p></div>';
+        }
+        const items = history
+          .slice()
+          .reverse()
+          .map((entry) => {
+            const when = entry.at ? new Date(entry.at).toLocaleString() : '';
+            const by = entry.by ? ` · ${entry.role || entry.by}` : '';
+            return `<li><strong>${escapeHtml(
+              activityTimelineLabel(app, entry)
+            )}</strong> — ${escapeHtml(when)}${escapeHtml(by)}</li>`;
+          })
+          .join('');
+        return `<div class="offer-history"><h4>Activity timeline</h4><ul style="margin:0;padding-left:18px;">${items}</ul></div>`;
+      }
+
+      function applicationActionButtons(app, opts = {}) {
+        const compact = !!opts.compact;
+        const status = normalizeAppStatus(app);
+        const id = escapeHtml(app.id);
+        const btnClass = compact ? '' : 'btn btn-sm';
+        const softClass = compact ? '' : 'btn btn-soft btn-sm';
+        const ghostClass = compact ? '' : 'btn btn-ghost btn-sm';
+        const buttons = [];
+
+        if (isEmploymentApp(app)) {
+          const next = getEmploymentNextAction(status);
+          if (next) {
+            const primaryClass =
+              next.status === 'registered'
+                ? compact
+                  ? ''
+                  : 'btn btn-sm'
+                : btnClass;
+            buttons.push(
+              `<button type="button" class="${primaryClass}" data-app-action="${escapeHtml(
+                next.status
+              )}" data-app-id="${id}">${escapeHtml(next.label)}</button>`
+            );
+          }
+          employmentExitActions(status).forEach((action) => {
+            const cls =
+              action.status === 'rejected' || action.status === 'declined'
+                ? ghostClass
+                : softClass;
+            buttons.push(
+              `<button type="button" class="${cls}" data-app-action="${escapeHtml(
+                action.status
+              )}" data-app-id="${id}">${escapeHtml(action.label)}</button>`
+            );
+          });
+        } else {
+          if (status === 'new') {
+            if (activeRole === 'Manager') {
+              buttons.push(
+                `<button type="button" class="${btnClass}" data-app-action="manager_approved" data-app-id="${id}">Manager approve</button>`
+              );
+            }
+          }
+          if (status === 'manager_approved' && activeRole === 'Headmaster') {
+            buttons.push(
+              `<button type="button" class="${btnClass}" data-app-action="headmaster_approved" data-app-id="${id}">Headmaster approve</button>`
+            );
+          }
+          if (status === 'headmaster_approved' && activeRole === 'Secretary') {
+            buttons.push(
+              `<button type="button" class="${btnClass}" data-app-action="admission_letter_printed" data-app-id="${id}">Mark admission letter printed</button>`
+            );
+          }
+          if (status !== 'archived') {
+            buttons.push(
+              `<button type="button" class="${softClass}" data-app-action="archived" data-app-id="${id}">Archive</button>`
+            );
+          }
+        }
+
+        return buttons.join('');
+      }
+
       function applicationTitle(app) {
         const type = app.type || 'student';
         const forms = app.forms || {};
@@ -2054,7 +2484,9 @@
         const q = (document.getElementById('appSearch')?.value || '').trim().toLowerCase();
         let apps = Array.isArray(state.applications) ? state.applications.slice() : [];
         if (typeFilter !== 'all') apps = apps.filter((a) => (a.type || 'student') === typeFilter);
-        if (statusFilter !== 'all') apps = apps.filter((a) => (a.status || 'new') === statusFilter);
+        if (statusFilter !== 'all') {
+          apps = apps.filter((a) => normalizeAppStatus(a) === statusFilter);
+        }
         if (q) {
           apps = apps.filter((a) => applicationTitle(a).toLowerCase().includes(q));
         }
@@ -2068,7 +2500,10 @@
         if (!listEl) return;
 
         const allApps = Array.isArray(state.applications) ? state.applications : [];
-        const newCount = allApps.filter((a) => (a.status || 'new') === 'new').length;
+        const newCount = allApps.filter((a) => {
+          const status = normalizeAppStatus(a);
+          return isEmploymentApp(a) ? status === 'applied' : status === 'new';
+        }).length;
         if (dashEl) dashEl.textContent = String(newCount);
         if (tabCount) tabCount.textContent = String(newCount);
 
@@ -2086,9 +2521,8 @@
             const parent = forms.parent || {};
             const teaching = forms.teaching || {};
             const nonTeaching = forms.nonTeaching || {};
-            const status = app.status || 'new';
-            const statusClass =
-              status === 'reviewed' ? 'approved' : status === 'archived' ? 'draft' : 'review';
+            const status = normalizeAppStatus(app);
+            const statusClass = applicationStatusClass(status);
             const when = app.submittedAt ? new Date(app.submittedAt).toLocaleString() : 'recently';
             const title = applicationTitle(app);
             const typeLabel = applicationTypeLabel(type);
@@ -2097,49 +2531,42 @@
             const phone =
               type === 'student' ? parent.phone || '' : teaching.phone || nonTeaching.phone || '';
             const menuId = `app-menu-${escapeHtml(app.id)}`;
+            const next = isEmploymentApp(app) ? getEmploymentNextAction(status) : null;
+            const stageHint = isEmploymentApp(app)
+              ? `Offer: ${applicationStatusLabel(status)}`
+              : applicationStatusLabel(status);
 
             return `
             <div class="compact-row" data-application-id="${escapeHtml(app.id)}">
               <div class="compact-main">
                 <strong>${escapeHtml(title)}</strong>
                 <div>
-                  <span class="status-badge ${statusClass}">${escapeHtml(status)}</span>
+                  <span class="status-badge ${statusClass}">${escapeHtml(
+              applicationStatusLabel(status)
+            )}</span>
                   <span class="status-badge draft">${escapeHtml(typeLabel)}</span>
                 </div>
                 <div class="muted" style="margin-top:4px;">
                   ${escapeHtml(when)}${position ? ' • ' + escapeHtml(position) : ''}${
               phone ? ' • ' + escapeHtml(phone) : ''
-            }
+            }${isEmploymentApp(app) ? ' • ' + escapeHtml(stageHint) : ''}
                 </div>
               </div>
               <div class="row-actions">
                 <button class="btn btn-ghost btn-sm" type="button" data-view-app="${escapeHtml(
                   app.id
                 )}">View</button>
+                ${
+                  next
+                    ? `<button class="btn btn-sm" type="button" data-app-action="${escapeHtml(
+                        next.status
+                      )}" data-app-id="${escapeHtml(app.id)}">${escapeHtml(next.label)}</button>`
+                    : ''
+                }
                 <div class="menu" id="${menuId}">
                   <button class="btn btn-sm" type="button" data-menu-toggle="${menuId}">Actions ▾</button>
                   <div class="menu-panel">
-                    ${
-                      status === 'new'
-                        ? `<button type="button" data-app-action="reviewed" data-app-id="${escapeHtml(
-                            app.id
-                          )}">Mark reviewed</button>`
-                        : ''
-                    }
-                    ${
-                      status !== 'archived'
-                        ? `<button type="button" data-app-action="archived" data-app-id="${escapeHtml(
-                            app.id
-                          )}">Archive</button>`
-                        : ''
-                    }
-                    ${
-                      status === 'archived'
-                        ? `<button type="button" data-app-action="reviewed" data-app-id="${escapeHtml(
-                            app.id
-                          )}">Mark reviewed</button>`
-                        : ''
-                    }
+                    ${applicationActionButtons(app, { compact: true })}
                     <button type="button" data-view-app="${escapeHtml(
                       app.id
                     )}">Open details</button>
@@ -2155,34 +2582,59 @@
       function openApplicationModal(id) {
         const app = (state.applications || []).find((a) => a.id === id);
         if (!app) return;
-        const status = app.status || 'new';
-        const statusClass =
-          status === 'reviewed' ? 'approved' : status === 'archived' ? 'draft' : 'review';
+        const status = normalizeAppStatus(app);
+        const statusClass = applicationStatusClass(status);
+        const employment = isEmploymentApp(app);
         document.getElementById('appModalTitle').textContent = applicationTitle(app);
         document.getElementById('appModalMeta').innerHTML = `
-          <span class="status-badge ${statusClass}">${escapeHtml(status)}</span>
+          <span class="status-badge ${statusClass}">${escapeHtml(
+          applicationStatusLabel(status)
+        )}</span>
           <span class="status-badge draft">${escapeHtml(
             applicationTypeLabel(app.type || 'student')
           )}</span>
           ${app.submittedAt ? ' • ' + escapeHtml(new Date(app.submittedAt).toLocaleString()) : ''}
         `;
-        document.getElementById('appModalBody').innerHTML =
+
+        const detailHtml =
           formatApplicationDetail(app) || '<div class="empty-state">No details provided.</div>';
+        const employmentUi = employment
+          ? `${renderEmploymentPipeline(status)}${renderEmploymentGateNote(status)}`
+          : '';
+
+        let verificationHtml = '';
+        if (app.verification && app.verification.token) {
+          const v = app.verification;
+          verificationHtml = `
+            <div class="verification-block" style="margin-top:12px;padding:10px;border:1px dashed rgba(90,62,114,0.12);border-radius:6px;background:#fbf8fd">
+              <h4 style="margin:0 0 8px">Admission letter verification</h4>
+              <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                ${"" /* qr image if present */}
+                ${""}
+              </div>
+              <div style="margin-top:8px">
+                <div>Token: <strong>${escapeHtml(v.token || '')}</strong></div>
+                <div>Issued: <strong>${escapeHtml(v.issuedAt || '')}</strong></div>
+                <div>Printed by: <strong>${escapeHtml(v.printedBy || '')}</strong></div>
+                <div style="margin-top:8px"><button class="btn btn-soft btn-sm" type="button" onclick="window.open('${escapeHtml(
+                  v.url || ''
+                )}','_blank')">Open verification page / Print</button></div>
+              </div>
+            </div>
+          `;
+          // Inject QR image markup if available (keep data URL small in DOM)
+          if (v.qrDataUrl) {
+            verificationHtml = verificationHtml.replace(
+              '<!-- qr image if present -->',
+              `<img src="${escapeHtml(v.qrDataUrl)}" alt="QR code" style="width:120px;height:120px;border:1px solid #ddd;border-radius:6px;flex:0 0 auto">`
+            );
+          }
+        }
+
+        document.getElementById('appModalBody').innerHTML =
+          employmentUi + renderStatusHistory(app) + detailHtml + verificationHtml;
         document.getElementById('appModalActions').innerHTML = `
-          ${
-            status === 'new'
-              ? `<button type="button" class="btn btn-sm" data-app-action="reviewed" data-app-id="${escapeHtml(
-                  app.id
-                )}">Mark reviewed</button>`
-              : ''
-          }
-          ${
-            status !== 'archived'
-              ? `<button type="button" class="btn btn-soft btn-sm" data-app-action="archived" data-app-id="${escapeHtml(
-                  app.id
-                )}">Archive</button>`
-              : ''
-          }
+          ${applicationActionButtons(app)}
           <button type="button" class="btn btn-ghost btn-sm" data-close-modal="appModal">Close</button>
         `;
         openModal('appModal');
@@ -2639,6 +3091,8 @@
           await fetchApplicationsFromBackend();
           await fetchDashboardFromBackend();
           await refreshMessageNotification();
+          await sendComputerHeartbeat();
+          window.setInterval(sendComputerHeartbeat, 30000);
           syncProposalToolbar();
           syncActiveRoleUI();
           applyRoleVisibility();
@@ -2944,6 +3398,71 @@
         }
         updateModalFormFieldsForCategory();
         openModal('newProposalModal');
+      });
+
+      document.getElementById('createHeadlineBtn')?.addEventListener('click', () => {
+        const today = toISODate(new Date());
+        const d = document.getElementById('ch_date');
+        const expiresAt = document.getElementById('ch_expiresAt');
+        if (d && !d.value) d.value = today;
+        if (expiresAt) expiresAt.min = d?.value || today;
+        openModal('createHeadlineModal');
+      });
+
+      document.getElementById('ch_date')?.addEventListener('change', (event) => {
+        const expiresAt = document.getElementById('ch_expiresAt');
+        if (!expiresAt) return;
+        expiresAt.min = event.target.value;
+        if (expiresAt.value && expiresAt.value < event.target.value) expiresAt.value = event.target.value;
+      });
+
+      document.getElementById('createHeadlineSubmit')?.addEventListener('click', async () => {
+        const title = (document.getElementById('ch_title')?.value || '').trim();
+        const date = (document.getElementById('ch_date')?.value || '').trim() || toISODate(new Date());
+        const expiresAt = (document.getElementById('ch_expiresAt')?.value || '').trim();
+        const body = (document.getElementById('ch_body')?.value || '').trim();
+        const statusEl = document.getElementById('proposalStatus') || document.getElementById('pageMsg');
+
+        if (!title || !expiresAt || expiresAt < date) {
+          if (statusEl) {
+            statusEl.textContent = !title
+              ? 'Headline title is required'
+              : 'Choose a display end date on or after the publish date';
+            statusEl.style.color = '#b11f2e';
+          }
+          return;
+        }
+
+        try {
+          if (statusEl) {
+            statusEl.textContent = 'Publishing headline...';
+            statusEl.style.color = '#5a3e72';
+          }
+          const postRes = await authedFetch(`${API_BASE}/api/news/headline`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, body, date, expiresAt }),
+          });
+          if (!postRes.ok) {
+            const t = await postRes.text().catch(() => null);
+            throw new Error(t || 'Publish failed');
+          }
+
+          closeModal('createHeadlineModal');
+          document.getElementById('ch_title').value = '';
+          document.getElementById('ch_body').value = '';
+          document.getElementById('ch_expiresAt').value = '';
+          if (statusEl) {
+            statusEl.textContent = 'Headline published.';
+            statusEl.style.color = '#2d6a4f';
+          }
+          await fetchDashboardFromBackend();
+        } catch (err) {
+          if (statusEl) {
+            statusEl.textContent = err.message || 'Publish failed';
+            statusEl.style.color = '#b11f2e';
+          }
+        }
       });
 
       document.getElementById('dayModalProposeBtn')?.addEventListener('click', () => {

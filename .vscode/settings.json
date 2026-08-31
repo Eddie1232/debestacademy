@@ -1,5 +1,5 @@
 {
-  "liveServer.settings.port": 5502,
-  "githubPullRequests.pullRequestDescription": "Copilot",
-  "security.workspace.trust.untrustedFiles": "open"
+  "liveServer.settings.host": "0.0.0.0",
+"githubPullRequests.pullRequestDescription": "Copilot",
+"security.workspace.trust.untrustedFiles": "open"
 }

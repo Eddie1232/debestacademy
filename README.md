@@ -13,14 +13,15 @@ The project combines:
 ## Tech Stack
 
 - HTML, CSS, and JavaScript for the website UI
-- Node.js and Express for the local server and APIs
+- Node.js, Express, and TypeScript for the local server and APIs
 - JWT, bcrypt, and cookie support for admin authentication
-- lowdb for file-based JSON storage
+- PostgreSQL for persistent shared school data
 
 ## Prerequisites
 
 - Node.js 18+ recommended
 - npm
+- PostgreSQL 16+ (or Docker Desktop)
 
 ## Getting Started
 
@@ -31,16 +32,30 @@ The project combines:
    npm install
    ```
 
-3. Start the server:
+3. Start PostgreSQL. With Docker:
+
+   ```bash
+   docker compose up -d postgres
+   ```
+
+4. Copy `.env.example` to `.env`, then set a secure `JWT_SECRET` and the PostgreSQL password.
+
+5. Import the existing school data once (new installations can skip this):
+
+   ```bash
+   DATABASE_URL=postgresql://debest:change-this-password@localhost:5432/debest_academy npm run db:migrate-json
+   ```
+
+6. Start the TypeScript server:
 
    ```bash
    npm start
    ```
 
-4. Open the site in your browser at:
+7. Open the site in your browser at:
 
    ```text
-   http://localhost:5500/debest.html
+   http://localhost:5501/debest.html
    ```
 
 You can also run the server in development mode with:
@@ -56,12 +71,13 @@ npm run dev
 ├── admin/                  # Admin dashboard pages
 ├── student/                # Student and parent-facing pages
 ├── tests/                  # Node.js test files
-├── data.json               # File-based app data store
+├── scripts/                # PostgreSQL migration utilities
 ├── debest.html             # Main public homepage
 ├── debest.css              # Main stylesheet
 ├── debest.js               # Frontend scripts
 ├── proposal-workflow.js    # Proposal status and calendar update logic
-├── server.js               # Express server and REST API
+├── server.ts               # TypeScript Express server and REST API
+├── docker-compose.yml      # Local PostgreSQL service
 ├── package.json            # npm scripts and dependencies
 └── README.md               # Project documentation
 ```
@@ -82,7 +98,7 @@ npm run dev
               Dashboard    Dashboard   Dashboard
 ```
 
-**One host computer** runs the Node server. The other two admin PCs only use a browser. Everyone opens the same host URL so applications, proposals, and calendar data stay shared in `data.json`.
+**One host computer** runs the Node server and PostgreSQL. The other two admin PCs only use a browser. Everyone opens the same host URL so applications, proposals, and calendar data stay shared in PostgreSQL.
 
 ### Staff URLs
 
@@ -105,7 +121,7 @@ npm run dev
 | `SuperAdmin` | `SuperAdmin123` | SuperAdmin (IT — credentials + tech ops only) |
 | `admin`      | `Admin123`      | Headmaster (legacy)                           |
 
-Passwords are bcrypt-hashed in `data.json` (not stored in the frontend). See [README_ADMIN_LOGIN.md](README_ADMIN_LOGIN.md) for LAN setup and password resets.
+Passwords are bcrypt-hashed in PostgreSQL (not stored in the frontend). See [README_ADMIN_LOGIN.md](README_ADMIN_LOGIN.md) for LAN setup and password resets.
 
 ### Admin API (summary)
 
@@ -118,10 +134,10 @@ Passwords are bcrypt-hashed in `data.json` (not stored in the frontend). See [RE
 
 ### School network checklist
 
-1. Host PC: `npm start` (listens on `0.0.0.0:5500` by default).
+1. Host PC: `npm start` (listens on `0.0.0.0:5501` by default).
 2. Note host IP: `hostname -I`.
-3. Open firewall TCP **5500** on the host if needed.
-4. From each admin PC: `http://HOST_IP:5500/admin/login.html`
+3. Open firewall TCP **5501** on the host if needed.
+4. From each admin PC: `http://HOST_IP:5501/admin/login.html`
 5. Optional: set `JWT_SECRET` and `ADMIN_IP_ALLOWLIST` (see `.env.example`).
 
 ## Testing
@@ -137,8 +153,8 @@ node --test tests/proposal-workflow.test.js
 ## Notes
 
 - The server serves the project root as static content, so pages such as `debest.html` and `photo.html` are available directly.
-- If port `5500` is already in use, set a different port with `PORT=8080 npm start`.
-- The app uses a JSON file as its data store, so changes made through the UI are stored locally in `data.json`.
+- If port `5501` is already in use, set a different port with `PORT=8080 npm start`.
+- The app stores its shared data in PostgreSQL. `data.json` is retained only as a one-time migration source.
 
 ## Contributing
 
