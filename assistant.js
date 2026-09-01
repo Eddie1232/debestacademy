@@ -1,6 +1,7 @@
 (function () {
   if (window.__debestAssistantMounted) return;
-  if ((window.location.pathname || '').includes('/admin/')) return;
+  const pagePath = window.location.pathname || '';
+  if (pagePath.endsWith('/admin/login.html') || pagePath.endsWith('/admin/login')) return;
   window.__debestAssistantMounted = true;
 
   function assetBase() {
@@ -8,7 +9,9 @@
     if (script && script.src) return script.src.replace(/assistant\.js(\?.*)?$/, '');
     const tagged = document.querySelector('script[src*="assistant.js"]');
     if (tagged && tagged.src) return tagged.src.replace(/assistant\.js(\?.*)?$/, '');
-    return (window.location.pathname || '').includes('/student/') ? '../' : './';
+    const path = window.location.pathname || '';
+    if (path.includes('/admin/')) return '../';
+    return path.includes('/student/') ? '../' : './';
   }
 
   function apiBase() {
@@ -31,14 +34,14 @@
   }
 
   const SUGGESTIONS = [
-    { label: 'School hours', question: 'What are the school hours?' },
-    { label: 'How to apply', question: 'How do I apply for admission?' },
-    { label: 'Contact the office', question: 'How can I contact the school office?' },
-    { label: 'Uniforms', question: 'Are uniforms required?' },
+    { label: 'Admissions', question: 'How do I apply for admission?' },
+    { label: 'Documents', question: 'What documents do I need to enroll my child?' },
+    { label: 'School tour', question: 'Can I book a school tour or visit the campus?' },
+    { label: 'Contact office', question: 'How can I contact the school office?' },
   ];
 
   const WELCOME =
-    'Hello! I can help with admissions, school hours, uniforms, fees, campuses, and how to reach DEBEST Academy. Ask a question or pick a topic below.';
+    'Hello! I’m DEBEST Academy’s admissions and school-life assistant. I can help with enrollment, tours, school hours, contact details, and campus information.';
 
   function mount() {
     const base = assetBase();
@@ -53,7 +56,7 @@
       '<path d="M4 12a8 8 0 0 1 8-8h0a8 8 0 0 1 8 8v2.2a3.8 3.8 0 0 1-3.8 3.8H11l-4.2 3v-3A8 8 0 0 1 4 14.2Z"/>' +
       '<path d="M9 12h.01M12 12h.01M15 12h.01"/>' +
       '</svg></span>' +
-      '<span class="debest-assistant__toggle-label">Ask DEBEST</span>' +
+      '<span class="debest-assistant__toggle-label">Ask DEBEST AI</span>' +
       '</button>' +
       '<section id="debest-assistant-panel" class="debest-assistant__panel" role="dialog" aria-labelledby="debest-assistant-title" hidden>' +
       '<header class="debest-assistant__header">' +
@@ -83,6 +86,21 @@
 
     const history = [];
 
+    function setOpen(open) {
+      root.classList.toggle('is-open', open);
+      panel.hidden = !open;
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('title', open ? 'Collapse assistant' : 'Ask DEBEST AI');
+      toggle.setAttribute('aria-label', open ? 'Collapse DEBEST assistant' : 'Open DEBEST assistant');
+      if (open) {
+        input.focus();
+      } else {
+        toggle.focus();
+      }
+    }
+
+    setOpen(false);
+
     function addBubble(role, text, pending) {
       const article = document.createElement('article');
       article.className = 'debest-assistant__bubble debest-assistant__bubble--' + role;
@@ -105,17 +123,6 @@
       });
       suggestionsEl.appendChild(button);
     });
-
-    function setOpen(open) {
-      root.classList.toggle('is-open', open);
-      panel.hidden = !open;
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      if (open) {
-        input.focus();
-      } else {
-        toggle.focus();
-      }
-    }
 
     toggle.addEventListener('click', function () {
       setOpen(panel.hidden);
@@ -141,7 +148,10 @@
       const pending = addBubble('assistant', '', true);
 
       try {
-        const res = await fetch(apiBase() + '/api/assistant', {
+        const assistantEndpoint = (window.location.pathname || '').includes('/admin/')
+          ? apiBase() + '/api/admin/assistant'
+          : apiBase() + '/api/assistant';
+        const res = await fetch(assistantEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ messages: history }),

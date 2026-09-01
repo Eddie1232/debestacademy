@@ -74,6 +74,11 @@ const FAQ_ANSWERS = [
       'Start on the Apply page (apply.html) and complete the student admission form. You will also need past school records, a birth certificate, and a parent/guardian meeting. After submitting online, print and bring signed copies to the office within one week where required. You can also call 0244 669 383 or 0244 802 748.',
   },
   {
+    keys: ['document', 'documents', 'birth certificate', 'records', 'enroll', 'enrol', 'enrollment', 'visit', 'tour'],
+    answer:
+      'For enrollment, parents usually need the application form, past school records, a birth certificate, and a parent or guardian meeting. You can also book a school tour by calling the office or requesting a visit through the contact form.',
+  },
+  {
     keys: ['scholarship', 'bursary', 'financial aid'],
     answer:
       'Scholarship applications go through the admissions office. Awards consider academic performance, exam results, and financial need. Call the office or use the contact form to start.',
@@ -240,12 +245,65 @@ function localAnswer(messages) {
   return fallbackReply();
 }
 
+const ADMIN_FAQ_ANSWERS = [
+  {
+    keys: ['admission', 'application', 'enrol', 'enroll', 'parent meeting', 'records', 'supporting documents'],
+    answer:
+      'Guide the parent to complete the online application, collect the required records and birth certificate, and arrange the parent/guardian meeting. If needed, follow up with the office and ask them to bring signed copies to the school within one week.',
+  },
+  {
+    keys: ['tour', 'visit', 'campus', 'school tour', 'parent visit'],
+    answer:
+      'Offer a tour or campus visit by coordinating with the school office. Families can request a visit when they apply or call to book a time during working hours.',
+  },
+  {
+    keys: ['scholarship', 'financial need', 'support', 'bursary'],
+    answer:
+      'Scholarship requests are routed through the admissions office. Encourage parents to share academic records, examination results, and financial information so the committee can assess their request.',
+  },
+  {
+    keys: ['transfer', 'withdraw', 'leave', 'records', 'previous school'],
+    answer:
+      'For transfers or withdrawals, ask the family to contact admissions and provide prior school records and approvals. This helps the office complete the process smoothly and on time.',
+  },
+  {
+    keys: ['complaint', 'concern', 'issue', 'discipline', 'safeguarding'],
+    answer:
+      'Escalate concerns through the school administration or the contact form. For urgent matters, advise families to call the office directly during working hours.',
+  },
+];
+
 function fallbackReply() {
   return (
     'I do not have that specific detail here. Please call the school office on 0244 669 383 or 0244 802 748 ' +
     '(Monday–Friday, 7:45 AM–3:00 PM), use WhatsApp at https://wa.me/233244669383, or send a message on the Contact page. ' +
     'You can also browse the FAQ page for common answers.'
   );
+}
+
+function adminLocalAnswer(messages) {
+  const question = lastUserText(messages);
+  const normalized = normalizeText(question);
+
+  if (!normalized) {
+    return localAnswer(messages);
+  }
+
+  let best = null;
+  let bestScore = 0;
+  for (const entry of ADMIN_FAQ_ANSWERS) {
+    let score = 0;
+    for (const key of entry.keys) {
+      if (normalized.includes(key)) score += key.split(' ').length;
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      best = entry;
+    }
+  }
+
+  if (best && bestScore >= 1) return best.answer;
+  return localAnswer(messages);
 }
 
 function formatNews(news) {
@@ -377,6 +435,25 @@ async function callXai(messages, systemPrompt, deps) {
   return text;
 }
 
+function buildAdminSystemPrompt(context) {
+  const news = formatNews(context && context.news);
+  const calendar = formatUpcomingEvents(context && context.termCalendar);
+  return `You are the staff assistant for DEBEST Academy.
+Support the school office, admissions team, and administrators with clear, practical guidance for parents, applicants, and school operations.
+Use only the verified school facts below and the latest news/calendar items. When a detail is missing, say so and encourage staff to use the office or official forms.
+Do not invent fee amounts, child records, or private information.
+Keep replies brief, professional, and parent-friendly.
+
+SCHOOL FACTS:
+${SCHOOL_FACTS}
+
+LATEST NEWS:
+${news}
+
+UPCOMING CALENDAR:
+${calendar}`;
+}
+
 async function handleAssistantChat(body, context, deps) {
   const parsed = parseMessages(body);
   if (parsed.error) return parsed;
@@ -389,6 +466,20 @@ async function handleAssistantChat(body, context, deps) {
   }
 
   return { reply: localAnswer(parsed.messages), source: 'local' };
+}
+
+async function handleAdminAssistantChat(body, context, deps) {
+  const parsed = parseMessages(body);
+  if (parsed.error) return parsed;
+
+  try {
+    const ai = await callXai(parsed.messages, buildAdminSystemPrompt(context || {}), deps);
+    if (ai) return { reply: ai, source: 'ai' };
+  } catch (err) {
+    console.error('[assistant:admin] model error:', err && err.message ? err.message : err);
+  }
+
+  return { reply: adminLocalAnswer(parsed.messages), source: 'local' };
 }
 
 const assistantRequestCounts = new Map();
@@ -420,8 +511,11 @@ module.exports = {
   SCHOOL_FACTS,
   parseMessages,
   localAnswer,
+  adminLocalAnswer,
   buildSystemPrompt,
+  buildAdminSystemPrompt,
   handleAssistantChat,
+  handleAdminAssistantChat,
   assistantRateLimit,
   formatNews,
   formatUpcomingEvents,

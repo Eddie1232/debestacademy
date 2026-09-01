@@ -4,6 +4,7 @@ const {
   parseMessages,
   localAnswer,
   handleAssistantChat,
+  handleAdminAssistantChat,
   formatNews,
   formatUpcomingEvents,
   extractChatText,
@@ -50,6 +51,26 @@ test('localAnswer does not invent fee amounts', () => {
 test('localAnswer greets visitors', () => {
   const reply = localAnswer([{ role: 'user', content: 'Hello' }]);
   assert.match(reply, /DEBEST/i);
+});
+
+test('localAnswer covers enrollment documents and tours', () => {
+  const reply = localAnswer([
+    { role: 'user', content: 'What documents do I need to enroll my child and can I book a tour?' },
+  ]);
+  assert.match(reply, /birth certificate|application form/i);
+  assert.match(reply, /tour|visit|office/i);
+});
+
+test('handleAdminAssistantChat helps staff with admissions and office guidance', async () => {
+  const result = await handleAdminAssistantChat(
+    { messages: [{ role: 'user', content: 'How do I guide a parent through admission?' }] },
+    { news: { items: [] }, termCalendar: { events: {} } },
+    { apiKey: '', fetch: async () => {
+      throw new Error('should not call the model without a key');
+    } }
+  );
+  assert.equal(result.source, 'local');
+  assert.match(result.reply, /apply|admission|parent|records/i);
 });
 
 test('handleAssistantChat uses local fallback without an API key', async () => {

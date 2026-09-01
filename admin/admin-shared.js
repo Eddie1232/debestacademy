@@ -247,6 +247,24 @@
     }
   }
 
+  function mountAdminAssistant() {
+    const path = typeof window !== 'undefined' ? (window.location.pathname || '') : '';
+    if (!path.includes('/admin/') || path.endsWith('/admin/login.html') || path.endsWith('/admin/login')) {
+      return;
+    }
+    if (document.querySelector('script[src*="assistant.js"]')) return;
+    const script = document.createElement('script');
+    script.src = '../assistant.js';
+    script.defer = true;
+    (document.body || document.documentElement).appendChild(script);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountAdminAssistant, { once: true });
+  } else {
+    mountAdminAssistant();
+  }
+
   global.DebestAdmin = {
     JWT_STORAGE_KEY,
     ROLE_DASHBOARD,

@@ -3,46 +3,60 @@
   right: 20px;
   bottom: 20px;
   z-index: 1400;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 10px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #4b3b4f;
+  color: #1c2f4a;
+}
+
+.debest-assistant__panel[hidden] {
+  display: none !important;
 }
 
 .debest-assistant__toggle {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   border: none;
   cursor: pointer;
-  background: #5a3e72;
-  color: #fff8f0;
+  background: linear-gradient(135deg, #1f3c6b, #d8a846);
+  color: #fffaf2;
   border-radius: 999px;
-  padding: 12px 18px 12px 14px;
-  font-weight: 700;
+  padding: 9px 14px 9px 10px;
+  font-weight: 800;
   letter-spacing: 0.04em;
-  box-shadow: 0 10px 28px rgba(90, 62, 114, 0.35);
+  box-shadow: 0 10px 28px rgba(31, 60, 107, 0.28);
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  max-width: 100%;
+  line-height: 1.2;
+  white-space: nowrap;
 }
 
 .debest-assistant__toggle:hover,
 .debest-assistant__toggle:focus {
-  background: #7e628f;
+  background: linear-gradient(135deg, #16335d, #c79230);
   transform: translateY(-1px);
   outline: none;
-  box-shadow: 0 12px 30px rgba(90, 62, 114, 0.42);
+  box-shadow: 0 12px 30px rgba(31, 60, 107, 0.32);
 }
 
 .debest-assistant__icon {
   display: inline-flex;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   align-items: center;
   justify-content: center;
   background: rgba(255, 248, 240, 0.14);
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.debest-assistant.is-open .debest-assistant__toggle {
-  display: none;
+.debest-assistant__toggle-label {
+  display: inline-block;
+  font-size: 0.74rem;
+  white-space: nowrap;
 }
 
 .debest-assistant__panel {
@@ -55,6 +69,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  margin-bottom: 12px;
 }
 
 .debest-assistant__header {
@@ -63,8 +78,8 @@
   justify-content: space-between;
   gap: 12px;
   padding: 16px 16px 12px;
-  background: linear-gradient(135deg, #f1e9f6, #bfa5c7);
-  color: #341f4d;
+  background: linear-gradient(135deg, #f9f0d5, #d8a846);
+  color: #1c2f4a;
 }
 
 .debest-assistant__header h2 {
@@ -76,8 +91,8 @@
 .debest-assistant__header p {
   margin: 4px 0 0;
   font-size: 0.82rem;
-  color: #5a3e72;
-  font-weight: 600;
+  color: #20395e;
+  font-weight: 700;
 }
 
 .debest-assistant__close {
@@ -147,9 +162,9 @@
 }
 
 .debest-assistant__chip {
-  border: 1px solid #5a3e72;
+  border: 1px solid #1f3c6b;
   background: transparent;
-  color: #5a3e72;
+  color: #1f3c6b;
   border-radius: 999px;
   padding: 6px 10px;
   font-size: 0.75rem;
@@ -159,8 +174,8 @@
 
 .debest-assistant__chip:hover,
 .debest-assistant__chip:focus {
-  background: #5a3e72;
-  color: #fff8f0;
+  background: #1f3c6b;
+  color: #fffaf2;
   outline: none;
 }
 
@@ -226,13 +241,15 @@
     bottom: 12px;
   }
 
-  .debest-assistant__toggle-label {
-    display: none;
+  .debest-assistant__toggle {
+    padding: 8px 12px 8px 9px;
+    border-radius: 999px;
   }
 
-  .debest-assistant__toggle {
-    padding: 12px;
-    border-radius: 50%;
+  .debest-assistant__toggle-label {
+    display: inline-block;
+    font-size: 0.74rem;
+    white-space: nowrap;
   }
 
   .debest-assistant__panel {
