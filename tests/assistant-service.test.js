@@ -53,12 +53,12 @@ test('localAnswer greets visitors', () => {
   assert.match(reply, /DEBEST/i);
 });
 
-test('localAnswer covers enrollment documents and tours', () => {
+test('localAnswer directs families to verify current enrollment documents', () => {
   const reply = localAnswer([
     { role: 'user', content: 'What documents do I need to enroll my child and can I book a tour?' },
   ]);
-  assert.match(reply, /birth certificate|application form/i);
-  assert.match(reply, /tour|visit|office/i);
+  assert.match(reply, /apply\.html|admissions/i);
+  assert.match(reply, /current document checklist/i);
 });
 
 test('handleAdminAssistantChat helps staff with admissions and office guidance', async () => {

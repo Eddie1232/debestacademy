@@ -140,6 +140,38 @@ function applyProposalToNews(items, proposal) {
   return nextItems;
 }
 
+function addNewsItem(items, newsItem) {
+  const nextItems = Array.isArray(items) ? [...items] : [];
+  if (!newsItem || typeof newsItem !== 'object') return nextItems;
+
+  const item = {
+    id: newsItem.id || `news-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+    title: String(newsItem.title || 'News update').trim() || 'News update',
+    body: String(newsItem.body || '').trim(),
+    date: String(newsItem.date || new Date().toISOString().slice(0, 10)).trim(),
+    expiresAt: String(newsItem.expiresAt || newsItem.date || new Date().toISOString().slice(0, 10)).trim(),
+    category: newsItem.category || 'Announcement',
+    publishedBy: newsItem.publishedBy || 'Admin',
+    createdAt: newsItem.createdAt || new Date().toISOString(),
+  };
+
+  const existingIndex = nextItems.findIndex((entry) => entry.id === item.id);
+  if (existingIndex >= 0) {
+    nextItems[existingIndex] = item;
+  } else {
+    nextItems.unshift(item);
+  }
+
+  return nextItems;
+}
+
+function removeNewsItem(items, id) {
+  const nextItems = Array.isArray(items) ? [...items] : [];
+  const targetId = String(id || '').trim();
+  if (!targetId) return nextItems;
+  return nextItems.filter((item) => String(item?.id || '') !== targetId);
+}
+
 module.exports = {
   PROPOSAL_STATUSES,
   getNextStatus,
@@ -147,6 +179,8 @@ module.exports = {
   isFinalApprovedStatus,
   applyProposalToEvents,
   applyProposalToNews,
+  addNewsItem,
+  removeNewsItem,
   syncApprovedCalendarEvents,
   calendarEventsEqual,
 };

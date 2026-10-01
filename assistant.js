@@ -67,6 +67,7 @@
       '<div class="debest-assistant__messages" aria-live="polite"></div>' +
       '<div class="debest-assistant__suggestions"></div>' +
       '<form class="debest-assistant__form">' +
+      '<label class="debest-assistant__consent" for="debest-assistant-consent"><input id="debest-assistant-consent" type="checkbox" required /> I agree to send my question for an assistant response. Do not include sensitive details about a child. <a href="' + base + 'policies.html#third-parties">Privacy details</a></label>' +
       '<label class="visually-hidden" for="debest-assistant-input">Your question</label>' +
       '<input id="debest-assistant-input" type="text" maxlength="1000" autocomplete="off" placeholder="Ask a question..." />' +
       '<button type="submit" class="debest-assistant__send">Send</button>' +
@@ -81,6 +82,7 @@
     const messagesEl = root.querySelector('.debest-assistant__messages');
     const suggestionsEl = root.querySelector('.debest-assistant__suggestions');
     const form = root.querySelector('.debest-assistant__form');
+    const consent = root.querySelector('#debest-assistant-consent');
     const input = root.querySelector('#debest-assistant-input');
     const sendBtn = root.querySelector('.debest-assistant__send');
 
@@ -137,6 +139,10 @@
     async function sendQuestion(text) {
       const question = String(text || '').trim();
       if (!question) return;
+      if (!consent.checked) {
+        consent.focus();
+        return;
+      }
       if (panel.hidden) setOpen(true);
 
       addBubble('user', question);

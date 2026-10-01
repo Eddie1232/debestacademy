@@ -6,6 +6,7 @@
     <title>Application Forms - DEBEST Academy</title>
     <link rel="stylesheet" href="./debest.css" />
     <link rel="stylesheet" href="./forms-modal.css" />
+    <script src="./debest.js" defer></script>
   </head>
   <body>
     <header>
@@ -13,7 +14,7 @@
         <img src="./debestcrest.jpg" alt="DEBEST Crest" />
       </div>
       <h1>DEBEST ACADEMY</h1>
-      <a class="home-btn" href="apply.html" aria-label="Back to Apply page" title="Back">↩️</a>
+      <a class="back-btn" href="apply.html" aria-label="Go back" title="Back" onclick="if (history.length > 1) { event.preventDefault(); history.back(); }">←</a>
     </header>
 
     <main class="forms-container" role="main">
@@ -42,7 +43,6 @@
           </svg>
         </div>
         <div class="checkmark-label">Submitted successfully</div>
-        <div class="interview-message" aria-hidden="true"></div>
       </div>
 
       <nav class="form-tabs no-print" role="tablist" aria-label="Form categories">
@@ -112,101 +112,40 @@
                 <input
                   type="text"
                   name="student-full-name"
+                  required
                   placeholder="e.g., John Doe"
                   autocomplete="name"
                 />
               </label>
               <label>
-                Date of Birth
-                <input type="date" name="student-dob" />
+                Date of Birth *
+                <input type="date" name="student-dob" required autocomplete="bday" />
               </label>
               <label>
-                Current Grade / Class
-                <input type="text" name="student-current-grade" placeholder="e.g., KG1" />
+                Grade / Class Applying For *
+                <input type="text" name="student-current-grade" required placeholder="e.g., KG1" />
               </label>
               <label>
-                Gender
-                <select name="student-gender">
-                  <option value="">Select</option>
-                  <option>Male</option>
-                  <option>Female</option>
-                </select>
-              </label>
-              <label>
-                Nationality
-                <input type="text" name="student-nationality" placeholder="e.g., Ghanaian" />
-              </label>
-              <label>
-                Preferred Campus
-                <select name="student-campus">
+                Preferred Campus *
+                <select name="student-campus" required>
                   <option value="">Select</option>
                   <option>Dansoman</option>
                   <option>Kasoa</option>
                   <option>Either / Not sure</option>
                 </select>
               </label>
-              <label class="span-2">
-                Home Address
-                <textarea
-                  name="student-home-address"
-                  rows="2"
-                  placeholder="Write full home address"
-                ></textarea>
-              </label>
             </div>
           </section>
 
           <section class="a4-section" aria-labelledby="stu-sec-b">
-            <h4 id="stu-sec-b" class="a4-section-title">B. Health records</h4>
+            <h4 id="stu-sec-b" class="a4-section-title">B. Parent / guardian</h4>
             <div class="form-field-grid">
               <label>
-                Student Full Name
-                <input type="text" name="health-student-full-name" placeholder="e.g., John Doe" />
-              </label>
-              <label>
-                Blood Group
-                <input type="text" name="health-blood-group" placeholder="e.g., O+" />
-              </label>
-              <label>
-                Chronic Illness (if any)
-                <input type="text" name="health-chronic-illness" placeholder="e.g., Asthma" />
-              </label>
-              <label>
-                Immunization Status
-                <select name="health-immunization">
-                  <option value="">Select</option>
-                  <option>Up to date</option>
-                  <option>Partially completed</option>
-                  <option>Not done</option>
-                </select>
-              </label>
-              <label class="span-2">
-                Allergies (if any)
-                <textarea
-                  name="health-allergies"
-                  rows="2"
-                  placeholder="List allergies or write 'None'"
-                ></textarea>
-              </label>
-              <label class="span-2">
-                Doctor / Clinic Notes
-                <textarea
-                  name="health-doctor-notes"
-                  rows="2"
-                  placeholder="Add any relevant notes"
-                ></textarea>
-              </label>
-            </div>
-          </section>
-
-          <section class="a4-section" aria-labelledby="stu-sec-c">
-            <h4 id="stu-sec-c" class="a4-section-title">C. Parent / guardian</h4>
-            <div class="form-field-grid">
-              <label>
-                Parent/Guardian Full Name
+                Parent/Guardian Full Name *
                 <input
                   type="text"
                   name="parent-full-name"
+                  required
                   placeholder="e.g., Mary Doe"
                   autocomplete="name"
                 />
@@ -216,29 +155,14 @@
                 <input type="text" name="parent-relationship" placeholder="e.g., Mother/Father" />
               </label>
               <label>
-                Phone Number
-                <input type="text" name="parent-phone" placeholder="e.g., +233 xx xxx xxxx" />
+                Phone (optional if email supplied)
+                <input type="tel" name="parent-phone" placeholder="e.g., +233 24 000 0000" autocomplete="tel" aria-describedby="student-contact-hint" />
               </label>
               <label>
-                Email (optional)
-                <input type="email" name="parent-email" placeholder="you@example.com" />
+                Email (optional if phone supplied)
+                <input type="email" name="parent-email" placeholder="you@example.com" autocomplete="email" aria-describedby="student-contact-hint" />
               </label>
-              <label class="span-2">
-                Address
-                <textarea
-                  name="parent-address"
-                  rows="2"
-                  placeholder="Write full address"
-                ></textarea>
-              </label>
-              <label class="span-2">
-                Consent (brief)
-                <textarea
-                  name="parent-consent"
-                  rows="2"
-                  placeholder="Write consent statement or any notes"
-                ></textarea>
-              </label>
+              <div id="student-contact-hint" class="small span-2">Enter at least one parent or guardian contact method: phone or email.</div>
             </div>
           </section>
 
@@ -259,6 +183,7 @@
         </article>
 
         <div class="form-actions no-print">
+          <label class="consent-check"><input type="checkbox" data-application-consent required /> I agree to the <a href="policies.html#privacy">Privacy policy</a> and confirm I am the child’s parent or legal guardian.</label>
           <button class="btn" type="button" data-action="submit" data-form-set="student">
             Submit
           </button>
@@ -292,35 +217,20 @@
           </header>
 
           <section class="a4-section" aria-labelledby="tch-sec-a">
-            <h4 id="tch-sec-a" class="a4-section-title">A. Personal details &amp; role</h4>
+            <h4 id="tch-sec-a" class="a4-section-title">A. Contact details &amp; role</h4>
             <div class="form-field-grid">
               <label>
                 Full Name *
                 <input
                   type="text"
                   name="teach-full-name"
+                  required
                   placeholder="e.g., Ama Mensah"
                   autocomplete="name"
                 />
               </label>
               <label>
-                Date of Birth
-                <input type="date" name="teach-dob" />
-              </label>
-              <label>
-                Gender
-                <select name="teach-gender">
-                  <option value="">Select</option>
-                  <option>Male</option>
-                  <option>Female</option>
-                </select>
-              </label>
-              <label>
-                Nationality
-                <input type="text" name="teach-nationality" placeholder="e.g., Ghanaian" />
-              </label>
-              <label>
-                Phone Number *
+                Phone (optional if email supplied)
                 <input
                   type="tel"
                   name="teach-phone"
@@ -329,7 +239,7 @@
                 />
               </label>
               <label>
-                Email
+                Email (optional if phone supplied)
                 <input
                   type="email"
                   name="teach-email"
@@ -337,9 +247,10 @@
                   autocomplete="email"
                 />
               </label>
+              <div class="small span-2">Provide at least one contact method: phone or email.</div>
               <label>
-                Position Applied For
-                <select name="teach-position">
+                Position Applied For *
+                <select name="teach-position" required>
                   <option value="">Select</option>
                   <option>Creche / Nursery Teacher</option>
                   <option>KG Teacher</option>
@@ -376,14 +287,6 @@
                   <option>Substitute / Relief</option>
                 </select>
               </label>
-              <label class="span-2">
-                Residential Address
-                <textarea
-                  name="teach-address"
-                  rows="2"
-                  placeholder="Write full residential address"
-                ></textarea>
-              </label>
             </div>
           </section>
 
@@ -408,7 +311,7 @@
               </label>
               <label>
                 Year Completed
-                <input type="text" name="teach-qual-year" placeholder="e.g., 2019" />
+                <input type="number" name="teach-qual-year" min="1950" max="2100" step="1" placeholder="e.g., 2019" />
               </label>
               <label>
                 Professional Licence (if any)
@@ -416,7 +319,7 @@
               </label>
               <label>
                 Years of Teaching Experience
-                <input type="text" name="teach-years-experience" placeholder="e.g., 5 years" />
+                <input type="number" name="teach-years-experience" min="0" max="80" step="1" placeholder="e.g., 5" />
               </label>
               <label>
                 Current / Last Employer
@@ -446,51 +349,9 @@
           </section>
 
           <section class="a4-section" aria-labelledby="tch-sec-c">
-            <h4 id="tch-sec-c" class="a4-section-title">C. Referees &amp; declaration</h4>
-            <div class="form-field-grid">
-              <label>
-                Referee 1 — Full Name
-                <input type="text" name="teach-ref1-name" placeholder="Full name" />
-              </label>
-              <label>
-                Referee 1 — Phone / Email
-                <input type="text" name="teach-ref1-contact" placeholder="Phone or email" />
-              </label>
-              <label>
-                Referee 1 — Relationship
-                <input
-                  type="text"
-                  name="teach-ref1-relation"
-                  placeholder="e.g., Former headteacher"
-                />
-              </label>
-              <label>
-                Referee 2 — Full Name
-                <input type="text" name="teach-ref2-name" placeholder="Full name" />
-              </label>
-              <label>
-                Referee 2 — Phone / Email
-                <input type="text" name="teach-ref2-contact" placeholder="Phone or email" />
-              </label>
-              <label>
-                Referee 2 — Relationship
-                <input type="text" name="teach-ref2-relation" placeholder="e.g., Colleague" />
-              </label>
-              <label class="span-2">
-                Emergency Contact Name &amp; Phone
-                <input
-                  type="text"
-                  name="teach-emergency"
-                  placeholder="e.g., Kofi Mensah — 0244 000 000"
-                />
-              </label>
-              <label class="span-2">
-                Declaration
-                <textarea name="teach-declaration" rows="2">
-I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea
-                >
-              </label>
-            </div>
+            <h4 id="tch-sec-c" class="a4-section-title">C. Applicant declaration</h4>
+            <label class="span-2">Declaration<textarea name="teach-declaration" rows="2" required>I declare that the information provided is true and complete to the best of my knowledge.</textarea></label>
+            <label class="consent-check no-print"><input type="checkbox" name="teach-declaration-confirmed" required /> I confirm this declaration is true.</label>
           </section>
 
           <footer class="a4-signatures">
@@ -510,6 +371,7 @@ I declare that the information provided is true and complete to the best of my k
         </article>
 
         <div class="form-actions no-print">
+          <label class="consent-check"><input type="checkbox" data-application-consent required /> I agree to the <a href="policies.html#privacy">Privacy policy</a> and consent to processing this application.</label>
           <button class="btn" type="button" data-action="submit" data-form-set="teaching-staff">
             Submit
           </button>
@@ -553,35 +415,20 @@ I declare that the information provided is true and complete to the best of my k
           </header>
 
           <section class="a4-section" aria-labelledby="nt-sec-a">
-            <h4 id="nt-sec-a" class="a4-section-title">A. Personal details &amp; role</h4>
+            <h4 id="nt-sec-a" class="a4-section-title">A. Contact details &amp; role</h4>
             <div class="form-field-grid">
               <label>
                 Full Name *
                 <input
                   type="text"
                   name="nonteach-full-name"
+                  required
                   placeholder="e.g., Kwame Asante"
                   autocomplete="name"
                 />
               </label>
               <label>
-                Date of Birth
-                <input type="date" name="nonteach-dob" />
-              </label>
-              <label>
-                Gender
-                <select name="nonteach-gender">
-                  <option value="">Select</option>
-                  <option>Male</option>
-                  <option>Female</option>
-                </select>
-              </label>
-              <label>
-                Nationality
-                <input type="text" name="nonteach-nationality" placeholder="e.g., Ghanaian" />
-              </label>
-              <label>
-                Phone Number *
+                Phone (optional if email supplied)
                 <input
                   type="tel"
                   name="nonteach-phone"
@@ -590,7 +437,7 @@ I declare that the information provided is true and complete to the best of my k
                 />
               </label>
               <label>
-                Email
+                Email (optional if phone supplied)
                 <input
                   type="email"
                   name="nonteach-email"
@@ -598,9 +445,10 @@ I declare that the information provided is true and complete to the best of my k
                   autocomplete="email"
                 />
               </label>
+              <div class="small span-2">Provide at least one contact method: phone or email.</div>
               <label>
-                Position Applied For
-                <select name="nonteach-position">
+                Position Applied For *
+                <select name="nonteach-position" required>
                   <option value="">Select</option>
                   <option>School Administrator / Clerk</option>
                   <option>Secretary / Front Desk</option>
@@ -637,14 +485,6 @@ I declare that the information provided is true and complete to the best of my k
                 Expected Start Date
                 <input type="date" name="nonteach-start-date" />
               </label>
-              <label class="span-2">
-                Residential Address
-                <textarea
-                  name="nonteach-address"
-                  rows="2"
-                  placeholder="Write full residential address"
-                ></textarea>
-              </label>
             </div>
           </section>
 
@@ -669,7 +509,7 @@ I declare that the information provided is true and complete to the best of my k
               </label>
               <label>
                 Years of Relevant Experience
-                <input type="text" name="nonteach-years-experience" placeholder="e.g., 3 years" />
+                <input type="number" name="nonteach-years-experience" min="0" max="80" step="1" placeholder="e.g., 3" />
               </label>
               <label>
                 Current / Last Employer
@@ -703,51 +543,9 @@ I declare that the information provided is true and complete to the best of my k
           </section>
 
           <section class="a4-section" aria-labelledby="nt-sec-c">
-            <h4 id="nt-sec-c" class="a4-section-title">C. Referees &amp; declaration</h4>
-            <div class="form-field-grid">
-              <label>
-                Referee 1 — Full Name
-                <input type="text" name="nonteach-ref1-name" placeholder="Full name" />
-              </label>
-              <label>
-                Referee 1 — Phone / Email
-                <input type="text" name="nonteach-ref1-contact" placeholder="Phone or email" />
-              </label>
-              <label>
-                Referee 1 — Relationship
-                <input
-                  type="text"
-                  name="nonteach-ref1-relation"
-                  placeholder="e.g., Former supervisor"
-                />
-              </label>
-              <label>
-                Referee 2 — Full Name
-                <input type="text" name="nonteach-ref2-name" placeholder="Full name" />
-              </label>
-              <label>
-                Referee 2 — Phone / Email
-                <input type="text" name="nonteach-ref2-contact" placeholder="Phone or email" />
-              </label>
-              <label>
-                Referee 2 — Relationship
-                <input type="text" name="nonteach-ref2-relation" placeholder="e.g., Colleague" />
-              </label>
-              <label class="span-2">
-                Emergency Contact Name &amp; Phone
-                <input
-                  type="text"
-                  name="nonteach-emergency"
-                  placeholder="e.g., Ama Boateng — 0244 000 000"
-                />
-              </label>
-              <label class="span-2">
-                Declaration
-                <textarea name="nonteach-declaration" rows="2">
-I declare that the information provided is true and complete to the best of my knowledge. I understand that false information may lead to disqualification or dismissal.</textarea
-                >
-              </label>
-            </div>
+            <h4 id="nt-sec-c" class="a4-section-title">C. Applicant declaration</h4>
+            <label class="span-2">Declaration<textarea name="nonteach-declaration" rows="2" required>I declare that the information provided is true and complete to the best of my knowledge.</textarea></label>
+            <label class="consent-check no-print"><input type="checkbox" name="nonteach-declaration-confirmed" required /> I confirm this declaration is true.</label>
           </section>
 
           <footer class="a4-signatures">
@@ -767,6 +565,7 @@ I declare that the information provided is true and complete to the best of my k
         </article>
 
         <div class="form-actions no-print">
+          <label class="consent-check"><input type="checkbox" data-application-consent required /> I agree to the <a href="policies.html#privacy">Privacy policy</a> and consent to processing this application.</label>
           <button class="btn" type="button" data-action="submit" data-form-set="non-teaching-staff">
             Submit
           </button>

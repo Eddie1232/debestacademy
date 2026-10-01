@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DEBEST ACADEMY</title>
     <link rel="stylesheet" href="./debest.css" />
-    <script src="./debest.js"></script>
+    <script src="./debest.js" defer></script>
   </head>
   <body>
     <header>
@@ -16,10 +16,12 @@
       <nav role="navigation" aria-label="Primary Navigation">
         <ul id="nav-menu">
           <li><a href="#about" class="active">About Us</a></li>
+          <li><a href="programmes.html">Programmes</a></li>
           <li><a href="#admission">Admission</a></li>
           <li><a href="#staff">Staff</a></li>
           <li><a href="#policies">Policies</a></li>
           <li><a href="#news">News & Updates</a></li>
+          <li><a href="#reviews">Reviews</a></li>
           <li><a href="#platforms">Platforms</a></li>
           <li><a href="#faq">FAQs</a></li>
           <li><a href="#contact">Contact</a></li>
@@ -36,8 +38,10 @@
       </p>
       <div class="hero-actions">
         <button class="btn-primary" onclick="window.location.href='apply.html';">Apply Now</button>
+        <a class="btn-secondary" href="programmes.html">Programmes &amp; school hours</a>
+        <a class="btn-secondary" href="contact.html">Contact the office</a>
         <a class="btn-secondary" href="#about">Explore Our School</a>
-        <a class="btn-secondary" href="contact.html">Book a School Tour</a>
+        <a class="btn-secondary" href="tel:+233244669383">Call 0244 669 383</a>
       </div>
       <ul class="hero-metrics" aria-label="School highlights">
         <li><strong>Early Years</strong><span>Creche to KG</span></li>
@@ -71,9 +75,7 @@
               <article class="info-card">
                 <h4>Our Vision</h4>
                 <p>
-                  To be recognised as an outstanding top private institution offering the highest
-                  quality of education with strong religious, moral, and academic training that
-                  shapes students for life.
+                  To provide education that supports students' academic, moral, and personal growth.
                 </p>
               </article>
             </div>
@@ -114,7 +116,7 @@
           <article class="step-card">
             <span class="step-number">3</span>
             <h4>Provide Records</h4>
-            <p>Share previous school reports, health information, and required supporting documents.</p>
+            <p>Admissions will explain which records are needed for placement. Share only the requested information.</p>
           </article>
           <article class="step-card">
             <span class="step-number">4</span>
@@ -125,7 +127,6 @@
 
         <div class="admission-actions">
           <button class="btn-primary" onclick="window.location.href='apply.html';">Apply Now</button>
-          <a class="btn-secondary" href="teachers-reviews.html" target="_blank" rel="noopener noreferrer">Parent Reviews</a>
           <a class="btn-secondary" href="contact.html">Speak to Admissions</a>
         </div>
 
@@ -158,7 +159,7 @@
           <article class="staff-card">
             <div class="staff-avatar">C</div>
             <h4>Pastoral Care</h4>
-            <p>Ensures children feel safe, valued, and supported as they learn and grow.</p>
+            <p>Supports students' wellbeing and learning as they grow.</p>
           </article>
         </div>
       </section>
@@ -187,8 +188,10 @@
 
       <section id="news" aria-labelledby="news-title">
         <h3 id="news-title">News & Updates</h3>
-        <div id="homeNewsList">
-          <div class="news-item loading">Loading headlines...</div>
+        <div id="homeNewsList" aria-live="polite" aria-busy="true">
+          <div class="news-skeleton" aria-label="Loading news">
+            <span></span><span></span><span></span>
+          </div>
         </div>
         <script>
           (function () {
@@ -228,6 +231,8 @@
                   .join('');
               } catch (e) {
                 container.innerHTML = '<div class="news-item">Could not load headlines.</div>';
+              } finally {
+                container.setAttribute('aria-busy', 'false');
               }
             }
             loadHomeNews();
@@ -237,13 +242,40 @@
         <p style="margin: 18px 0 8px; font-weight: 700; color: #5a3e72">
           More news and updates are available on the Student/Parent Platform.
         </p>
-        <a
-          class="btn-primary"
-          style="display: inline-block"
-          href="student/news-updates.html"
-          aria-label="Open More News and Updates"
-          >More news and updates...
-        </a>
+        <div style="display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
+          <a
+            class="btn-primary"
+            style="display: inline-block"
+            href="student/news-updates.html"
+            aria-label="Open More News and Updates"
+            >More news and updates...
+          </a>
+        </div>
+      </section>
+
+      <section id="reviews" aria-labelledby="reviews-title">
+        <h3 id="reviews-title">Community Reviews</h3>
+        <p>
+          No testimonials are currently published. We only share feedback after it has been received
+          directly, verified, and approved for publication by its author.
+        </p>
+        <div class="admission-grid" style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
+          <article class="step-card">
+            <h4>Teachers' Reviews</h4>
+            <p>No teacher testimonials are currently published.</p>
+            <a class="btn-secondary" href="contact.html">Ask the school</a>
+          </article>
+          <article class="step-card">
+            <h4>Students' Reviews</h4>
+            <p>No student testimonials are currently published.</p>
+            <a class="btn-secondary" href="contact.html">Ask the school</a>
+          </article>
+          <article class="step-card">
+            <h4>Parents' Reviews</h4>
+            <p>No parent testimonials are currently published.</p>
+            <a class="btn-secondary" href="contact.html">Contact the school</a>
+          </article>
+        </div>
       </section>
 
       <section id="platforms" aria-labelledby="platforms-title">
@@ -253,6 +285,12 @@
           Students/Parents Platform
         </button>
         <button class="btn-primary" onclick="window.location.href='pta.html';">PTA Platform</button>
+      </section>
+
+      <section aria-labelledby="programmes-promo-title">
+        <h3 id="programmes-promo-title">Learning Stages</h3>
+        <p>Explore the school levels currently listed by DEBEST Academy.</p>
+        <a class="btn-secondary" href="programmes.html">View programmes and published hours</a>
       </section>
 
       <section id="faq" aria-labelledby="faq-title">
@@ -282,14 +320,14 @@
           <div class="faq-item">
             <dt tabindex="0" aria-controls="faq3">What is the student-teacher ratio?</dt>
             <dd id="faq3" class="faq-answer">
-              We aim for a class ratio of about 20 students per teacher so every child receives individual attention and support.
+              Contact admissions for current class-size and staffing information.
             </dd>
           </div>
 
           <div class="faq-item">
             <dt tabindex="0" aria-controls="faq4">Are meals provided?</dt>
             <dd id="faq4" class="faq-answer">
-              Yes, nutritious meals are prepared on campus each day. We also support special dietary requirements when notified in advance.
+              Contact the school office to confirm current meal arrangements and any dietary support.
             </dd>
           </div>
 
@@ -399,33 +437,6 @@
             <label for="email">Email Address</label>
             <input type="email" id="email" name="email" required placeholder="you@example.com" />
 
-            <label for="social-x">X (Twitter) Handle</label>
-            <input type="text" id="social-x" name="social-x" placeholder="@yourhandle" />
-
-            <label for="social-whatsapp">WhatsApp Number</label>
-            <input
-              type="text"
-              id="social-whatsapp"
-              name="social-whatsapp"
-              placeholder="+233 xx xxx xxxx"
-            />
-
-            <label for="social-telegram">Telegram Username</label>
-            <input
-              type="text"
-              id="social-telegram"
-              name="social-telegram"
-              placeholder="@telegramuser"
-            />
-
-            <label for="social-instagram">Instagram Handle</label>
-            <input
-              type="text"
-              id="social-instagram"
-              name="social-instagram"
-              placeholder="@instagramhandle"
-            />
-
             <label for="message">Message</label>
             <textarea
               id="message"
@@ -433,6 +444,11 @@
               rows="5"
               placeholder="Please write your message here"
             ></textarea>
+
+            <label class="consent-check">
+              <input type="checkbox" name="contact-consent" required />
+              I agree that DEBEST Academy may use my details to respond to this enquiry. <a href="policies.html#privacy">Privacy policy</a>
+            </label>
 
             <button type="submit">Send Message</button>
           </form>
@@ -442,7 +458,14 @@
     </main>
 
     <footer>
-      <div>© 2024 DEBEST ACADEMY. All rights reserved.</div>
+      <div>© 2024 DEBEST ACADEMY. Dansoman and Kasoa, Ghana. Phone: <a href="tel:+233244669383">0244 669 383</a> · <a href="mailto:pta@debestacademy.com">pta@debestacademy.com</a></div>
+      <nav class="footer-links" aria-label="Legal and data rights">
+        <a href="policies.html#privacy">Privacy</a>
+        <a href="policies.html#terms">Terms</a>
+        <a href="policies.html#refunds">Refunds</a>
+        <a href="policies.html#cookies">Cookies</a>
+        <a href="policies.html#deletion">Delete my data</a>
+      </nav>
       <div class="social-icons" aria-label="Social Media Links">
         <a
           href="https://twitter.com/debestacademy"
@@ -452,7 +475,7 @@
           rel="noopener noreferrer"
         ></a>
         <a
-          href="https://wa.me/233000000000"
+          href="https://wa.me/233244669383"
           aria-label="WhatsApp"
           title="WhatsApp"
           target="_blank"
@@ -474,7 +497,5 @@
         ></a>
       </div>
     </footer>
-    <link rel="stylesheet" href="./debest.css" />
-    <script src="./debest.js"></script>
   </body>
 </html>

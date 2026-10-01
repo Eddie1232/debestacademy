@@ -69,7 +69,7 @@ npm run dev
 Public pages include a floating **DEBEST Assistant** for admissions, hours, contact details, and other school questions.
 
 - The widget posts to `/api/assistant`. The API key stays on the server.
-- Set `XAI_API_KEY` (from https://console.x.ai) to answer with SpaceXAI / Grok. Optional: `XAI_MODEL` (default `grok-4.5`).
+- Set `OPENAI_API_KEY` on the server to enable AI-generated answers through OpenAI. Optional: set `OPENAI_MODEL` to choose a model (default: `gpt-5.6-luna`).
 - If no key is set, or the model is unreachable, the assistant still answers from the school FAQ knowledge on this site.
 
 ## Project Structure

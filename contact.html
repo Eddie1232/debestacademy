@@ -17,10 +17,11 @@
         <img src="./debestcrest.jpg" alt="DEBEST Crest" />
       </div>
       <h1>DEBEST ACADEMY</h1>
-      <a class="home-btn" href="debest.html" aria-label="Go to Home page" title="Home">🏠</a>
+      <a class="back-btn" href="debest.html" aria-label="Go back" title="Back" onclick="if (history.length > 1) { event.preventDefault(); history.back(); }">←</a>
       <nav role="navigation" aria-label="Primary Navigation">
         <ul id="nav-menu">
           <li><a href="debest.html#about">About Us</a></li>
+          <li><a href="programmes.html">Programmes</a></li>
           <li><a href="debest.html#admission">Admission</a></li>
           <li><a href="debest.html#news">News & Updates</a></li>
           <li><a href="debest.html#platforms">Platforms</a></li>
@@ -43,9 +44,8 @@
         <h3 id="contact-intro-title">How can we help?</h3>
         <p class="contact-lead">
           Whether you are enquiring about admission, following up on an application, or need help
-          with the student/parent platform, our team will guide you. We typically respond to written
-          messages within
-          <strong>1–2 working days</strong>. For urgent matters, please call the office.
+          with the student/parent platform, our team will guide you. We respond to written messages
+          as soon as the office can. For urgent matters, please call the office.
         </p>
       </section>
 
@@ -100,10 +100,56 @@
           <ul class="contact-list">
             <li>General: use the contact form on this page</li>
             <li>PTA: <a href="mailto:pta@debestacademy.com">pta@debestacademy.com</a></li>
-            <li>Include your child’s name and class when writing about a pupil.</li>
           </ul>
           <a class="btn-secondary" href="pta.html">Learn about the PTA</a>
         </article>
+      </section>
+
+      <section class="campus-directions" aria-labelledby="campus-directions-title">
+        <div class="campus-directions-heading">
+          <h3 id="campus-directions-title">Find a campus</h3>
+          <p>Choose the campus you are visiting to view its map or open driving directions.</p>
+        </div>
+        <div class="campus-map-grid">
+          <article class="campus-map">
+            <div class="campus-map-heading">
+              <h4>Dansoman campus</h4>
+              <a
+                class="btn-secondary"
+                href="https://www.google.com/maps/dir/?api=1&amp;destination=DEBEST+Academy+Dansoman+Accra+Ghana"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Get directions</a
+              >
+            </div>
+            <iframe
+              title="Map of DEBEST Academy Dansoman campus"
+              src="https://www.google.com/maps?q=DEBEST+Academy+Dansoman+Accra+Ghana&amp;output=embed"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </article>
+          <article class="campus-map">
+            <div class="campus-map-heading">
+              <h4>Kasoa campus</h4>
+              <a
+                class="btn-secondary"
+                href="https://www.google.com/maps/dir/?api=1&amp;destination=DEBEST+Academy+Kasoa+Ghana"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Get directions</a
+              >
+            </div>
+            <iframe
+              title="Map of DEBEST Academy Kasoa campus"
+              src="https://www.google.com/maps?q=DEBEST+Academy+Kasoa+Ghana&amp;output=embed"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+            ></iframe>
+          </article>
+        </div>
       </section>
 
       <section id="contact" class="contact-main" aria-labelledby="contact-title">
@@ -174,16 +220,6 @@
               </div>
 
               <div class="form-field">
-                <label for="student-info">Child’s name &amp; class (if applicable)</label>
-                <input
-                  type="text"
-                  id="student-info"
-                  name="student_info"
-                  placeholder="e.g. Ama Mensah — Basic 4"
-                />
-              </div>
-
-              <div class="form-field">
                 <label for="message">Message *</label>
                 <textarea
                   id="message"
@@ -193,6 +229,11 @@
                   placeholder="Please share your question or request. Include any useful details so we can help you faster."
                 ></textarea>
               </div>
+
+              <label class="consent-check">
+                <input type="checkbox" name="contact-consent" required />
+                I agree that DEBEST Academy may use my details to respond to this enquiry. <a href="policies.html#privacy">Privacy policy</a>
+              </label>
 
               <button type="submit">Send message</button>
               <p id="form-response" aria-live="polite"></p>
@@ -204,7 +245,6 @@
               <h4>What to include</h4>
               <ul>
                 <li>Your full name and a reachable phone number</li>
-                <li>Your child’s name and class (for pupil-related matters)</li>
                 <li>The campus you are writing about, if known</li>
                 <li>Any application or receipt reference numbers</li>
               </ul>
@@ -256,7 +296,7 @@
           rel="noopener noreferrer"
         ></a>
         <a
-          href="https://wa.me/233000000000"
+          href="https://wa.me/233244669383"
           aria-label="WhatsApp"
           title="WhatsApp"
           target="_blank"

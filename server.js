@@ -1,4 +1,5 @@
 const path = require('path');
+const crypto = require('crypto');
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
@@ -10,6 +11,8 @@ const {
   getNextStatus,
   applyProposalToEvents,
   applyProposalToNews,
+  addNewsItem,
+  removeNewsItem,
   syncApprovedCalendarEvents,
   calendarEventsEqual,
 } = require('./proposal-workflow');
@@ -18,7 +21,17 @@ const {
   normalizeApplicationStatus,
   applyApplicationStatusChange,
   statusLabel,
+  createEmploymentAuditEntry,
+  appendEmploymentAuditEntry,
+  hydrateEmploymentHistory,
+  collectEmploymentAuditLog,
+  isStaffActor,
 } = require('./employment-offer-workflow');
+const {
+  sanitizeApplicationForms,
+  hasApplicationContact,
+  isValidApplicationEmail,
+} = require('./application-data');
 const { assistantRateLimit, handleAssistantChat, handleAdminAssistantChat } = require('./assistant-service');
 
 const app = express();
@@ -42,7 +55,7 @@ app.use(
         defaultSrc: ["'self'"],
         baseUri: ["'self'"],
         fontSrc: ["'self'", 'https:', 'data:'],
-        formAction: ["'self'"],
+        formAction: ["'self'", 'https://formspree.io'],
         frameAncestors: ["'self'"],
         frameSrc: ["'self'"],
         imgSrc: ["'self'", 'data:', 'blob:'],
@@ -79,7 +92,7 @@ app.use(cookieParser());
 app.use('/api', apiRateLimit);
 
 // ---- Config ----
-const PORT = Number(process.env.PORT) || 5500;
+const PORT = Number(process.env.PORT) || 5501;
 const HOST = process.env.HOST || '0.0.0.0';
 const JWT_SECRET = process.env.JWT_SECRET || 'CHANGE_ME_IN_PROD';
 const ADMIN_IP_ALLOWLIST = (process.env.ADMIN_IP_ALLOWLIST || '')
@@ -195,6 +208,12 @@ function authRequired(req, res, next) {
   } catch (e) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
+}
+
+function optionalAuth(req, res, next) {
+  const header = req.headers.authorization || '';
+  if (!header) return next();
+  return authRequired(req, res, next);
 }
 
 function roleRequired(...roles) {
@@ -776,6 +795,56 @@ app.get('/api/news', async (req, res) => {
   return res.json(d.data.news || { items: [] });
 });
 
+app.post(
+  '/api/news/headline',
+  authRequired,
+  adminIpAllowed,
+  schoolStaffRequired,
+  async (req, res) => {
+    const d = await getDB();
+    const body = req.body || {};
+    const title = String(body.title || '').trim();
+    const bodyText = String(body.body || '').trim();
+    const date = String(body.date || new Date().toISOString().slice(0, 10)).trim();
+    const expiresAt = String(body.expiresAt || '').trim();
+
+    if (!title) return res.status(400).json({ error: 'Headline title is required' });
+    if (!expiresAt) return res.status(400).json({ error: 'Display end date is required' });
+    if (expiresAt < date) {
+      return res.status(400).json({ error: 'Display end date must be on or after the publish date' });
+    }
+
+    const item = {
+      id: `news-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
+      title,
+      body: bodyText,
+      date,
+      expiresAt,
+      category: 'Announcement',
+      publishedBy: req.user?.username || req.user?.role || 'Admin',
+      createdAt: new Date().toISOString(),
+    };
+
+    d.data.news = { items: addNewsItem(d.data.news?.items || [], item) };
+    await d.write();
+    return res.json({ ok: true, item });
+  }
+);
+
+app.delete(
+  '/api/news/:id',
+  authRequired,
+  adminIpAllowed,
+  schoolStaffRequired,
+  async (req, res) => {
+    const d = await getDB();
+    const { id } = req.params;
+    d.data.news = { items: removeNewsItem(d.data.news?.items || [], id) };
+    await d.write();
+    return res.json({ ok: true, removedId: id });
+  }
+);
+
 app.post('/api/assistant', assistantRateLimit, async (req, res) => {
   try {
     const d = await getDB();
@@ -897,14 +966,21 @@ function summarizeApplication(app) {
   };
 }
 
-function appendApplicationStatusHistory(application, status, by, role) {
-  if (!Array.isArray(application.statusHistory)) application.statusHistory = [];
-  application.statusHistory.push({
-    status,
-    at: new Date().toISOString(),
-    by: by || '',
+function recordApplicationAction(application, { status, fromStatus, action, actor, role }) {
+  const name = applicantDisplayName(application);
+  const entry = createEmploymentAuditEntry({
+    type: application.type,
+    status: status || application.status,
+    fromStatus,
+    action,
+    applicantName: name,
+    by: actor || '',
     role: role || '',
+    applicationId: application.id,
+    createdByStaff: isStaffActor(role, actor),
   });
+  application.statusHistory = appendEmploymentAuditEntry(application.statusHistory, entry);
+  return entry;
 }
 
 function canUpdateStudentAdmission(role, fromStatus, nextStatus) {
@@ -924,50 +1000,68 @@ function normalizeStoredApplication(app) {
   const type = app.type || 'student';
   const status = normalizeApplicationStatus(type, app.status);
   if (app.status !== status) app.status = status;
-  if (!Array.isArray(app.statusHistory) || !app.statusHistory.length) {
-    const initialStatus = isEmploymentApplication(type) ? 'applied' : 'new';
-    const registeredAt = app.submittedAt || new Date().toISOString();
-    app.statusHistory = [
-      {
-        status: initialStatus,
-        at: registeredAt,
-        by: 'system',
-        role: 'system',
-      },
-    ];
-    // Preserve the current stage of old records that predate activity logging.
-    if (status !== initialStatus) {
-      app.statusHistory.push({
-        status,
-        at: app.reviewedAt || registeredAt,
-        by: app.reviewedBy || 'system',
-        role: 'system',
-      });
-    }
-  }
+  app.statusHistory = hydrateEmploymentHistory(app, applicantDisplayName(app));
   return app;
 }
 
-app.post('/api/applications', async (req, res) => {
+app.post('/api/applications', optionalAuth, async (req, res) => {
   const d = await getDB();
   const body = req.body || {};
-  const forms = body.forms;
+  const submittedForms = body.forms;
 
-  if (!forms || typeof forms !== 'object') {
+  if (!submittedForms || typeof submittedForms !== 'object' || Array.isArray(submittedForms)) {
     return res.status(400).json({ error: 'forms object is required' });
   }
 
-  const type = resolveApplicationType(body, forms);
+  const type = resolveApplicationType(body, submittedForms);
+  const forms = sanitizeApplicationForms(type, submittedForms);
+
+  if (!req.user && body.consent?.privacyAccepted !== true) {
+    return res.status(400).json({ error: 'Privacy consent is required to submit an application.' });
+  }
+  if (!req.user && type === 'student' && body.consent?.guardianConfirmed !== true) {
+    return res.status(400).json({ error: 'A parent or legal guardian must submit a student application.' });
+  }
 
   if (type === 'teaching-staff') {
     const name = `${forms.teaching?.fullName || ''}`.trim();
     if (!name) {
       return res.status(400).json({ error: 'Teaching applicant full name is required' });
     }
+    if (!`${forms.teaching?.position || ''}`.trim()) {
+      return res.status(400).json({ error: 'Teaching position is required' });
+    }
+    if (!isValidApplicationEmail(forms.teaching?.email)) {
+      return res.status(400).json({ error: 'Enter a valid teaching applicant email address' });
+    }
+    if (
+      forms.teachingDeclaration?.confirmed !== true ||
+      !`${forms.teachingDeclaration?.declaration || ''}`.trim()
+    ) {
+      return res.status(400).json({ error: 'Teaching applicant declaration must be confirmed' });
+    }
+    if (!hasApplicationContact(forms.teaching)) {
+      return res.status(400).json({ error: 'Teaching applicant phone or email is required' });
+    }
   } else if (type === 'non-teaching-staff') {
     const name = `${forms.nonTeaching?.fullName || ''}`.trim();
     if (!name) {
       return res.status(400).json({ error: 'Non-teaching applicant full name is required' });
+    }
+    if (!`${forms.nonTeaching?.position || ''}`.trim()) {
+      return res.status(400).json({ error: 'Non-teaching position is required' });
+    }
+    if (!isValidApplicationEmail(forms.nonTeaching?.email)) {
+      return res.status(400).json({ error: 'Enter a valid non-teaching applicant email address' });
+    }
+    if (
+      forms.nonTeachingDeclaration?.confirmed !== true ||
+      !`${forms.nonTeachingDeclaration?.declaration || ''}`.trim()
+    ) {
+      return res.status(400).json({ error: 'Non-teaching applicant declaration must be confirmed' });
+    }
+    if (!hasApplicationContact(forms.nonTeaching)) {
+      return res.status(400).json({ error: 'Non-teaching applicant phone or email is required' });
     }
   } else {
     const student = forms.student || {};
@@ -975,27 +1069,62 @@ app.post('/api/applications', async (req, res) => {
     if (!studentName) {
       return res.status(400).json({ error: 'Student full name is required' });
     }
+    if (!`${student.dateOfBirth || ''}`.trim()) {
+      return res.status(400).json({ error: 'Student date of birth is required' });
+    }
+    if (!`${student.currentGrade || ''}`.trim()) {
+      return res.status(400).json({ error: 'Grade or class applying for is required' });
+    }
+    if (!`${student.campus || ''}`.trim()) {
+      return res.status(400).json({ error: 'Preferred campus is required' });
+    }
+    if (!isValidApplicationEmail(forms.parent?.email)) {
+      return res.status(400).json({ error: 'Enter a valid parent or guardian email address' });
+    }
+    if (!`${forms.parent?.fullName || ''}`.trim()) {
+      return res.status(400).json({ error: 'Parent or guardian full name is required' });
+    }
+    if (!hasApplicationContact(forms.parent)) {
+      return res.status(400).json({ error: 'Parent or guardian phone or email is required' });
+    }
   }
 
   const initialStatus = isEmploymentApplication(type) ? 'applied' : 'new';
   const submittedAt = new Date().toISOString();
+  const actor = req.user?.username || 'applicant';
+  const role = req.user?.role || 'applicant';
+  const applicantName = applicantDisplayName({ type, forms });
+  const applicationId = `app-${crypto.randomUUID()}`;
   const application = {
-    id: `app-${Date.now()}`,
+    id: applicationId,
     type,
     which: body.which || (type === 'student' ? 'all-3' : `${type}-all`),
     status: initialStatus,
     submittedAt,
     forms: { ...forms },
+    consent: req.user
+      ? null
+      : {
+          privacyPolicyVersion: '2026-10-01',
+          privacyAccepted: true,
+          guardianConfirmed: type === 'student',
+          acceptedAt: submittedAt,
+        },
     // Assigned to secretary inbox by default
     assignedTo: 'Secretary',
-    notes: body.notes || '',
+    notes: req.user ? body.notes || '' : '',
     statusHistory: [
-      {
+      createEmploymentAuditEntry({
+        type,
         status: initialStatus,
+        action: 'created',
+        applicantName,
+        by: actor,
+        role,
         at: submittedAt,
-        by: 'applicant',
-        role: 'applicant',
-      },
+        applicationId,
+        createdByStaff: isStaffActor(role, actor),
+      }),
     ],
   };
 
@@ -1020,10 +1149,12 @@ app.get(
 
     const applications = (d.data.applications || [])
       .map((app) => {
-        const before = app.status;
-        const beforeHistoryLength = Array.isArray(app.statusHistory) ? app.statusHistory.length : 0;
+        const beforeStatus = app.status;
+        const beforeHistory = JSON.stringify(app.statusHistory || []);
         normalizeStoredApplication(app);
-        if (app.status !== before || app.statusHistory.length !== beforeHistoryLength) dirty = true;
+        if (app.status !== beforeStatus || JSON.stringify(app.statusHistory) !== beforeHistory) {
+          dirty = true;
+        }
         return app;
       })
       .slice()
@@ -1031,7 +1162,10 @@ app.get(
 
     if (dirty) await d.write();
 
-    return res.json({ applications });
+    return res.json({
+      applications,
+      employmentAudit: collectEmploymentAuditLog(applications, applicantDisplayName),
+    });
   }
 );
 
@@ -1086,7 +1220,13 @@ app.put(
       application.status = result.status;
       application.reviewedBy = actor;
       application.reviewedAt = new Date().toISOString();
-      appendApplicationStatusHistory(application, result.status, actor, role);
+      recordApplicationAction(application, {
+        status: result.status,
+        fromStatus: currentStatus,
+        action: 'status_changed',
+        actor,
+        role,
+      });
 
       if (result.status === 'accepted') {
         application.offerAcceptedAt = application.reviewedAt;
@@ -1098,7 +1238,15 @@ app.put(
     }
 
     if (typeof req.body?.notes === 'string') {
-      application.notes = req.body.notes;
+      if (application.notes !== req.body.notes) {
+        application.notes = req.body.notes;
+        recordApplicationAction(application, {
+          status: application.status,
+          action: 'notes_updated',
+          actor,
+          role,
+        });
+      }
     }
 
     await d.write();
@@ -1478,10 +1626,17 @@ app.get(
 // ---- Static content (optional) ----
 app.use(express.static(__dirname));
 
-const BIND_PORT = 5501;
-app.listen(BIND_PORT, HOST, async () => {
+// Keep API misses machine-readable while giving browser navigation a branded page.
+app.use((req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  return res.status(404).sendFile(path.join(__dirname, '404.html'));
+});
+
+app.listen(PORT, HOST, async () => {
   await ensureDefaultAdmins();
-  console.log(`Server running on http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${BIND_PORT}`);
-  console.log(`LAN: open http://<this-computer-ip>:${BIND_PORT}/debest.html from other school PCs`);
-  console.log(`Admin login: http://<this-computer-ip>:${BIND_PORT}/admin/login.html`);
+  console.log(`Server running on http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
+  console.log(`LAN: open http://<this-computer-ip>:${PORT}/debest.html from other school PCs`);
+  console.log(`Admin login: http://<this-computer-ip>:${PORT}/admin/login.html`);
 });

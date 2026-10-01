@@ -13,7 +13,7 @@
         <img src="../debestcrest.jpg" alt="DEBEST Crest" />
       </div>
       <h1>DEBEST ACADEMY</h1>
-      <a class="home-btn" href="../debest.html" aria-label="Go to Home page" title="Home">🏠</a>
+      <a class="back-btn" href="../debest.html" aria-label="Go back" title="Back" onclick="if (history.length > 1) { event.preventDefault(); history.back(); }">←</a>
       <nav role="navigation" aria-label="Primary Navigation">
         <ul id="nav-menu">
           <li><a href="../debest.html#about">About Us</a></li>
@@ -34,6 +34,7 @@
       </p>
       <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px">
         <a class="btn-primary" href="terms-calendar.html">Open Terms Calendar</a>
+        <a class="btn-primary" href="timetable.html">View Class Timetable</a>
         <a class="btn-primary" href="../debest.html#contact">Contact School</a>
       </div>
     </section>
@@ -79,6 +80,20 @@
           </ul>
           <div class="contact-card-actions">
             <a class="btn-primary btn-small" href="terms-calendar.html">Open Calendar</a>
+          </div>
+        </article>
+
+        <article class="contact-card" aria-labelledby="card-timetable-title">
+          <div class="contact-card-icon" aria-hidden="true">🗓️</div>
+          <h4 id="card-timetable-title">Class Timetable</h4>
+          <p>View the weekly timetable for Basic 1 to Basic 9, including the subjects taught each day.</p>
+          <ul class="contact-list">
+            <li>Choose Basic 1 through Basic 9</li>
+            <li>English reading, oral, grammar, and writing</li>
+            <li>History for primary and Social Studies for JHS</li>
+          </ul>
+          <div class="contact-card-actions">
+            <a class="btn-primary btn-small" href="timetable.html">View Timetable</a>
           </div>
         </article>
 
@@ -157,7 +172,7 @@
           rel="noopener noreferrer"
         ></a>
         <a
-          href="https://wa.me/233000000000"
+          href="https://wa.me/233244669383"
           aria-label="WhatsApp"
           title="WhatsApp"
           target="_blank"

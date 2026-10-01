@@ -1,4 +1,68 @@
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'auto';
+}
+
+window.addEventListener('pageshow', function () {
+  var navigation = performance.getEntriesByType('navigation')[0];
+  var isHistoryNavigation = navigation && navigation.type === 'back_forward';
+  if (window.location.hash || isHistoryNavigation) return;
+  window.scrollTo(0, 0);
+});
+
 (function () {
+  function setupCookieConsent() {
+    if (document.querySelector('.cookie-consent')) return;
+    var stored = null;
+    try { stored = localStorage.getItem('debest_cookie_consent'); } catch (e) { /* private browsing */ }
+    if (stored) return;
+    var banner = document.createElement('aside');
+    banner.className = 'cookie-consent';
+    document.body.classList.add('cookie-consent-visible');
+    banner.setAttribute('aria-label', 'Cookie consent');
+    banner.innerHTML = '<p>This site currently uses no optional cookies or advertising trackers. Your choice is saved in this browser.</p>' +
+      '<button type="button" class="btn-primary" data-cookie-accept>Accept</button>' +
+      '<button type="button" class="btn-secondary" data-cookie-reject>Decline optional cookies</button>';
+    document.body.appendChild(banner);
+    function close(value) {
+      try { localStorage.setItem('debest_cookie_consent', value); } catch (e) { /* continue without storage */ }
+      banner.remove();
+      document.body.classList.remove('cookie-consent-visible');
+    }
+    banner.querySelector('[data-cookie-accept]').addEventListener('click', function () { close('accepted'); });
+    banner.querySelector('[data-cookie-reject]').addEventListener('click', function () { close('declined'); });
+  }
+
+  function setupCookieSettings() {
+    document.querySelectorAll('[data-cookie-settings]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        try { localStorage.removeItem('debest_cookie_consent'); } catch (e) { /* continue */ }
+        setupCookieConsent();
+        button.focus();
+      });
+    });
+  }
+
+  function setupPolicyLinks() {
+    if ((window.location.pathname || '').includes('/admin/')) return;
+    var footer = document.querySelector('body > footer');
+    if (!footer) {
+      footer = document.createElement('footer');
+      footer.className = 'no-print';
+      document.body.appendChild(footer);
+    }
+    if (footer.querySelector('.footer-links')) return;
+    var base = (window.location.pathname || '').includes('/student/') ? '../' : './';
+    var nav = document.createElement('nav');
+    nav.className = 'footer-links';
+    nav.setAttribute('aria-label', 'Legal and data rights');
+    nav.innerHTML = '<a href="' + base + 'policies.html#privacy">Privacy</a>' +
+      '<a href="' + base + 'policies.html#terms">Terms</a>' +
+      '<a href="' + base + 'policies.html#refunds">Refunds</a>' +
+      '<a href="' + base + 'policies.html#cookies">Cookies</a>' +
+      '<a href="' + base + 'policies.html#deletion">Delete my data</a>';
+    footer.appendChild(nav);
+  }
+
   function makeCrestLink() {
     const crestContainers = document.querySelectorAll('.crest-container');
     if (!crestContainers.length) return;
@@ -24,6 +88,32 @@
     });
   }
 
+  function setupMobileNavigation() {
+    document.querySelectorAll('header nav ul[id="nav-menu"]').forEach((menu) => {
+      const nav = menu.closest('nav');
+      const header = nav && nav.closest('header');
+      if (!nav || !header || header.querySelector('.site-menu-toggle')) return;
+
+      const toggle = document.createElement('button');
+      toggle.className = 'site-menu-toggle';
+      toggle.type = 'button';
+      toggle.setAttribute('aria-controls', menu.id);
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.textContent = 'Menu';
+      toggle.addEventListener('click', () => {
+        const isOpen = nav.classList.toggle('is-open');
+        toggle.setAttribute('aria-expanded', String(isOpen));
+      });
+      menu.addEventListener('click', (event) => {
+        if (event.target.closest('a')) {
+          nav.classList.remove('is-open');
+          toggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+      header.insertBefore(toggle, nav);
+    });
+  }
+
   function loadAssistantWidget() {
     if (window.__debestAssistantLoader) return;
     window.__debestAssistantLoader = true;
@@ -45,7 +135,11 @@
 
   function bootSharedUi() {
     makeCrestLink();
+    setupMobileNavigation();
     loadAssistantWidget();
+    setupCookieConsent();
+    setupCookieSettings();
+    setupPolicyLinks();
   }
 
   if (document.readyState === 'loading') {

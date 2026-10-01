@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Class Timetable - DEBEST ACADEMY</title>
+    <link rel="stylesheet" href="../debest.css" />
+    <script src="../debest.js" defer></script>
+    <style>
+      .timetable-wrap {
+        max-width: 1180px;
+        margin: 36px auto;
+        padding: 28px 20px;
+        background: #fff;
+        border: 1px solid #eadff3;
+        border-radius: 15px;
+        box-shadow: 0 5px 25px rgba(124, 101, 144, 0.12);
+      }
+      .timetable-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+      .timetable-heading h2 {
+        color: #341f4d;
+        margin: 0;
+      }
+      .timetable-heading p {
+        margin: 4px 0 0;
+        color: #6d587a;
+      }
+      .class-picker {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #341f4d;
+        font-weight: 800;
+      }
+      .class-picker select {
+        min-width: 150px;
+        padding: 10px 12px;
+        border: 2px solid #bfa5c7;
+        border-radius: 8px;
+        color: #341f4d;
+        background: #fff8f0;
+        font-weight: 800;
+      }
+      .download-btn {
+        padding: 10px 14px;
+        border: 0;
+        border-radius: 8px;
+        background: #0b5d63;
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .download-btn:hover {
+        background: #08474c;
+      }
+      .schedule-note {
+        padding: 12px 14px;
+        margin-bottom: 18px;
+        border-left: 4px solid #0b5d63;
+        background: #edf7f5;
+        color: #31565a;
+      }
+      .table-scroll {
+        overflow-x: auto;
+      }
+      .timetable {
+        width: 100%;
+        min-width: 850px;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+      .timetable th,
+      .timetable td {
+        padding: 12px 10px;
+        border: 1px solid #eadff3;
+        text-align: center;
+        vertical-align: middle;
+      }
+      .timetable thead th {
+        background: #5a3e72;
+        color: #fff8f0;
+        font-weight: 900;
+      }
+      .timetable thead th:first-child {
+        width: 112px;
+      }
+      .timetable tbody th {
+        background: #f1e9f6;
+        color: #341f4d;
+        white-space: nowrap;
+      }
+      .timetable tbody tr:nth-child(even) td {
+        background: #fdf9fb;
+      }
+      .timetable td {
+        color: #4b3b4f;
+        font-weight: 700;
+        line-height: 1.25;
+      }
+      .timetable .break,
+      .timetable .lunch {
+        background: #fff1d6;
+        color: #7a5421;
+        font-weight: 900;
+      }
+      .subject-detail {
+        display: block;
+        margin-top: 3px;
+        color: #6d587a;
+        font-size: 0.78rem;
+        font-weight: 600;
+      }
+      @media (max-width: 700px) {
+        .timetable-wrap {
+          margin: 20px 10px;
+          padding: 20px 12px;
+        }
+        .timetable-heading {
+          align-items: stretch;
+        }
+        .class-picker {
+          justify-content: space-between;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="crest-container" aria-label="School Crest">
+        <img src="../debestcrest.jpg" alt="DEBEST Crest" />
+      </div>
+      <h1>DEBEST ACADEMY</h1>
+      <a class="back-btn" href="parent_platform.html" aria-label="Go back" title="Back" onclick="if (history.length > 1) { event.preventDefault(); history.back(); }">←</a>
+      <nav role="navigation" aria-label="Primary Navigation">
+        <ul id="nav-menu">
+          <li><a href="../debest.html#about">About Us</a></li>
+          <li><a href="../debest.html#admission">Admission</a></li>
+          <li><a href="../debest.html#news">News &amp; Updates</a></li>
+          <li><a href="parent_platform.html" class="active">Platforms</a></li>
+          <li><a href="../debest.html#faq">FAQs</a></li>
+          <li><a href="../debest.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container" role="main">
+      <section class="timetable-wrap" aria-labelledby="timetable-title">
+        <div class="timetable-heading">
+          <div>
+            <h2 id="timetable-title">Class Timetable</h2>
+            <p id="class-description">Weekly timetable for Basic 1.</p>
+          </div>
+          <div class="class-picker">
+            <label for="class-select">Select class</label>
+            <select id="class-select">
+                <option value="1">Basic 1</option>
+                <option value="2">Basic 2</option>
+                <option value="3">Basic 3</option>
+                <option value="4">Basic 4</option>
+                <option value="5">Basic 5</option>
+                <option value="6">Basic 6</option>
+                <option value="7">Basic 7</option>
+                <option value="8">Basic 8</option>
+                <option value="9">Basic 9</option>
+            </select>
+            <button class="download-btn" id="download-timetable" type="button">Download</button>
+          </div>
+        </div>
+
+        <p class="schedule-note">
+          This is the standard weekly schedule. The class teacher will announce any temporary changes.
+        </p>
+
+        <div class="table-scroll">
+          <table class="timetable">
+            <caption class="sr-only">Weekly class timetable</caption>
+            <thead>
+              <tr>
+                <th scope="col">Time</th>
+                <th scope="col">Monday</th>
+                <th scope="col">Tuesday</th>
+                <th scope="col">Wednesday</th>
+                <th scope="col">Thursday</th>
+                <th scope="col">Friday</th>
+              </tr>
+            </thead>
+            <tbody id="timetable-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const teachingTimes = [
+        '7:30 - 8:30',
+        '8:30 - 9:30',
+        '10:00 - 11:00',
+        '11:00 - 12:00',
+        '12:30 - 1:30',
+        '1:30 - 2:30',
+      ];
+
+      const weeklySubjects = [
+        ['English: Reading', 'Numeracy', 'Science', 'History', 'French', 'RME'],
+        ['Numeracy', 'English: Oral', 'Creative Arts', 'Science', 'Career Technology', 'Computing'],
+        ['Worship', 'English: Grammar', 'Science', 'Numeracy', 'English: Writing', 'GA'],
+        ['Science', 'English: Reading', 'Numeracy', 'History', 'RME', 'GA'],
+        ['English: Writing', 'Numeracy', 'Computing', 'French', 'Career Technology', 'Science'],
+      ];
+
+      const classTimetables = Object.fromEntries(
+        Array.from({ length: 9 }, (_, classIndex) => {
+          const classNumber = classIndex + 1;
+          const lessons = weeklySubjects.map((daySubjects, dayIndex) => {
+            const sourceSubjects = classNumber === 9 ? [...daySubjects].reverse() : daySubjects;
+            if (dayIndex === 2) {
+              const remainingSubjects = sourceSubjects.filter((subject) => subject !== 'Worship');
+              const shift = classIndex % remainingSubjects.length;
+              return ['Worship', ...remainingSubjects.map((_, periodIndex) => remainingSubjects[(periodIndex + shift) % remainingSubjects.length])];
+            }
+            const shift = (classIndex + dayIndex) % sourceSubjects.length;
+            return sourceSubjects.map((_, periodIndex) => sourceSubjects[(periodIndex + shift) % sourceSubjects.length]);
+          });
+          return [classNumber, lessons];
+        })
+      );
+
+      const select = document.getElementById('class-select');
+      const description = document.getElementById('class-description');
+      const body = document.getElementById('timetable-body');
+      const downloadButton = document.getElementById('download-timetable');
+
+      function getOrderedRows(classNumber) {
+        const classLessons = classTimetables[classNumber];
+        const rows = [
+          ['7:00 - 7:30', ...Array(5).fill('Assembly / Devotion')],
+          ...teachingTimes.map((time, periodIndex) => [time, ...classLessons.map((day) => day[periodIndex])]),
+          ['9:30 - 10:00', ...Array(5).fill('SNACK')],
+          ['12:00 - 12:30', ...Array(5).fill('LUNCH')],
+          ['2:30 - 3:00', ...Array(5).fill('Closing / Class Review')],
+        ];
+        return [rows[0], rows[1], rows[2], rows[7], rows[3], rows[4], rows[8], rows[5], rows[6], rows[9]];
+      }
+
+      function renderTimetable() {
+        const classNumber = Number(select.value);
+        const socialSubject = classNumber >= 7 ? 'Social Studies' : 'History';
+        description.textContent = `Weekly timetable for Basic ${classNumber}. ${socialSubject} is included for this level.`;
+        const orderedRows = getOrderedRows(classNumber);
+        body.innerHTML = orderedRows
+          .map(([time, ...lessons]) => {
+            const cells = lessons.map((lesson) => {
+              const subject = lesson === 'History' ? socialSubject : lesson;
+              const isBreak = subject === 'SNACK' || subject === 'LUNCH';
+              return `<td class="${isBreak ? subject.toLowerCase() : ''}">${subject}</td>`;
+            }).join('');
+            return `<tr><th scope="row">${time}</th>${cells}</tr>`;
+          }).join('');
+      }
+
+      function downloadTimetable() {
+        const classNumber = Number(select.value);
+        const socialSubject = classNumber >= 7 ? 'Social Studies' : 'History';
+        const csvRows = [
+          [`DEBEST ACADEMY - Basic ${classNumber} Timetable (${socialSubject})`],
+          ['Time', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          ...getOrderedRows(classNumber).map((row) => row.map((value) => {
+            const subject = value === 'History' ? socialSubject : value;
+            return `"${subject.replaceAll('"', '""')}"`;
+          })),
+        ];
+        const csv = csvRows.map((row) => row.join(',')).join('\n');
+        const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `DEBEST-Basic-${classNumber}-Timetable.csv`;
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      select.addEventListener('change', renderTimetable);
+      downloadButton.addEventListener('click', downloadTimetable);
+      renderTimetable();
+    </script>
+    <script src="../assistant.js" defer></script>
+  </body>
+</html>

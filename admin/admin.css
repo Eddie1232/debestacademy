@@ -1,0 +1,234 @@
+:root {
+  --admin-bg: #f3f5f7;
+  --admin-card: #ffffff;
+  --admin-border: #d9e0e6;
+  --admin-text: #17212b;
+  --admin-muted: #61707d;
+  --admin-accent: #0f4c5c;
+  --admin-accent-2: #176b7e;
+  --admin-warm: #d46a4c;
+  --admin-soft: #edf4f5;
+  --admin-shadow: 0 12px 30px rgba(23, 33, 43, 0.08);
+}
+
+html,
+body {
+  background: var(--admin-bg) !important;
+  color: var(--admin-text) !important;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+.topbar-brand h1 {
+  color: var(--admin-text) !important;
+  font-family: Georgia, 'Times New Roman', serif !important;
+  letter-spacing: 0 !important;
+}
+
+.topbar,
+.shell-banner {
+  background: var(--admin-card) !important;
+  border: 1px solid var(--admin-border) !important;
+  border-top: 4px solid var(--admin-warm) !important;
+  border-radius: 4px !important;
+  box-shadow: var(--admin-shadow) !important;
+}
+
+.topbar {
+  padding: 16px 18px !important;
+}
+
+.topbar-brand .sub,
+.sub,
+.muted,
+.hint,
+.panel-head p,
+.status,
+.conversation-head .hint {
+  color: var(--admin-muted) !important;
+}
+
+.pill,
+.role-pill {
+  background: var(--admin-accent) !important;
+  color: #fff !important;
+  border-radius: 3px !important;
+}
+
+.pill.soft {
+  background: var(--admin-soft) !important;
+  color: var(--admin-accent) !important;
+}
+
+.tab-nav {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 0 8px !important;
+}
+
+.tab-btn {
+  color: var(--admin-muted) !important;
+  border-radius: 3px !important;
+}
+
+.tab-btn:hover,
+.tab-btn.is-active {
+  background: var(--admin-accent) !important;
+  color: #fff !important;
+}
+
+.panel,
+.card,
+.auth-card,
+.day,
+.admin-row,
+.computer-row,
+.login-event,
+.person,
+.workspace,
+.people {
+  background: var(--admin-card) !important;
+  border: 1px solid var(--admin-border) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 14px rgba(23, 33, 43, 0.045) !important;
+}
+
+.panel {
+  padding: 18px !important;
+}
+
+.dash-card {
+  background: var(--admin-accent) !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  color: #fff !important;
+  box-shadow: none !important;
+}
+
+.dash-card h4,
+.dash-card .dash-value,
+.dash-card .hint {
+  color: #fff !important;
+}
+
+.dash-card:nth-child(2) {
+  background: #236b70 !important;
+}
+
+.dash-card:nth-child(3) {
+  background: #526b7a !important;
+}
+
+.dash-card:nth-child(4) {
+  background: var(--admin-warm) !important;
+}
+
+.btn,
+.cal-btn {
+  background: var(--admin-accent) !important;
+  border-radius: 3px !important;
+  color: #fff !important;
+}
+
+.btn:hover,
+.cal-btn:hover {
+  background: var(--admin-accent-2) !important;
+}
+
+.btn-ghost,
+.btn.secondary,
+.cal-btn.secondary {
+  background: #fff !important;
+  border: 1px solid var(--admin-border) !important;
+  color: var(--admin-accent) !important;
+}
+
+.btn-danger,
+.danger-item {
+  background: #a63d38 !important;
+}
+
+input,
+select,
+textarea {
+  background: #fff !important;
+  border: 1px solid #bdc9d1 !important;
+  border-radius: 3px !important;
+  color: var(--admin-text) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--admin-accent-2) !important;
+  box-shadow: 0 0 0 3px rgba(23, 107, 126, 0.14) !important;
+}
+
+.status-badge,
+.status-pill,
+.priority {
+  border-radius: 3px !important;
+}
+
+.calendar-grid {
+  gap: 5px !important;
+}
+
+.day {
+  min-height: 86px !important;
+}
+
+.event {
+  background: #dcecef !important;
+  border-color: #b6d5da !important;
+  border-radius: 3px !important;
+  color: var(--admin-accent) !important;
+}
+
+.menu-panel,
+.modal {
+  border-radius: 4px !important;
+  border-color: var(--admin-border) !important;
+}
+
+.modal {
+  background: #fff !important;
+}
+
+.shell-banner {
+  border-top-width: 0 !important;
+  border-bottom: 1px solid var(--admin-border) !important;
+  background: var(--admin-accent) !important;
+  color: #fff !important;
+}
+
+.shell-banner a {
+  color: #fff !important;
+}
+
+@media (max-width: 700px) {
+  .admin-shell,
+  .shell,
+  main {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .topbar-actions,
+  .actions,
+  .toolbar {
+    width: 100%;
+  }
+
+  .topbar-actions > *,
+  .actions > *,
+  .toolbar > * {
+    flex: 1 1 auto;
+  }
+}

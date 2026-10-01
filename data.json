@@ -133,22 +133,6 @@
   "news": {
     "items": [
       {
-        "id": "1784961747527",
-        "title": "New school Policy",
-        "body": "",
-        "date": "2026-07-29",
-        "category": "Announcement",
-        "publishedBy": "Comma"
-      },
-      {
-        "id": "1784960412772",
-        "title": "Meeting",
-        "body": "",
-        "date": "2026-07-27",
-        "category": "Announcement",
-        "publishedBy": "Comma"
-      },
-      {
         "id": "permanent-sports-day",
         "title": "Annual Sports Day Scheduled",
         "body": "Join us on May 30th for our exciting Annual Sports Day, fostering sportsmanship and teamwork.",
@@ -699,13 +683,19 @@
           "status": "new",
           "at": "2026-07-09T23:48:51.185Z",
           "by": "system",
-          "role": "system"
+          "role": "system",
+          "action": "created",
+          "description": "Application submitted for Test Student",
+          "applicationId": "app-1783640931185"
         },
         {
           "status": "manager_approved",
           "at": "2026-07-16T01:31:10.073Z",
           "by": "Comma",
-          "role": "system"
+          "role": "system",
+          "action": "status_changed",
+          "description": "Manager approved admission for Test Student",
+          "applicationId": "app-1783640931185"
         }
       ]
     },
@@ -751,13 +741,19 @@
           "status": "new",
           "at": "2026-07-16T01:43:10.038Z",
           "by": "system",
-          "role": "system"
+          "role": "system",
+          "action": "created",
+          "description": "Application submitted for Sammy",
+          "applicationId": "app-1784166190038"
         },
         {
           "status": "manager_approved",
           "at": "2026-07-17T23:51:14.620Z",
           "by": "Secretary",
-          "role": "system"
+          "role": "system",
+          "action": "status_changed",
+          "description": "Manager approved admission for Sammy",
+          "applicationId": "app-1784166190038"
         }
       ]
     },
@@ -803,13 +799,19 @@
           "status": "new",
           "at": "2026-08-10T20:08:53.961Z",
           "by": "system",
-          "role": "system"
+          "role": "system",
+          "action": "created",
+          "description": "Application submitted for MHE",
+          "applicationId": "app-1786392533961"
         },
         {
           "status": "manager_approved",
           "at": "2026-08-11T06:48:27.417Z",
           "by": "Secretary",
-          "role": "system"
+          "role": "system",
+          "action": "status_changed",
+          "description": "Manager approved admission for MHE",
+          "applicationId": "app-1786392533961"
         }
       ]
     },
@@ -855,13 +857,19 @@
           "status": "new",
           "at": "2026-08-10T20:11:38.510Z",
           "by": "system",
-          "role": "system"
+          "role": "system",
+          "action": "created",
+          "description": "Application submitted for MHE",
+          "applicationId": "app-1786392698510"
         },
         {
           "status": "manager_approved",
           "at": "2026-08-11T06:48:20.635Z",
           "by": "Secretary",
-          "role": "system"
+          "role": "system",
+          "action": "status_changed",
+          "description": "Manager approved admission for MHE",
+          "applicationId": "app-1786392698510"
         }
       ]
     },
@@ -907,13 +915,19 @@
           "status": "new",
           "at": "2026-08-10T20:43:09.411Z",
           "by": "system",
-          "role": "system"
+          "role": "system",
+          "action": "created",
+          "description": "Application submitted for MHE",
+          "applicationId": "app-1786394589411"
         },
         {
           "status": "manager_approved",
           "at": "2026-08-11T06:48:18.564Z",
           "by": "Secretary",
-          "role": "system"
+          "role": "system",
+          "action": "status_changed",
+          "description": "Manager approved admission for MHE",
+          "applicationId": "app-1786394589411"
         }
       ]
     },
@@ -959,13 +973,19 @@
           "status": "new",
           "at": "2026-08-10T20:44:03.240Z",
           "by": "system",
-          "role": "system"
+          "role": "system",
+          "action": "created",
+          "description": "Application submitted for MHE",
+          "applicationId": "app-1786394643240"
         },
         {
           "status": "manager_approved",
           "at": "2026-08-11T06:48:15.467Z",
           "by": "Secretary",
-          "role": "system"
+          "role": "system",
+          "action": "status_changed",
+          "description": "Manager approved admission for MHE",
+          "applicationId": "app-1786394643240"
         }
       ]
     },
@@ -1011,13 +1031,19 @@
           "status": "new",
           "at": "2026-08-10T20:54:12.327Z",
           "by": "system",
-          "role": "system"
+          "role": "system",
+          "action": "created",
+          "description": "Application submitted for MHE",
+          "applicationId": "app-1786395252305"
         },
         {
           "status": "manager_approved",
           "at": "2026-08-11T06:48:11.566Z",
           "by": "Secretary",
-          "role": "system"
+          "role": "system",
+          "action": "status_changed",
+          "description": "Manager approved admission for MHE",
+          "applicationId": "app-1786395252305"
         }
       ]
     },
@@ -1063,13 +1089,19 @@
           "status": "new",
           "at": "2026-08-10T22:14:32.214Z",
           "by": "system",
-          "role": "system"
+          "role": "system",
+          "action": "created",
+          "description": "Application submitted for mhe",
+          "applicationId": "app-1786400072214"
         },
         {
           "status": "manager_approved",
           "at": "2026-08-11T06:48:06.794Z",
           "by": "Secretary",
-          "role": "system"
+          "role": "system",
+          "action": "status_changed",
+          "description": "Manager approved admission for mhe",
+          "applicationId": "app-1786400072214"
         }
       ]
     },
@@ -1120,27 +1152,47 @@
         {
           "status": "applied",
           "at": "2026-08-12T10:16:26.331Z",
-          "by": "applicant"
+          "by": "applicant",
+          "role": "applicant",
+          "action": "created",
+          "description": "Application submitted for MHE",
+          "applicationId": "app-1786529786331"
         },
         {
           "status": "interviewed",
           "at": "2026-08-12T10:17:50.943Z",
-          "by": "Secretary"
+          "by": "Secretary",
+          "role": "Secretary",
+          "action": "status_changed",
+          "description": "Marked MHE as interviewed",
+          "applicationId": "app-1786529786331"
         },
         {
           "status": "selected",
           "at": "2026-08-12T10:18:42.127Z",
-          "by": "Secretary"
+          "by": "Secretary",
+          "role": "Secretary",
+          "action": "status_changed",
+          "description": "Selected MHE for an employment offer",
+          "applicationId": "app-1786529786331"
         },
         {
           "status": "accepted",
           "at": "2026-08-12T10:19:32.724Z",
-          "by": "Secretary"
+          "by": "Secretary",
+          "role": "Secretary",
+          "action": "status_changed",
+          "description": "Recorded offer acceptance for MHE",
+          "applicationId": "app-1786529786331"
         },
         {
           "status": "registered",
           "at": "2026-08-12T10:19:36.141Z",
-          "by": "Secretary"
+          "by": "Secretary",
+          "role": "Secretary",
+          "action": "status_changed",
+          "description": "Started registration for MHE",
+          "applicationId": "app-1786529786331"
         }
       ],
       "reviewedBy": "Secretary",
@@ -1196,31 +1248,46 @@
           "status": "applied",
           "at": "2026-08-12T11:15:35.128Z",
           "by": "applicant",
-          "role": "applicant"
+          "role": "applicant",
+          "action": "created",
+          "description": "Application submitted for Hehe",
+          "applicationId": "app-1786533335128"
         },
         {
           "status": "interviewed",
           "at": "2026-08-12T11:23:56.739Z",
           "by": "Secretary",
-          "role": "Secretary"
+          "role": "Secretary",
+          "action": "status_changed",
+          "description": "Marked Hehe as interviewed",
+          "applicationId": "app-1786533335128"
         },
         {
           "status": "selected",
           "at": "2026-08-12T11:24:00.222Z",
           "by": "Secretary",
-          "role": "Secretary"
+          "role": "Secretary",
+          "action": "status_changed",
+          "description": "Selected Hehe for an employment offer",
+          "applicationId": "app-1786533335128"
         },
         {
           "status": "accepted",
           "at": "2026-08-12T11:24:01.834Z",
           "by": "Secretary",
-          "role": "Secretary"
+          "role": "Secretary",
+          "action": "status_changed",
+          "description": "Recorded offer acceptance for Hehe",
+          "applicationId": "app-1786533335128"
         },
         {
           "status": "registered",
           "at": "2026-08-12T11:24:03.508Z",
           "by": "Secretary",
-          "role": "Secretary"
+          "role": "Secretary",
+          "action": "status_changed",
+          "description": "Started registration for Hehe",
+          "applicationId": "app-1786533335128"
         }
       ],
       "reviewedBy": "Secretary",
@@ -1251,13 +1318,19 @@
           "status": "new",
           "at": "2026-08-12T17:02:56.604Z",
           "by": "applicant",
-          "role": "applicant"
+          "role": "applicant",
+          "action": "created",
+          "description": "Application submitted for Test Student",
+          "applicationId": "app-1786554176604"
         },
         {
           "status": "archived",
           "at": "2026-08-13T14:51:57.959Z",
           "by": "Secretary",
-          "role": "Secretary"
+          "role": "Secretary",
+          "action": "status_changed",
+          "description": "Archived application for Test Student",
+          "applicationId": "app-1786554176604"
         }
       ],
       "reviewedBy": "Secretary",
@@ -1323,7 +1396,7 @@
       "message": "Hello sir!",
       "priority": "normal",
       "createdAt": "2026-08-05T19:49:32.197Z",
-      "readAt": null
+      "readAt": "2026-09-01T02:20:13.660Z"
     },
     {
       "id": "msg-1785959483239-vc8iu9",
@@ -1383,7 +1456,7 @@
       "message": "Sir!!!!!!!!!11",
       "priority": "normal",
       "createdAt": "2026-08-05T19:58:48.822Z",
-      "readAt": null
+      "readAt": "2026-09-01T02:20:02.874Z"
     },
     {
       "id": "msg-1785960154547-b79kut",
@@ -1398,7 +1471,7 @@
       "message": "Sir!",
       "priority": "normal",
       "createdAt": "2026-08-05T20:02:34.547Z",
-      "readAt": null
+      "readAt": "2026-09-01T02:19:53.063Z"
     },
     {
       "id": "msg-1785960361200-n2ar9k",
@@ -1458,7 +1531,7 @@
       "message": "Can you see me!",
       "priority": "normal",
       "createdAt": "2026-08-05T20:13:53.212Z",
-      "readAt": null
+      "readAt": "2026-09-01T02:18:49.097Z"
     },
     {
       "id": "msg-1785961300832-2stqmv",
@@ -1473,7 +1546,7 @@
       "message": "Mad person",
       "priority": "normal",
       "createdAt": "2026-08-05T20:21:40.832Z",
-      "readAt": null
+      "readAt": "2026-09-01T02:17:28.941Z"
     },
     {
       "id": "msg-1785961351106-url9u3",
@@ -1683,7 +1756,7 @@
       "message": "Be respectful at least!\nGeezz!",
       "priority": "normal",
       "createdAt": "2026-08-07T05:08:36.773Z",
-      "readAt": null
+      "readAt": "2026-09-01T02:17:21.174Z"
     },
     {
       "id": "msg-1786079353875-5ur8a3",
@@ -1713,7 +1786,7 @@
       "message": "Yes please :(",
       "priority": "normal",
       "createdAt": "2026-08-10T20:26:23.702Z",
-      "readAt": null
+      "readAt": "2026-09-01T02:18:40.924Z"
     },
     {
       "id": "msg-1786393597056-wwln4h",
@@ -1728,11 +1801,74 @@
       "message": "Ohh!!",
       "priority": "normal",
       "createdAt": "2026-08-10T20:26:37.056Z",
+      "readAt": "2026-09-01T02:17:12.491Z"
+    },
+    {
+      "id": "msg-1788229076822-coe0z6",
+      "threadId": "thread-1785966909271-wj1g4o",
+      "senderId": "mgr-1",
+      "senderName": "Manager",
+      "senderRole": "Manager",
+      "recipientId": "hm-1",
+      "recipientName": "Headmaster",
+      "recipientRole": "Headmaster",
+      "subject": "",
+      "message": "I'm sorry sir!\nI need my job",
+      "priority": "normal",
+      "createdAt": "2026-09-01T02:17:56.822Z",
+      "readAt": "2026-09-01T02:18:24.728Z"
+    },
+    {
+      "id": "msg-1788229119283-t0xnet",
+      "threadId": "thread-1785966909271-wj1g4o",
+      "senderId": "hm-1",
+      "senderName": "Headmaster",
+      "senderRole": "Headmaster",
+      "recipientId": "mgr-1",
+      "recipientName": "Manager",
+      "recipientRole": "Manager",
+      "subject": "",
+      "message": "Good",
+      "priority": "normal",
+      "createdAt": "2026-09-01T02:18:39.283Z",
       "readAt": null
+    },
+    {
+      "id": "msg-1788229129037-cpv92v",
+      "threadId": "thread-1785959372197-e1hjnh",
+      "senderId": "hm-1",
+      "senderName": "Headmaster",
+      "senderRole": "Headmaster",
+      "recipientId": "sec-1",
+      "recipientName": "Secretary",
+      "recipientRole": "Secretary",
+      "subject": "",
+      "message": "Good",
+      "priority": "normal",
+      "createdAt": "2026-09-01T02:18:49.036Z",
+      "readAt": "2026-09-16T12:19:29.020Z"
+    },
+    {
+      "id": "msg-1789561186840-dpp0yb",
+      "threadId": "thread-1785959372197-e1hjnh",
+      "senderId": "sec-1",
+      "senderName": "Secretary",
+      "senderRole": "Secretary",
+      "recipientId": "hm-1",
+      "recipientName": "Headmaster",
+      "recipientRole": "Headmaster",
+      "subject": "",
+      "message": "how are you?",
+      "priority": "normal",
+      "createdAt": "2026-09-16T12:19:46.840Z",
+      "readAt": "2026-09-16T12:20:02.675Z"
     }
   ],
   "knownOfficeDevices": {
-    "Secretary": "7520b842-4aa9-49bc-b8cd-5338dc078180"
+    "Secretary": "7520b842-4aa9-49bc-b8cd-5338dc078180",
+    "Manager": "fb7136b3-ce98-4090-8d0c-6e073868ca32",
+    "Headmaster": "fb7136b3-ce98-4090-8d0c-6e073868ca32",
+    "SuperAdmin": "d0e025a6-048d-445e-92c3-4ba2a94b2f2b"
   },
   "loginHistory": [
     {
@@ -1779,12 +1915,155 @@
       "computer": "Secretary-PC",
       "ip": "127.0.0.1",
       "unexpectedDevice": true
+    },
+    {
+      "id": "login-1788228942870-8rcppq",
+      "at": "2026-09-01T02:15:42.870Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1788229028231-5nqt51",
+      "at": "2026-09-01T02:17:08.231Z",
+      "role": "Manager",
+      "username": "Manager",
+      "computer": "Manager-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": false
+    },
+    {
+      "id": "login-1788229100020-l0jo1n",
+      "at": "2026-09-01T02:18:20.020Z",
+      "role": "Headmaster",
+      "username": "Comma",
+      "computer": "Headmaster-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": false
+    },
+    {
+      "id": "login-1788277944381-h6j0b0",
+      "at": "2026-09-01T15:52:24.381Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1788278132880-cp3gg1",
+      "at": "2026-09-01T15:55:32.880Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1788460180728-92qm2v",
+      "at": "2026-09-03T18:29:40.728Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1788460250182-63is4b",
+      "at": "2026-09-03T18:30:50.183Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1788460680703-ui9fi0",
+      "at": "2026-09-03T18:38:00.704Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1788468681386-h09827",
+      "at": "2026-09-03T20:51:21.386Z",
+      "role": "Headmaster",
+      "username": "Comma",
+      "computer": "Headmaster-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1789561079111-mkxvp2",
+      "at": "2026-09-16T12:17:59.111Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1789561152183-finzh2",
+      "at": "2026-09-16T12:19:12.183Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1789561199521-9jwv60",
+      "at": "2026-09-16T12:19:59.521Z",
+      "role": "Headmaster",
+      "username": "Comma",
+      "computer": "Headmaster-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1789561519922-pgzfas",
+      "at": "2026-09-16T12:25:19.922Z",
+      "role": "SuperAdmin",
+      "username": "SuperAdmin",
+      "computer": "SuperAdmin-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": false
+    },
+    {
+      "id": "login-1790850970947-evz4q0",
+      "at": "2026-10-01T10:36:10.948Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
+    },
+    {
+      "id": "login-1790853284758-njh01n",
+      "at": "2026-10-01T11:14:44.758Z",
+      "role": "Secretary",
+      "username": "Secretary",
+      "computer": "Secretary-PC",
+      "ip": "127.0.0.1",
+      "unexpectedDevice": true
     }
   ],
   "computerHealth": {
     "Secretary": {
-      "lastSeenAt": "2026-08-13T14:52:00.579Z",
+      "lastSeenAt": "2026-10-01T11:31:28.271Z",
       "username": "Secretary"
+    },
+    "Manager": {
+      "lastSeenAt": "2026-09-01T02:17:08.559Z",
+      "username": "Manager"
+    },
+    "Headmaster": {
+      "lastSeenAt": "2026-09-16T12:19:59.842Z",
+      "username": "Comma"
     }
   }
 }

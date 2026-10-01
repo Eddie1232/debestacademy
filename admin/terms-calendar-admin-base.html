@@ -324,6 +324,68 @@
         justify-content: space-between;
       }
 
+      .application-skeleton-row {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 74px;
+        padding: 12px;
+        border-bottom: 1px solid var(--admin-border);
+      }
+
+      .application-skeleton-main {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .application-skeleton-line {
+        height: 12px;
+        border-radius: 999px;
+        background: rgba(90, 62, 114, 0.09);
+      }
+
+      .application-skeleton-line.title {
+        width: min(38%, 250px);
+        height: 16px;
+      }
+
+      .application-skeleton-line.meta {
+        width: min(58%, 390px);
+        height: 10px;
+      }
+
+      .application-skeleton-line.action {
+        width: 78px;
+        height: 30px;
+        border-radius: 6px;
+      }
+
+      .application-skeleton-row::after {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 42%;
+        background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.72), transparent);
+        content: '';
+        pointer-events: none;
+        transform: translateX(-110%);
+        animation: application-skeleton-shimmer 2.8s linear infinite;
+      }
+
+      @keyframes application-skeleton-shimmer {
+        to { transform: translateX(250%); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .application-skeleton-row::after {
+          animation-duration: 8s;
+        }
+      }
+
       .compact-main {
         flex: 1;
         min-width: 200px;
@@ -636,10 +698,62 @@
         color: var(--admin-accent);
       }
 
-      .offer-history li {
-        margin: 4px 0;
-        font-size: 0.85rem;
-        color: var(--admin-muted);
+      .employment-audit-panel {
+        margin-top: 18px;
+        padding-top: 14px;
+        border-top: 1px solid var(--admin-border);
+      }
+
+      .employment-audit-panel h3 {
+        margin: 0 0 4px;
+        font-size: 1rem;
+        color: #341f4d;
+      }
+
+      .audit-list {
+        list-style: none;
+        margin: 10px 0 0;
+        padding: 0;
+        display: grid;
+        gap: 8px;
+        max-height: 420px;
+        overflow: auto;
+      }
+
+      .audit-entry {
+        margin: 0;
+        padding: 10px 12px;
+        border-left: 3px solid var(--admin-accent);
+        background: #fdf9fb;
+        border-radius: 0 10px 10px 0;
+        border-top: 1px solid var(--admin-border);
+        border-right: 1px solid var(--admin-border);
+        border-bottom: 1px solid var(--admin-border);
+      }
+
+      .audit-entry button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: 0;
+        padding: 0;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .audit-entry-meta {
+        font-weight: 900;
+        color: var(--admin-accent);
+        font-size: 0.88rem;
+      }
+
+      .audit-entry-action {
+        margin-top: 3px;
+        color: var(--admin-text);
+        font-weight: 650;
+        font-size: 0.9rem;
+        line-height: 1.35;
       }
 
       .danger {
@@ -839,6 +953,7 @@
         }
       }
     </style>
+    <link rel="stylesheet" href="./admin.css" />
   </head>
   <body>
     <main class="admin-shell" role="main">
@@ -1051,6 +1166,21 @@
               </div>
             </div>
 
+            <div class="panel" style="margin-top: 14px; background: #fff;">
+              <div class="panel-head" style="margin-bottom: 10px;">
+                <div>
+                  <h3 style="margin: 0; color: #341f4d; font-size: 1rem">School news feed</h3>
+                  <p style="margin: 4px 0 0;">Manage the headlines families see on the public site.</p>
+                </div>
+                <div class="toolbar">
+                  <button class="btn btn-sm" type="button" id="newsFeedAddBtn" style="display: none">
+                    + Add headline
+                  </button>
+                </div>
+              </div>
+              <div id="newsFeedList" class="compact-list"></div>
+            </div>
+
             <div class="today-box" id="todayActionsBox">
               <div style="font-weight: 900; color: #5a3e72">Today’s actions</div>
               <div id="todayActionsText" class="muted" style="margin-top: 6px">
@@ -1113,6 +1243,14 @@
               </div>
             </div>
             <div id="applicationsList" class="compact-list"></div>
+            <div id="employmentAuditSection" class="employment-audit-panel">
+              <h3>Employment history</h3>
+              <p class="muted" style="margin: 0">
+                Every important hiring action is recorded here. This log makes it visible if
+                someone tries to change the process in secret.
+              </p>
+              <ol id="employmentAuditList" class="audit-list"></ol>
+            </div>
           </div>
         </section>
 
@@ -1485,6 +1623,9 @@
         events: structuredClone(DEFAULT_EVENTS),
         proposals: [],
         applications: [],
+        applicationsLoading: false,
+        applicationsLoadError: '',
+        news: [],
       };
 
       const API_BASE = (() => {
@@ -1857,11 +1998,19 @@
         if (title) title.textContent = `${activeRole || 'Admin'} dashboard`;
         // Show create headline button for any school admin role
         const createBtn = document.getElementById('createHeadlineBtn');
+        const addBtn = document.getElementById('newsFeedAddBtn');
         if (createBtn) {
           if (activeRole === 'Secretary' || activeRole === 'Manager' || activeRole === 'Headmaster') {
             createBtn.style.display = '';
           } else {
             createBtn.style.display = 'none';
+          }
+        }
+        if (addBtn) {
+          if (activeRole === 'Secretary' || activeRole === 'Manager' || activeRole === 'Headmaster') {
+            addBtn.style.display = '';
+          } else {
+            addBtn.style.display = 'none';
           }
         }
       }
@@ -2271,23 +2420,96 @@
         return applicationStatusLabel(status);
       }
 
+      function formatAuditDate(iso) {
+        const date = iso ? new Date(iso) : null;
+        if (!date || !Number.isFinite(date.getTime())) return 'Date unavailable';
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        });
+      }
+
+      function formatAuditActor(entry) {
+        const role = String(entry?.role || '').trim();
+        const by = String(entry?.by || '').trim();
+        if (['Secretary', 'Manager', 'Headmaster', 'SuperAdmin'].includes(role)) return role;
+        if (role === 'applicant' || by === 'applicant') return 'Applicant';
+        if (role === 'system' || by === 'system') return 'System';
+        if (['Secretary', 'Manager', 'Headmaster', 'SuperAdmin'].includes(by)) return by;
+        return by || role || 'Unknown';
+      }
+
+      function renderAuditEntry(entry, app, opts = {}) {
+        const date = formatAuditDate(entry.at);
+        const actor = formatAuditActor(entry);
+        const description = entry.description || activityTimelineLabel(app, entry);
+        const body = `<div class="audit-entry-meta">${escapeHtml(date)} — ${escapeHtml(
+          actor
+        )}</div><div class="audit-entry-action">${escapeHtml(description)}</div>`;
+        if (opts.clickable && app?.id) {
+          return `<li class="audit-entry"><button type="button" data-view-app="${escapeHtml(
+            app.id
+          )}">${body}</button></li>`;
+        }
+        return `<li class="audit-entry">${body}</li>`;
+      }
+
       function renderStatusHistory(app) {
         const history = Array.isArray(app.statusHistory) ? app.statusHistory : [];
+        const title = isEmploymentApp(app) ? 'Employment audit trail' : 'Activity timeline';
         if (!history.length) {
-          return '<div class="offer-history"><h4>Activity timeline</h4><p class="muted">No activity recorded yet.</p></div>';
+          return `<div class="offer-history"><h4>${title}</h4><p class="muted">No activity recorded yet.</p></div>`;
         }
         const items = history
+          .filter((entry) => entry && typeof entry === 'object' && !Array.isArray(entry))
           .slice()
           .reverse()
-          .map((entry) => {
-            const when = entry.at ? new Date(entry.at).toLocaleString() : '';
-            const by = entry.by ? ` · ${entry.role || entry.by}` : '';
-            return `<li><strong>${escapeHtml(
-              activityTimelineLabel(app, entry)
-            )}</strong> — ${escapeHtml(when)}${escapeHtml(by)}</li>`;
-          })
+          .map((entry) => renderAuditEntry(entry, app))
           .join('');
-        return `<div class="offer-history"><h4>Activity timeline</h4><ul style="margin:0;padding-left:18px;">${items}</ul></div>`;
+        return `<div class="offer-history"><h4>${title}</h4><ol class="audit-list" style="max-height:none">${items}</ol></div>`;
+      }
+
+      function renderEmploymentAuditList() {
+        const section = document.getElementById('employmentAuditSection');
+        const listEl = document.getElementById('employmentAuditList');
+        if (!section || !listEl) return;
+
+        const typeFilter = document.getElementById('appTypeFilter')?.value || 'all';
+        if (typeFilter === 'student') {
+          section.hidden = true;
+          return;
+        }
+        section.hidden = false;
+
+        const q = (document.getElementById('appSearch')?.value || '').trim().toLowerCase();
+        let apps = (state.applications || []).filter((app) => isEmploymentApp(app));
+        if (typeFilter !== 'all') {
+          apps = apps.filter((app) => (app.type || '') === typeFilter);
+        }
+        if (q) {
+          apps = apps.filter((app) => applicationTitle(app).toLowerCase().includes(q));
+        }
+
+        const entries = [];
+        apps.forEach((app) => {
+          (Array.isArray(app.statusHistory) ? app.statusHistory : []).forEach((entry) => {
+            if (entry && typeof entry === 'object' && !Array.isArray(entry)) {
+              entries.push({ entry, app });
+            }
+          });
+        });
+        entries.sort((a, b) => new Date(b.entry.at || 0) - new Date(a.entry.at || 0));
+
+        if (!entries.length) {
+          listEl.innerHTML = '<li class="muted" style="list-style:none">No employment actions recorded yet.</li>';
+          return;
+        }
+
+        listEl.innerHTML = entries
+          .slice(0, 80)
+          .map(({ entry, app }) => renderAuditEntry(entry, app, { clickable: true }))
+          .join('');
       }
 
       function applicationActionButtons(app, opts = {}) {
@@ -2371,20 +2593,16 @@
         if (type === 'teaching-staff') {
           const t = forms.teaching || {};
           const q = forms.teachingQualifications || {};
-          const r = forms.teachingReferees || {};
+          const declaration = forms.teachingDeclaration || {};
           rows = [
             ['Type', 'Teaching staff'],
             ['Full name', t.fullName],
-            ['Date of birth', t.dateOfBirth],
-            ['Gender', t.gender],
-            ['Nationality', t.nationality],
             ['Phone', t.phone],
             ['Email', t.email],
             ['Position', t.position],
             ['Campus', t.campus],
             ['Subjects / classes', t.subjects],
             ['Availability', t.availability],
-            ['Address', t.address],
             ['Highest qualification', q.highestQualification],
             ['Institution', q.institution],
             ['Year completed', q.yearCompleted],
@@ -2393,34 +2611,24 @@
             ['Employer', q.employer],
             ['Experience', q.experience],
             ['Motivation', q.motivation],
-            [
-              'Referee 1',
-              [r.referee1Name, r.referee1Contact, r.referee1Relation].filter(Boolean).join(' — '),
+            ['Declaration', declaration.declaration],
+            ['Declaration confirmed',
+              declaration.confirmed === true ? 'Yes' : declaration.confirmed === false ? 'No' : '',
             ],
-            [
-              'Referee 2',
-              [r.referee2Name, r.referee2Contact, r.referee2Relation].filter(Boolean).join(' — '),
-            ],
-            ['Emergency contact', r.emergencyContact],
-            ['Declaration', r.declaration],
           ];
         } else if (type === 'non-teaching-staff') {
           const n = forms.nonTeaching || {};
           const e = forms.nonTeachingExperience || {};
-          const r = forms.nonTeachingReferees || {};
+          const declaration = forms.nonTeachingDeclaration || {};
           rows = [
             ['Type', 'Non-teaching staff'],
             ['Full name', n.fullName],
-            ['Date of birth', n.dateOfBirth],
-            ['Gender', n.gender],
-            ['Nationality', n.nationality],
             ['Phone', n.phone],
             ['Email', n.email],
             ['Position', n.position],
             ['Campus', n.campus],
             ['Availability', n.availability],
             ['Expected start', n.startDate],
-            ['Address', n.address],
             ['Education', e.education],
             ['Certificates', e.certificates],
             ['Years experience', e.yearsExperience],
@@ -2428,52 +2636,32 @@
             ['Skills', e.skills],
             ['Experience', e.experience],
             ['Motivation', e.motivation],
-            [
-              'Referee 1',
-              [r.referee1Name, r.referee1Contact, r.referee1Relation].filter(Boolean).join(' — '),
+            ['Declaration', declaration.declaration],
+            ['Declaration confirmed',
+              declaration.confirmed === true ? 'Yes' : declaration.confirmed === false ? 'No' : '',
             ],
-            [
-              'Referee 2',
-              [r.referee2Name, r.referee2Contact, r.referee2Relation].filter(Boolean).join(' — '),
-            ],
-            ['Emergency contact', r.emergencyContact],
-            ['Declaration', r.declaration],
           ];
         } else {
           const student = forms.student || {};
-          const health = forms.health || {};
           const parent = forms.parent || {};
           rows = [
             ['Type', 'Student admission'],
             ['Student name', student.fullName],
             ['Date of birth', student.dateOfBirth],
-            ['Current grade', student.currentGrade],
-            ['Gender', student.gender],
-            ['Nationality', student.nationality],
+            ['Grade / class applying for', student.currentGrade],
             ['Campus', student.campus],
-            ['Home address', student.homeAddress],
-            ['Health — student name', health.studentFullName],
-            ['Blood group', health.bloodGroup],
-            ['Allergies', health.allergies],
-            ['Chronic illness', health.chronicIllness],
-            ['Immunization', health.immunization],
-            ['Doctor notes', health.doctorNotes],
             ['Parent/guardian', parent.fullName],
             ['Relationship', parent.relationship],
             ['Phone', parent.phone],
             ['Email', parent.email],
-            ['Parent address', parent.address],
-            ['Consent / notes', parent.consent],
           ];
         }
 
         return rows
           .filter(([, value]) => value)
-          .map(
-            ([label, value]) =>
-              `<div><span class="muted">${escapeHtml(label)}:</span> <strong>${escapeHtml(
-                value
-              )}</strong></div>`
+          .map(([label, value]) =>
+            '<div><span class="muted">' + escapeHtml(label) + ':</span> <strong>' +
+              escapeHtml(value) + '</strong></div>'
           )
           .join('');
       }
@@ -2507,10 +2695,34 @@
         if (dashEl) dashEl.textContent = String(newCount);
         if (tabCount) tabCount.textContent = String(newCount);
 
+        if (state.applicationsLoading) {
+          listEl.innerHTML = `
+            <div class="application-skeleton" role="status" aria-live="polite" aria-label="Loading applications">
+              ${[1, 2, 3].map(() => `
+                <div class="application-skeleton-row" aria-hidden="true">
+                  <div class="application-skeleton-main">
+                    <span class="application-skeleton-line title"></span>
+                    <span class="application-skeleton-line meta"></span>
+                  </div>
+                  <span class="application-skeleton-line action"></span>
+                </div>
+              `).join('')}
+            </div>`;
+          return;
+        }
+
+        if (state.applicationsLoadError) {
+          listEl.innerHTML = `<div class="empty-state" role="status">${escapeHtml(
+            state.applicationsLoadError
+          )}</div>`;
+          return;
+        }
+
         const apps = getFilteredApplications();
 
         if (!apps.length) {
           listEl.innerHTML = '<div class="empty-state">No applications match your filters.</div>';
+          renderEmploymentAuditList();
           return;
         }
 
@@ -2641,17 +2853,24 @@
       }
 
       async function fetchApplicationsFromBackend() {
-        const res = await authedFetch(`${API_BASE}/api/applications`, {
-          method: 'GET',
-        });
-        if (!res.ok) {
-          state.applications = [];
-          renderApplicationsList();
-          return;
-        }
-        const data = await res.json();
-        state.applications = Array.isArray(data.applications) ? data.applications : [];
+        state.applicationsLoading = true;
+        state.applicationsLoadError = '';
         renderApplicationsList();
+        try {
+          const res = await authedFetch(`${API_BASE}/api/applications`, {
+            method: 'GET',
+          });
+          if (!res.ok) throw new Error('Applications are temporarily unavailable. Select Refresh to try again.');
+          const data = await res.json();
+          state.applications = Array.isArray(data.applications) ? data.applications : [];
+        } catch {
+          state.applications = [];
+          state.applicationsLoadError =
+            'Applications are temporarily unavailable. Select Refresh to try again.';
+        } finally {
+          state.applicationsLoading = false;
+          renderApplicationsList();
+        }
       }
 
       async function updateApplicationStatus(id, status) {
@@ -2674,6 +2893,52 @@
         if (open && open.classList.contains('open')) {
           openApplicationModal(id);
         }
+      }
+
+      async function fetchNewsFromBackend() {
+        const res = await authedFetch(`${API_BASE}/api/news`, {
+          method: 'GET',
+        });
+        if (!res.ok) throw new Error('Could not load news feed');
+        const data = await res.json();
+        state.news = Array.isArray(data.items) ? data.items : [];
+        renderNewsFeedList();
+      }
+
+      function renderNewsFeedList() {
+        const listEl = document.getElementById('newsFeedList');
+        if (!listEl) return;
+
+        const items = Array.isArray(state.news) ? state.news : [];
+        if (!items.length) {
+          listEl.innerHTML = '<div class="empty-state">No headlines published yet.</div>';
+          return;
+        }
+
+        listEl.innerHTML = items
+          .map(
+            (item) => `
+              <div class="compact-row" data-news-id="${escapeHtml(item.id || '')}">
+                <div class="compact-main">
+                  <strong>${escapeHtml(item.title || 'Headline')}</strong>
+                  <div>
+                    <span class="status-badge draft">${escapeHtml(item.date || 'Latest')}</span>
+                    ${
+                      item.expiresAt
+                        ? `<span class="status-badge draft" style="margin-left:6px;">Visible until ${escapeHtml(item.expiresAt)}</span>`
+                        : ''
+                    }
+                  </div>
+                  ${item.body ? `<div class="muted" style="margin-top:6px;">${escapeHtml(item.body)}</div>` : ''}
+                  <div class="muted" style="margin-top:6px;">Posted by ${escapeHtml(item.publishedBy || 'Admin')}</div>
+                </div>
+                <div class="row-actions">
+                  <button class="btn btn-danger btn-sm" type="button" data-news-delete="${escapeHtml(item.id || '')}">Remove</button>
+                </div>
+              </div>
+            `
+          )
+          .join('');
       }
 
       async function fetchDashboardFromBackend() {
@@ -3090,6 +3355,7 @@
           await fetchProposalsFromBackend();
           await fetchApplicationsFromBackend();
           await fetchDashboardFromBackend();
+          await fetchNewsFromBackend();
           await refreshMessageNotification();
           await sendComputerHeartbeat();
           window.setInterval(sendComputerHeartbeat, 30000);
@@ -3265,9 +3531,14 @@
           await fetchDashboardFromBackend();
           await fetchApplicationsFromBackend();
           await fetchProposalsFromBackend();
+          await fetchNewsFromBackend();
         } catch (e) {
           /* ignore */
         }
+      });
+
+      document.getElementById('newsFeedAddBtn')?.addEventListener('click', () => {
+        document.getElementById('createHeadlineBtn')?.click();
       });
 
       ['appTypeFilter', 'appStatusFilter'].forEach((id) => {
@@ -3300,10 +3571,49 @@
 
       // Proposal actions & comments (list + modal)
       document.addEventListener('click', async (event) => {
+        const deleteNewsBtn = event.target.closest('button[data-news-delete]');
         const actionBtn = event.target.closest('button[data-action]');
         const commentBtn = event.target.closest('button[data-comment-submit]');
         if (!getAuthToken()) return;
         const statusEl = document.getElementById('proposalStatus');
+
+        if (deleteNewsBtn) {
+          const id = deleteNewsBtn.getAttribute('data-news-delete');
+          if (!id) return;
+          const confirmed = window.confirm('Remove this headline from the public school news feed?');
+          if (!confirmed) return;
+          try {
+            if (statusEl) {
+              statusEl.textContent = 'Removing headline...';
+              statusEl.style.color = '#5a3e72';
+            }
+            const res = await authedFetch(`${API_BASE}/api/news/${encodeURIComponent(id)}`, {
+              method: 'DELETE',
+            });
+            if (!res.ok) {
+              const t = await res.text().catch(() => null);
+              throw new Error(t || 'Could not remove headline');
+            }
+
+            const row = deleteNewsBtn.closest('.compact-row');
+            if (row) row.remove();
+            state.news = Array.isArray(state.news)
+              ? state.news.filter((item) => String(item?.id || '') !== String(id))
+              : [];
+            renderNewsFeedList();
+            await fetchDashboardFromBackend();
+            if (statusEl) {
+              statusEl.textContent = 'Headline removed.';
+              statusEl.style.color = '#2d6a4f';
+            }
+          } catch (err) {
+            if (statusEl) {
+              statusEl.textContent = err.message || 'Headline remove failed';
+              statusEl.style.color = '#b11f2e';
+            }
+          }
+          return;
+        }
 
         if (actionBtn && actionBtn.dataset.id && actionBtn.dataset.action) {
           // ignore menu toggles etc.

@@ -72,7 +72,7 @@
 
 .set-intro {
   margin: 0 0 14px;
-  color: #6d587a;
+  color: #4b3b4f;
   font-weight: 500;
   max-width: 820px;
   line-height: 1.55;
@@ -152,7 +152,7 @@
 
 .a4-subtitle {
   margin: 3px 0 0;
-  color: #6d587a;
+  color: #4b3b4f;
   font-size: 0.82rem;
   font-weight: 600;
 }
@@ -212,7 +212,7 @@
 .form-field-grid select:focus,
 .form-field-grid textarea:focus {
   outline: none;
-  border-color: #7e628f;
+  border-color: #5a3e72;
   background: #fff;
   box-shadow: 0 0 0 2px rgba(126, 98, 143, 0.15);
 }
@@ -275,32 +275,6 @@
   transform: translateX(-50%) translateY(0);
 }
 
-.interview-message {
-  max-width: 300px;
-  text-align: center;
-  font-size: 0.92rem;
-  line-height: 1.4;
-  color: #4b3b4f;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.22s ease 0.1s, transform 0.22s ease 0.1s;
-}
-
-.notice-prefix {
-  color: #d42f2f;
-  font-weight: 900;
-}
-
-.notice-content {
-  color: #1f1f1f;
-  font-weight: 800;
-}
-
-.interview-message.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .checkmark-ring {
   width: 92px;
   height: 92px;
@@ -313,7 +287,7 @@
 
 .checkmark-circle {
   fill: none;
-  stroke: #7e628f;
+  stroke: #5a3e72;
   stroke-width: 8;
   stroke-linecap: round;
   stroke-dasharray: 265;
@@ -402,7 +376,7 @@
 
 .btn:hover,
 .btn:focus {
-  background: #7e628f;
+  background: #5a3e72;
   outline: none;
   transform: translateY(-1px);
 }
@@ -470,7 +444,7 @@
   .form-actions,
   .set-intro,
   .forms-footer-note,
-  .home-btn,
+  .back-btn,
   .crest-container {
     display: none !important;
   }

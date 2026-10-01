@@ -1,10 +1,10 @@
 /**
  * Public website assistant: school knowledge, request validation,
- * SpaceXAI (xAI) replies, and a local FAQ fallback when no API key is set.
+ * OpenAI replies, and a local FAQ fallback when no API key is set.
  */
 
-const XAI_BASE_URL = 'https://api.x.ai/v1';
-const DEFAULT_MODEL = 'grok-4.5';
+const OPENAI_BASE_URL = 'https://api.openai.com/v1';
+const DEFAULT_MODEL = 'gpt-5.6-luna';
 const MAX_MESSAGES = 12;
 const MAX_MESSAGE_CHARS = 1000;
 const ASSISTANT_WINDOW_MS = 15 * 60 * 1000;
@@ -13,100 +13,70 @@ const ASSISTANT_MAX_REQUESTS = 20;
 const SCHOOL_FACTS = `
 DEBEST Academy is a private school in Ghana offering education from Creche through Junior High School (JHS).
 Tagline: EDUCATION GOOD AS GOLD.
-Mission: create a conducive environment that equips students with confidence and leadership through quality teaching, care, and morally based training.
-Vision: to be recognised as an outstanding top private institution offering high-quality education with strong religious, moral, and academic training.
-Values: faith-based values, positive discipline, academic support, creative arts, sports, leadership, and a safe family-oriented environment.
-
-Campuses:
-- Dansoman campus — school activities and cultural programmes
-- Kasoa campus — school activities and events
-Parents may book a tour when applying or by calling the office.
-
-School hours: Monday to Friday, 7:45 AM to 3:00 PM. Weekend closed except scheduled events. Holidays: office closed; leave a message online.
-After-school activities (sports, music, clubs, academic support) are offered on selected days.
+School hours: Monday to Friday, 7:45 AM to 3:00 PM.
+The public website lists campuses in Dansoman and Kasoa. Contact the office to confirm visit arrangements.
 
 Contact:
 - Phone: 0244 669 383 and 0244 802 748 (Ghana)
 - WhatsApp: https://wa.me/233244669383
 - PTA email: pta@debestacademy.com
-- Written messages: contact form on contact.html; typical reply in 1–2 working days
+- Written messages: contact form on contact.html
 - For urgent matters, call the office during working hours
-- Include the child’s name and class when writing about a pupil
 
 Admission:
 - Levels: Creche, KG, Primary, JHS
-- Steps: 1) Submit an enquiry / online application 2) Visit the school 3) Provide records 4) Confirm admission
-- Required: completed application form, past school records, birth certificate, and a parent/guardian meeting
+- Steps: submit an enquiry or application, contact the school about a visit and current requirements, then follow the school's placement instructions
 - Apply at apply.html — student admission forms, teaching staff forms, and non-teaching staff forms
-- After submitting online, print and deliver signed copies to the school office within one week where required
-- Scholarships: apply through the admissions office; awards consider academic performance, exam results, and financial need
-- Transfers: contact admissions; previous school records and approvals are needed
-
-Fees: can be paid online, at the school office, or through approved bank deposits. Keep receipts. Do not invent specific fee amounts.
-
-Uniforms: required every day, including PE days and formal events.
-Meals: nutritious meals prepared on campus daily; special dietary needs accommodated when notified in advance.
-Bus: school bus service on selected routes; register early.
-Class size: about 20 students per teacher.
-New students: orientation, mentoring, and a welcome programme.
-Progress: reports each term via the student/parent platform and parent meetings.
-Exam schedules and term dates: Terms Calendar (student/terms-calendar.html), updated by administration after Headmaster approval.
-Absence: notify the office by phone or the contact form as soon as possible; send a note when the child returns.
-Teacher contact: student/parent platform messages or scheduled parent-teacher conferences.
-Platforms: student/parent platform (student/parent_platform.html) and PTA (pta.html). Access after registration.
-PTA: connects families and teachers; supports events, student activities, and community programmes. Volunteer for approved events and PTA activities.
-Safety: supervised arrival/departure, secure campus access, regular safety drills.
-Complaints: contact form or school administration.
-Policies: Admissions & Enrolment, Attendance & Discipline, Child Safety, Parent Communication — available on the website and from the office.
-Staff: Headmaster (leadership), teaching team, administrative team, pastoral care.
-Photo library and reviews pages are on the public site.
+For current documents, fees, uniforms, meals, transport, class sizes, schedules, and support arrangements, contact the school office; do not assume availability or invent terms.
+The Terms Calendar is available at student/terms-calendar.html.
+Do not request sensitive or identifying information about a child in chat.
 `.trim();
 
 const FAQ_ANSWERS = [
   {
     keys: ['hour', 'time', 'open', 'close', 'schedule', 'when do you', 'school day'],
     answer:
-      'The school day runs from 7:45 AM to 3:00 PM, Monday through Friday. After-school activities are offered on selected days. The office is closed on weekends except for scheduled events.',
+      'The school day is listed as 7:45 AM to 3:00 PM, Monday through Friday. Call the office to confirm holiday or event schedules.',
   },
   {
     keys: ['apply', 'admission', 'enrol', 'enroll', 'join', 'new student', 'how do i apply'],
     answer:
-      'Start on the Apply page (apply.html) and complete the student admission form. You will also need past school records, a birth certificate, and a parent/guardian meeting. After submitting online, print and bring signed copies to the office within one week where required. You can also call 0244 669 383 or 0244 802 748.',
+      'Start on the Apply page (apply.html), then contact admissions for the current document checklist and next steps. You can call 0244 669 383 or 0244 802 748.',
   },
   {
-    keys: ['document', 'documents', 'birth certificate', 'records', 'enroll', 'enrol', 'enrollment', 'visit', 'tour'],
+    keys: ['document', 'documents', 'records', 'enroll', 'enrol', 'enrollment'],
     answer:
-      'For enrollment, parents usually need the application form, past school records, a birth certificate, and a parent or guardian meeting. You can also book a school tour by calling the office or requesting a visit through the contact form.',
+      'The website does not publish a complete document checklist. Contact the admissions office for the current document checklist. For a visit, call the office or use the contact form.',
   },
   {
     keys: ['scholarship', 'bursary', 'financial aid'],
     answer:
-      'Scholarship applications go through the admissions office. Awards consider academic performance, exam results, and financial need. Call the office or use the contact form to start.',
+      'Contact admissions to ask whether financial support is currently available and what its terms are.',
   },
   {
     keys: ['uniform', 'dress', 'clothes', 'attire'],
     answer:
-      'Yes. Students wear the school uniform every day, including PE days and formal school events.',
+      'Contact the school office for current uniform requirements.',
   },
   {
     keys: ['meal', 'food', 'lunch', 'canteen', 'diet'],
     answer:
-      'Nutritious meals are prepared on campus each day. Tell the office in advance if your child has special dietary needs.',
+      'Contact the school office to confirm current meal arrangements and any dietary support.',
   },
   {
     keys: ['bus', 'transport', 'pickup', 'van'],
     answer:
-      'Yes, a school bus service runs on selected routes. Register early to secure a seat. Ask the office for the current routes list.',
+      'Contact the school office to confirm whether transport is currently available and to request current route information.',
   },
   {
     keys: ['fee', 'pay', 'tuition', 'bank', 'receipt'],
     answer:
-      'Fees can be paid online, at the school office, or through approved bank deposits. Please keep your receipts. For the current amount, contact the office — I do not quote fee figures here.',
+      'Request the current written fee schedule and approved payment instructions from the school office before making a payment.',
   },
   {
     keys: ['contact', 'phone', 'call', 'whatsapp', 'email', 'number'],
     answer:
-      'Call the office on 0244 669 383 or 0244 802 748 (Monday–Friday, 7:45 AM–3:00 PM). WhatsApp: https://wa.me/233244669383. PTA email: pta@debestacademy.com. You can also use the contact form; we typically reply in 1–2 working days.',
+      'Call the office on 0244 669 383 or 0244 802 748 (Monday–Friday, 7:45 AM–3:00 PM). WhatsApp: https://wa.me/233244669383. PTA email: pta@debestacademy.com. You can also use the contact form.',
   },
   {
     keys: ['campus', 'dansoman', 'kasoa', 'location', 'where', 'address', 'tour', 'visit'],
@@ -116,7 +86,7 @@ const FAQ_ANSWERS = [
   {
     keys: ['ratio', 'class size', 'how many student', 'teacher'],
     answer:
-      'Average class size is about 20 students per teacher so learners get individual attention.',
+      'Contact admissions for current class-size and staffing information.',
   },
   {
     keys: ['platform', 'parent portal', 'login', 'announcement'],
@@ -141,17 +111,17 @@ const FAQ_ANSWERS = [
   {
     keys: ['after school', 'club', 'sport', 'music', 'extra'],
     answer:
-      'Yes. We offer sports, music, clubs, and academic support sessions after school on selected days.',
+      'Contact the school office for current after-school activity information.',
   },
   {
     keys: ['progress', 'report', 'result', 'grade'],
     answer:
-      'Progress reports are shared each term through the student/parent platform and at parent meetings.',
+      'Ask the school office how and when student progress information is shared.',
   },
   {
     keys: ['transfer', 'withdraw', 'leave the school'],
     answer:
-      'Contact admissions for the transfer or withdrawal process. You will need records from the current school and the required approvals.',
+      'Contact admissions for the current transfer or withdrawal process and any records needed.',
   },
   {
     keys: ['complaint', 'concern', 'problem'],
@@ -249,7 +219,7 @@ const ADMIN_FAQ_ANSWERS = [
   {
     keys: ['admission', 'application', 'enrol', 'enroll', 'parent meeting', 'records', 'supporting documents'],
     answer:
-      'Guide the parent to complete the online application, collect the required records and birth certificate, and arrange the parent/guardian meeting. If needed, follow up with the office and ask them to bring signed copies to the school within one week.',
+      'Guide the parent to the online application, then confirm the current document checklist and next steps with admissions. Ask the family to share only records requested for the application.',
   },
   {
     keys: ['tour', 'visit', 'campus', 'school tour', 'parent visit'],
@@ -259,12 +229,12 @@ const ADMIN_FAQ_ANSWERS = [
   {
     keys: ['scholarship', 'financial need', 'support', 'bursary'],
     answer:
-      'Scholarship requests are routed through the admissions office. Encourage parents to share academic records, examination results, and financial information so the committee can assess their request.',
+      'Ask the admissions office whether financial support is currently available and what its terms are. Do not promise that a programme or award exists.',
   },
   {
     keys: ['transfer', 'withdraw', 'leave', 'records', 'previous school'],
     answer:
-      'For transfers or withdrawals, ask the family to contact admissions and provide prior school records and approvals. This helps the office complete the process smoothly and on time.',
+      'For transfers or withdrawals, direct the family to admissions to confirm the current process and any records needed.',
   },
   {
     keys: ['complaint', 'concern', 'issue', 'discipline', 'safeguarding'],
@@ -385,53 +355,59 @@ function extractChatText(data) {
   return '';
 }
 
-async function callXai(messages, systemPrompt, deps) {
+async function callOpenAI(messages, systemPrompt, deps) {
   const fetchFn = (deps && deps.fetch) || globalThis.fetch;
-  const apiKey = (deps && deps.apiKey) || process.env.XAI_API_KEY;
+  const apiKey = (deps && deps.apiKey) || process.env.OPENAI_API_KEY;
+
   if (!apiKey || typeof fetchFn !== 'function') return null;
 
-  const model = (deps && deps.model) || process.env.XAI_MODEL || DEFAULT_MODEL;
-  const payloadMessages = [{ role: 'system', content: systemPrompt }, ...messages];
+  const model =
+    (deps && deps.model) ||
+    process.env.OPENAI_MODEL ||
+    DEFAULT_MODEL;
 
-  const headers = {
-    Authorization: `Bearer ${apiKey}`,
-    'Content-Type': 'application/json',
-  };
+  const input = [
+    {
+      role: 'system',
+      content: systemPrompt
+    },
+    ...messages
+  ];
 
-  const chatRes = await fetchFn(`${XAI_BASE_URL}/chat/completions`, {
+  const response = await fetchFn(`${OPENAI_BASE_URL}/responses`, {
     method: 'POST',
-    headers,
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({
       model,
-      temperature: 0.3,
-      max_tokens: 450,
-      messages: payloadMessages,
-    }),
+      input,
+      max_output_tokens: 450
+    })
   });
 
-  if (chatRes.ok) {
-    const data = await chatRes.json();
-    const text = extractChatText(data);
-    if (text) return text;
+  if (!response.ok) {
+    const detail = await response.text().catch(() => '');
+    throw new Error(
+      `OpenAI request failed (${response.status}) ${detail.slice(0, 180)}`
+    );
   }
 
-  const responsesRes = await fetchFn(`${XAI_BASE_URL}/responses`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      model,
-      input: payloadMessages,
-    }),
-  });
+  const data = await response.json();
 
-  if (!responsesRes.ok) {
-    const detail = await responsesRes.text().catch(() => '');
-    throw new Error(`xAI request failed (${responsesRes.status}) ${detail.slice(0, 180)}`);
+  // OpenAI Responses API provides the convenient output_text field.
+  if (typeof data.output_text === 'string' && data.output_text.trim()) {
+    return data.output_text.trim();
   }
 
-  const data = await responsesRes.json();
+  // Fallback parser in case output_text isn't present.
   const text = extractChatText(data);
-  if (!text) throw new Error('xAI returned an empty reply');
+
+  if (!text) {
+    throw new Error('OpenAI returned an empty reply');
+  }
+
   return text;
 }
 
@@ -459,7 +435,7 @@ async function handleAssistantChat(body, context, deps) {
   if (parsed.error) return parsed;
 
   try {
-    const ai = await callXai(parsed.messages, buildSystemPrompt(context || {}), deps);
+    const ai = await callOpenAI(parsed.messages, buildSystemPrompt(context || {}), deps);
     if (ai) return { reply: ai, source: 'ai' };
   } catch (err) {
     console.error('[assistant] model error:', err && err.message ? err.message : err);
@@ -473,7 +449,7 @@ async function handleAdminAssistantChat(body, context, deps) {
   if (parsed.error) return parsed;
 
   try {
-    const ai = await callXai(parsed.messages, buildAdminSystemPrompt(context || {}), deps);
+    const ai = await callOpenAI(parsed.messages, buildAdminSystemPrompt(context || {}), deps);
     if (ai) return { reply: ai, source: 'ai' };
   } catch (err) {
     console.error('[assistant:admin] model error:', err && err.message ? err.message : err);

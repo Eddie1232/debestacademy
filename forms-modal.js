@@ -73,32 +73,23 @@ function fieldValue(name) {
   return el ? `${el.value || ''}`.trim() : '';
 }
 
+function fieldChecked(name) {
+  return !!document.querySelector(`[name="${name}"]`)?.checked;
+}
+
 function collectStudentForms() {
   return {
     student: {
       fullName: fieldValue('student-full-name'),
       dateOfBirth: fieldValue('student-dob'),
       currentGrade: fieldValue('student-current-grade'),
-      gender: fieldValue('student-gender'),
-      nationality: fieldValue('student-nationality'),
       campus: fieldValue('student-campus'),
-      homeAddress: fieldValue('student-home-address'),
-    },
-    health: {
-      studentFullName: fieldValue('health-student-full-name'),
-      bloodGroup: fieldValue('health-blood-group'),
-      allergies: fieldValue('health-allergies'),
-      chronicIllness: fieldValue('health-chronic-illness'),
-      immunization: fieldValue('health-immunization'),
-      doctorNotes: fieldValue('health-doctor-notes'),
     },
     parent: {
       fullName: fieldValue('parent-full-name'),
       relationship: fieldValue('parent-relationship'),
       phone: fieldValue('parent-phone'),
       email: fieldValue('parent-email'),
-      address: fieldValue('parent-address'),
-      consent: fieldValue('parent-consent'),
     },
   };
 }
@@ -107,16 +98,12 @@ function collectTeachingForms() {
   return {
     teaching: {
       fullName: fieldValue('teach-full-name'),
-      dateOfBirth: fieldValue('teach-dob'),
-      gender: fieldValue('teach-gender'),
-      nationality: fieldValue('teach-nationality'),
       phone: fieldValue('teach-phone'),
       email: fieldValue('teach-email'),
       position: fieldValue('teach-position'),
       campus: fieldValue('teach-campus'),
       subjects: fieldValue('teach-subjects'),
       availability: fieldValue('teach-availability'),
-      address: fieldValue('teach-address'),
     },
     teachingQualifications: {
       highestQualification: fieldValue('teach-qualification'),
@@ -128,15 +115,9 @@ function collectTeachingForms() {
       experience: fieldValue('teach-experience'),
       motivation: fieldValue('teach-motivation'),
     },
-    teachingReferees: {
-      referee1Name: fieldValue('teach-ref1-name'),
-      referee1Contact: fieldValue('teach-ref1-contact'),
-      referee1Relation: fieldValue('teach-ref1-relation'),
-      referee2Name: fieldValue('teach-ref2-name'),
-      referee2Contact: fieldValue('teach-ref2-contact'),
-      referee2Relation: fieldValue('teach-ref2-relation'),
-      emergencyContact: fieldValue('teach-emergency'),
+    teachingDeclaration: {
       declaration: fieldValue('teach-declaration'),
+      confirmed: fieldChecked('teach-declaration-confirmed'),
     },
   };
 }
@@ -145,16 +126,12 @@ function collectNonTeachingForms() {
   return {
     nonTeaching: {
       fullName: fieldValue('nonteach-full-name'),
-      dateOfBirth: fieldValue('nonteach-dob'),
-      gender: fieldValue('nonteach-gender'),
-      nationality: fieldValue('nonteach-nationality'),
       phone: fieldValue('nonteach-phone'),
       email: fieldValue('nonteach-email'),
       position: fieldValue('nonteach-position'),
       campus: fieldValue('nonteach-campus'),
       availability: fieldValue('nonteach-availability'),
       startDate: fieldValue('nonteach-start-date'),
-      address: fieldValue('nonteach-address'),
     },
     nonTeachingExperience: {
       education: fieldValue('nonteach-education'),
@@ -165,15 +142,9 @@ function collectNonTeachingForms() {
       experience: fieldValue('nonteach-experience'),
       motivation: fieldValue('nonteach-motivation'),
     },
-    nonTeachingReferees: {
-      referee1Name: fieldValue('nonteach-ref1-name'),
-      referee1Contact: fieldValue('nonteach-ref1-contact'),
-      referee1Relation: fieldValue('nonteach-ref1-relation'),
-      referee2Name: fieldValue('nonteach-ref2-name'),
-      referee2Contact: fieldValue('nonteach-ref2-contact'),
-      referee2Relation: fieldValue('nonteach-ref2-relation'),
-      emergencyContact: fieldValue('nonteach-emergency'),
+    nonTeachingDeclaration: {
       declaration: fieldValue('nonteach-declaration'),
+      confirmed: fieldChecked('nonteach-declaration-confirmed'),
     },
   };
 }
@@ -190,26 +161,46 @@ function collectFormsForSet(formSet) {
 }
 
 function validateFormsForSet(formSet, forms) {
+  const panel = document.querySelector(`.form-set-panel[data-form-set="${formSet}"]`);
+  const consent = panel?.querySelector('[data-application-consent]');
+  if (!consent?.checked) {
+    throw new Error('Please confirm the privacy and application consent before submitting.');
+  }
+  const invalidField = Array.from(panel?.querySelectorAll('input, select, textarea') || []).find(
+    (field) => !field.checkValidity()
+  );
+  if (invalidField) {
+    invalidField.reportValidity();
+    throw new Error('Please correct the highlighted fields before submitting.');
+  }
   if (formSet === 'teaching-staff') {
     const name = forms.teaching?.fullName || '';
+    const contact = [forms.teaching?.phone, forms.teaching?.email].some(Boolean);
     if (!name)
       throw new Error(
         'Please enter your full name on the teaching application form before submitting.'
       );
+    if (!contact) throw new Error('Please enter a phone number or email address before submitting.');
     return;
   }
   if (formSet === 'non-teaching-staff') {
     const name = forms.nonTeaching?.fullName || '';
+    const contact = [forms.nonTeaching?.phone, forms.nonTeaching?.email].some(Boolean);
     if (!name)
       throw new Error(
         'Please enter your full name on the non-teaching application form before submitting.'
       );
+    if (!contact) throw new Error('Please enter a phone number or email address before submitting.');
     return;
   }
   const studentName = forms.student?.fullName || '';
+  const guardianName = forms.parent?.fullName || '';
+  const guardianContact = [forms.parent?.phone, forms.parent?.email].some(Boolean);
   if (!studentName) {
     throw new Error('Please enter the student full name before submitting.');
   }
+  if (!guardianName) throw new Error('Please enter the parent or guardian full name before submitting.');
+  if (!guardianContact) throw new Error('Please enter a parent or guardian phone number or email address.');
 }
 
 async function sendApplicationToSecretary(which, formSet) {
@@ -225,6 +216,10 @@ async function sendApplicationToSecretary(which, formSet) {
       which: which || meta.which,
       type: meta.type,
       forms,
+      consent: {
+        privacyAccepted: true,
+        guardianConfirmed: setKey === 'student',
+      },
     }),
   });
 
@@ -252,67 +247,12 @@ function printForm(which) {
   return printFormSet('student');
 }
 
-function getNextInterviewSlot(now = new Date()) {
-  const date = new Date(now);
-
-  const normalizeToBusinessDay = () => {
-    while (date.getDay() === 0 || date.getDay() === 6) {
-      date.setDate(date.getDate() + 1);
-    }
-  };
-
-  normalizeToBusinessDay();
-
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  const second = date.getSeconds();
-  const millisecond = date.getMilliseconds();
-
-  const atExactTime = (targetHour) =>
-    hour === targetHour && minute === 0 && second === 0 && millisecond === 0;
-
-  if (hour < 9 || atExactTime(9)) {
-    date.setHours(9, 0, 0, 0);
-  } else if (hour < 11 || atExactTime(11)) {
-    date.setHours(11, 0, 0, 0);
-  } else if (hour < 13 || atExactTime(13)) {
-    date.setHours(13, 0, 0, 0);
-  } else {
-    date.setDate(date.getDate() + 1);
-    normalizeToBusinessDay();
-    date.setHours(9, 0, 0, 0);
-  }
-
-  return date;
-}
-
-function formatInterviewInvitationText(interviewDate) {
-  const dateText = interviewDate.toLocaleDateString(undefined, {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-  });
-  const timeText = interviewDate.toLocaleTimeString(undefined, {
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-
-  const content = `Interview invitation: Please come to the office on ${dateText} at ${timeText}.`;
-  return `<span class="notice-prefix">IMPORTANT NOTICE:</span> <span class="notice-content">${content}</span>`;
-}
-
-function showSubmitAnimation(message, interviewText) {
+function showSubmitAnimation(message) {
   const el = document.getElementById('submitCheckmark');
   if (!el) return;
 
   const label = el.querySelector('.checkmark-label');
-  const interviewEl = el.querySelector('.interview-message');
-
   if (label) label.textContent = message || 'Submitted successfully';
-  if (interviewEl) {
-    interviewEl.innerHTML = interviewText || '';
-    interviewEl.classList.remove('is-visible');
-  }
 
   el.setAttribute('aria-hidden', 'false');
   el.classList.remove('is-active');
@@ -320,14 +260,7 @@ function showSubmitAnimation(message, interviewText) {
   el.classList.add('is-active');
 
   window.setTimeout(() => {
-    if (interviewEl && interviewText) {
-      interviewEl.classList.add('is-visible');
-    }
-  }, 900);
-
-  window.setTimeout(() => {
     el.classList.remove('is-active');
-    if (interviewEl) interviewEl.classList.remove('is-visible');
     el.setAttribute('aria-hidden', 'true');
   }, 6000);
 }
@@ -339,8 +272,7 @@ async function submitForm(which) {
     document.dispatchEvent(
       new CustomEvent('forms:submitted', { detail: { which, at: Date.now() } })
     );
-    const interviewSlot = getNextInterviewSlot(new Date());
-    showSubmitAnimation('Student form submitted', formatInterviewInvitationText(interviewSlot));
+    showSubmitAnimation('Student application submitted');
   } catch (err) {
     const msg = err && err.message ? err.message : 'Submit failed';
     const friendly =
@@ -386,6 +318,16 @@ async function submitAll() {
 
 async function submitFormSet(formSet) {
   const meta = FORM_SETS[formSet] || FORM_SETS.student;
+  const submitButton = Array.from(document.querySelectorAll('[data-action="submit"]')).find(
+    (button) => button.getAttribute('data-form-set') === formSet
+  );
+  if (submitButton?.disabled) return false;
+  const submitLabel = submitButton?.textContent.trim() || 'Submit';
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Submitting…';
+    submitButton.setAttribute('aria-busy', 'true');
+  }
   try {
     await sendApplicationToSecretary(meta.which, formSet);
     markSubmitted(meta.which, formSet);
@@ -394,10 +336,8 @@ async function submitFormSet(formSet) {
         detail: { which: meta.which, formSet, at: Date.now() },
       })
     );
-    const interviewSlot = getNextInterviewSlot(new Date());
     showSubmitAnimation(
-      `${meta.label.charAt(0).toUpperCase() + meta.label.slice(1)} form submitted`,
-      formatInterviewInvitationText(interviewSlot)
+      `${meta.label.charAt(0).toUpperCase() + meta.label.slice(1)} application submitted`
     );
     window.setTimeout(() => {
       alert(`Submitted. The secretary has received the ${meta.label} forms. You can now print.`);
@@ -409,6 +349,12 @@ async function submitFormSet(formSet) {
         ? 'Unable to reach the school server. Please make sure the site server is running, then try again.'
         : msg;
     alert(friendly);
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = submitLabel;
+      submitButton.removeAttribute('aria-busy');
+    }
   }
   return false;
 }
