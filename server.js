@@ -290,11 +290,18 @@ const ROLE_DASHBOARD = {
 };
 
 /** Operational school staff roles (not SuperAdmin / IT). */
-const SCHOOL_STAFF_ROLES = ['Secretary', 'Bursar', 'Manager', 'Headmaster'];
+const SCHOOL_STAFF_ROLES = ['Secretary', 'Manager', 'Headmaster'];
 const MANAGED_ADMIN_ROLES = ['Secretary', 'Bursar', 'Manager', 'Headmaster'];
 
 function schoolStaffRequired(req, res, next) {
   if (!req.user || !SCHOOL_STAFF_ROLES.includes(req.user.role)) {
+    return res.status(403).json({ error: 'Not allowed for your role' });
+  }
+  return next();
+}
+
+function schoolOperationsStaffRequired(req, res, next) {
+  if (!req.user || !['Secretary', 'Bursar', 'Manager', 'Headmaster'].includes(req.user.role)) {
     return res.status(403).json({ error: 'Not allowed for your role' });
   }
   return next();
@@ -1634,7 +1641,7 @@ app.get(
 
 // ---- Academic CSV import and KPI comparison (PostgreSQL-backed) ----
 registerAcademicRoutes(app, { authRequired, adminIpAllowed, schoolStaffRequired, roleRequired });
-registerSchoolOperationsRoutes(app, { authRequired, adminIpAllowed, schoolStaffRequired, roleRequired });
+registerSchoolOperationsRoutes(app, { authRequired, adminIpAllowed, schoolStaffRequired: schoolOperationsStaffRequired, roleRequired });
 
 // ---- Static content (optional) ----
 app.use(express.static(__dirname));
