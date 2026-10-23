@@ -126,6 +126,26 @@ function registerAcademicRoutes(app, { authRequired, adminIpAllowed, schoolStaff
     } finally { if (client) client.release(); }
   });
 
+
+  app.get('/api/academic/report-card', ...secure, async (req,res) => {
+    const studentId = String(req.query.studentId || '').trim().slice(0,80);
+    const academicYear = String(req.query.academicYear || '').trim().slice(0,20);
+    const term = String(req.query.term || '').trim();
+    if (!studentId || !academicYear || !TERMS.has(term)) return res.status(400).json({error:'Provide studentId, academicYear, and a valid term.'});
+    try {
+      const student = await getPool().query('SELECT student_id,full_name,school_section,class_name,status FROM academic_students WHERE student_id=$1',[studentId]);
+      if (!student.rowCount) return res.status(404).json({error:'Student not found.'});
+      const result = await getPool().query(
+        "SELECT subject,score,max_score,ROUND((score/NULLIF(max_score,0)*100)::numeric,2) AS percentage FROM academic_results WHERE student_id=$1 AND academic_year=$2 AND term=$3 ORDER BY subject",
+        [studentId,academicYear,term]
+      );
+      const rows = result.rows;
+      const avg = rows.length ? Number((rows.reduce((sum,r)=>sum+Number(r.percentage),0)/rows.length).toFixed(2)) : null;
+      const pass = rows.length ? Number((rows.filter(r=>Number(r.percentage)>=50).length/rows.length*100).toFixed(2)) : null;
+      return res.json({student:student.rows[0],academicYear,term,subjects:rows,summary:{subjectCount:rows.length,averagePercent:avg,passRate:pass},gradingNote:'Percentages are calculated from recorded scores. The pass-rate summary uses a provisional 50% threshold; apply the school-approved grading policy for official report cards.'});
+    } catch(e) { return res.status(503).json({error:'Could not generate report card. Check the academic schema.'}); }
+  });
+
   app.get('/api/academic/import-history', ...secure, async (_req, res) => {
     try {
       const result = await getPool().query('SELECT id,imported_by,file_name,school_section,academic_year,term,row_count,status,created_at FROM academic_import_batches ORDER BY created_at DESC LIMIT 50');
