@@ -24,4 +24,8 @@ test('school operations registers protected student, attendance, fee, overview a
   for (const route of routes) {
     assert.ok(route.handlers.length >= 4, route.method + ' ' + route.path + ' should have auth and role middleware');
   }
+  const feeWrite=routes.find(r=>r.path==='/api/school/fees/payments');
+  assert.deepEqual(feeWrite.handlers[3].roles,['Manager','Headmaster','Bursar']);
+  const studentRead=routes.find(r=>r.path==='/api/school/students'&&r.method==='GET');
+  assert.deepEqual(studentRead.handlers[3].roles,['Secretary','Manager','Headmaster']);
 });
