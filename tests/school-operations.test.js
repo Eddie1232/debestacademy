@@ -17,7 +17,7 @@ test('school operations registers protected student, attendance, fee, overview a
   const paths = routes.map(r => r.method + ' ' + r.path);
   for (const expected of [
     'GET /api/school/students','POST /api/school/students','PATCH /api/school/students/:studentId',
-    'GET /api/school/attendance','POST /api/school/attendance/mark','GET /api/school/fees',
+    'GET /api/school/attendance','POST /api/school/attendance/mark','GET /api/school/fees','GET /api/school/fee-students',
     'POST /api/school/fees/invoices','POST /api/school/fees/payments',
     'GET /api/school/overview','GET /api/school/insights'
   ]) assert.ok(paths.includes(expected), 'Missing route: ' + expected);
