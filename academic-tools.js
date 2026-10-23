@@ -46,7 +46,7 @@ function parseCsv(input) {
 }
 
 function validateRows(rows, defaults) {
-  const valid = []; const errors = [];
+  const valid = []; const errors = []; const seen = new Set();
   for (const r of rows) {
     const section = r.school_section || r.section || defaults.section;
     const term = r.term || defaults.term;
@@ -59,7 +59,13 @@ function validateRows(rows, defaults) {
     else if (!SECTIONS.has(section)) message = 'school_section must be KG, Primary, or JHS.';
     else if (!TERMS.has(term)) message = 'term must be Term 1, Term 2, or Term 3.';
     else if (!year || year.length > 20) message = 'academic_year is required and must be at most 20 characters.';
+    else if (section !== defaults.section || term !== defaults.term || year !== defaults.academicYear) message = 'Row section, term, and academic year must match the selected import settings.';
     else if (!Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore <= 0 || score < 0 || score > maxScore) message = 'score must be between 0 and max_score.';
+    if (!message) {
+      const key = [r.student_id.trim().toLowerCase(), year, term, r.subject.trim().toLowerCase()].join('|');
+      if (seen.has(key)) message = 'Duplicate student, year, term, and subject combination.';
+      else seen.add(key);
+    }
     if (message) errors.push({ row: r.__row, message });
     else valid.push({
       studentId: r.student_id.slice(0, 80), studentName: r.student_name.slice(0, 160),
