@@ -57,8 +57,9 @@ function registerSchoolOperationsRoutes(app, deps) {
     const statuses=['present','absent','late','excused'];
     if(!dateOK(date)||!SECTIONS.includes(section)||!cls||!Array.isArray(marks)||!marks.length||marks.length>500)return res.status(400).json({error:'Provide date, section, class and 1–500 marks.'});
     if(marks.some(m=>!text(m.studentId,80)||!statuses.includes(m.status))||new Set(marks.map(m=>text(m.studentId,80))).size!==marks.length)return res.status(400).json({error:'Marks must have unique student IDs and valid statuses.'});
-    const client=await getPool().connect();
+    let client;
     try {
+      client=await getPool().connect();
       await client.query('BEGIN');
       const s=await client.query("INSERT INTO attendance_sessions(session_date,school_section,class_name,created_by) VALUES($1,$2,$3,$4) ON CONFLICT(session_date,school_section,class_name) DO UPDATE SET created_by=EXCLUDED.created_by RETURNING id",[date,section,cls,staff(req)]);
       for(const m of marks){
@@ -68,8 +69,8 @@ function registerSchoolOperationsRoutes(app, deps) {
         await client.query("INSERT INTO attendance_marks(session_id,student_id,status,note,marked_by) VALUES($1,$2,$3,$4,$5) ON CONFLICT(session_id,student_id) DO UPDATE SET status=EXCLUDED.status,note=EXCLUDED.note,marked_by=EXCLUDED.marked_by,marked_at=NOW()",[s.rows[0].id,id,m.status,text(m.note,300)||null,staff(req)]);
       }
       await client.query('COMMIT'); return res.json({ok:true,sessionId:s.rows[0].id,marked:marks.length});
-    }catch(e){await client.query('ROLLBACK');return res.status(400).json({error:e.message||'Attendance failed; no partial changes were saved.'});}
-    finally{client.release();}
+    }catch(e){if(client){try{await client.query('ROLLBACK');}catch(_){}}return res.status(e.statusCode||503).json({error:e.statusCode?e.message:'Attendance failed; no partial changes were saved.'});}
+    finally{if(client)client.release();}
   });
 
 
@@ -103,8 +104,9 @@ function registerSchoolOperationsRoutes(app, deps) {
   app.post('/api/school/fees/payments', ...secure, manage, async (req,res) => {
     const b=req.body||{}, invoiceId=Number(b.invoiceId), amount=Number(b.amount), method=text(b.method,30), reference=text(b.reference,100), methods=['cash','mobile_money','bank_transfer','cheque','other'];
     if(!Number.isInteger(invoiceId)||invoiceId<1||!Number.isFinite(amount)||amount<=0||!methods.includes(method))return res.status(400).json({error:'Valid invoice, positive amount and payment method are required.'});
-    const client=await getPool().connect();
+    let client;
     try{
+      client=await getPool().connect();
       await client.query('BEGIN');
       const inv=await client.query("SELECT i.id,i.amount,COALESCE((SELECT SUM(p.amount) FROM fee_payments p WHERE p.invoice_id=i.id),0) AS paid FROM fee_invoices i WHERE i.id=$1 FOR UPDATE",[invoiceId]);
       if(!inv.rowCount){await client.query('ROLLBACK');return res.status(404).json({error:'Invoice not found.'});}
@@ -113,8 +115,8 @@ function registerSchoolOperationsRoutes(app, deps) {
       const receipt='RCP-'+Date.now().toString(36).toUpperCase()+'-'+randomUUID().slice(0,6).toUpperCase();
       const p=await client.query("INSERT INTO fee_payments(invoice_id,receipt_number,amount,payment_method,reference,received_by) VALUES($1,$2,$3,$4,$5,$6) RETURNING *",[invoiceId,receipt,amount,method,reference||null,staff(req)]);
       await client.query('COMMIT');return res.status(201).json({payment:p.rows[0],balanceAfter:Number((balance-amount).toFixed(2))});
-    }catch(e){await client.query('ROLLBACK');return res.status(503).json({error:'Payment recording failed; no partial payment was saved.'});}
-    finally{client.release();}
+    }catch(e){if(client){try{await client.query('ROLLBACK');}catch(_){}}return res.status(503).json({error:'Payment recording failed; no partial payment was saved.'});}
+    finally{if(client)client.release();}
   });
 
 
