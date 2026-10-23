@@ -283,14 +283,15 @@ function apiRateLimit(req, res, next) {
 
 const ROLE_DASHBOARD = {
   Secretary: '/admin/secretary.html',
+  Bursar: '/admin/bursar.html',
   Manager: '/admin/manager.html',
   Headmaster: '/admin/headmaster.html',
   SuperAdmin: '/admin/superadmin.html',
 };
 
 /** Operational school staff roles (not SuperAdmin / IT). */
-const SCHOOL_STAFF_ROLES = ['Secretary', 'Manager', 'Headmaster'];
-const MANAGED_ADMIN_ROLES = ['Secretary', 'Manager', 'Headmaster'];
+const SCHOOL_STAFF_ROLES = ['Secretary', 'Bursar', 'Manager', 'Headmaster'];
+const MANAGED_ADMIN_ROLES = ['Secretary', 'Bursar', 'Manager', 'Headmaster'];
 
 function schoolStaffRequired(req, res, next) {
   if (!req.user || !SCHOOL_STAFF_ROLES.includes(req.user.role)) {
@@ -376,6 +377,12 @@ async function ensureDefaultAdmins() {
       username: 'Secretary',
       role: 'Secretary',
       password: process.env.SECRETARY_PASS || 'Secretary123',
+    },
+    {
+      id: 'bursar-1',
+      username: process.env.BURSAR_USER || 'Bursar',
+      role: 'Bursar',
+      password: process.env.BURSAR_PASS || 'Bursar123',
     },
     {
       id: 'mgr-1',
