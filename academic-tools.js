@@ -52,7 +52,7 @@ function validateRows(rows, defaults) {
     const term = r.term || defaults.term;
     const year = r.academic_year || r.year || defaults.academicYear;
     const score = Number(r.score);
-    const maxScore = Number(r.max_score || 100);
+    const maxScore = r.max_score === undefined || r.max_score === '' ? 100 : Number(r.max_score);
     const missing = ['student_id', 'student_name', 'subject', 'score'].filter((k) => !r[k]);
     let message = '';
     if (missing.length) message = 'Missing required value(s): ' + missing.join(', ');
