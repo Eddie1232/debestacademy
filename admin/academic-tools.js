@@ -8,6 +8,7 @@ if(!session){window.location.replace('/admin/login.html');return;}
 if(!['Secretary','Manager','Headmaster'].includes(session.role)){window.location.replace(api.dashboardForRole(session.role));return;}
 const token=session.token;
 const base=api.getApiBase();
+if(session.role==='Secretary'){const submit=document.querySelector('#importForm button[type=submit]');if(submit)submit.disabled=true;const hint=document.createElement('p');hint.className='muted';hint.textContent='Secretary access is read-only for KPI comparisons; Manager or Headmaster must import results.';document.querySelector('#importForm').appendChild(hint);}
 function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function note(id,text,type){$(id).className='notice '+(type||'');$(id).textContent=text;}
 function fmt(v){return v===null||v===undefined?'—':Number(v).toFixed(2)+'%';}
