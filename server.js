@@ -34,6 +34,7 @@ const {
 } = require('./application-data');
 const { assistantRateLimit, handleAssistantChat, handleAdminAssistantChat } = require('./assistant-service');
 const { registerAcademicRoutes } = require('./academic-tools');
+const { registerSchoolOperationsRoutes } = require('./school-operations');
 
 const app = express();
 app.disable('x-powered-by');
@@ -1626,6 +1627,7 @@ app.get(
 
 // ---- Academic CSV import and KPI comparison (PostgreSQL-backed) ----
 registerAcademicRoutes(app, { authRequired, adminIpAllowed, schoolStaffRequired, roleRequired });
+registerSchoolOperationsRoutes(app, { authRequired, adminIpAllowed, schoolStaffRequired, roleRequired });
 
 // ---- Static content (optional) ----
 app.use(express.static(__dirname));
