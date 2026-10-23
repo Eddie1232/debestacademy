@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id), api=window.DebestAdmin;
 if(!api){$('status').textContent='Admin session helper failed to load.';return;}
 const session=api.getSession();
 if(!session){window.location.replace('/admin/login.html');return;}
-if(!['Secretary','Manager','Headmaster'].includes(session.role)){window.location.replace(api.dashboardForRole(session.role));return;}
+if(!['Secretary','Bursar','Manager','Headmaster'].includes(session.role)){window.location.replace(api.dashboardForRole(session.role));return;}
 const token=session.token, base=api.getApiBase();
 const today=new Date();$('attDate').value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -25,5 +25,5 @@ if(session.role==='Secretary'){document.querySelector('#invoiceForm button[type=
 
 async function generateInsights(){message('insights','Analyzing aggregate school metrics…',false);try{const d=await req('/api/school/insights');$('insights').textContent=(d.source==='ai'?'DataPulse AI analysis':'DataPulse rules-based analysis')+'\\n\\n'+d.insight;}catch(e){message('insights',e.message,true);}}
 $('generateInsights').addEventListener('click',generateInsights);
-students();fees();overview();
+if(session.role==='Bursar'){document.querySelectorAll('[data-role-access=records]').forEach(el=>el.style.display='none');document.querySelectorAll('[data-role-access=academic]').forEach(el=>el.style.display='none');const link=document.querySelector('a[href="/admin/academic-tools.html"]');if(link)link.style.display='none';}students();fees();overview();
 })();
