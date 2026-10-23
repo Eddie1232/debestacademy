@@ -108,6 +108,54 @@ function registerSchoolOperationsRoutes(app, deps) {
     finally{client.release();}
   });
 
+
+  app.get('/api/school/insights', ...secure, async (_req,res) => {
+    try {
+      const p = getPool();
+      const [students, subjects, attendance, fees] = await Promise.all([
+        p.query("SELECT school_section,COUNT(*)::int AS count FROM academic_students WHERE status='active' GROUP BY school_section"),
+        p.query("SELECT subject,ROUND(AVG(score/NULLIF(max_score,0)*100)::numeric,2) AS average_percent,COUNT(*)::int AS assessments FROM academic_results GROUP BY subject ORDER BY average_percent ASC LIMIT 8"),
+        p.query("SELECT COUNT(*)::int AS total,COUNT(*) FILTER(WHERE status='present')::int AS present,COUNT(*) FILTER(WHERE status='late')::int AS late,COUNT(*) FILTER(WHERE status='absent')::int AS absent FROM attendance_marks"),
+        p.query("SELECT COALESCE(SUM(i.amount),0)::numeric(12,2) AS invoiced,COALESCE(SUM(p.paid),0)::numeric(12,2) AS paid,COALESCE(SUM(i.amount-COALESCE(p.paid,0)),0)::numeric(12,2) AS outstanding FROM fee_invoices i LEFT JOIN (SELECT invoice_id,SUM(amount) paid FROM fee_payments GROUP BY invoice_id) p ON p.invoice_id=i.id")
+      ]);
+      const metrics = { students:students.rows, lowestSubjectAverages:subjects.rows, attendance:attendance.rows[0], fees:fees.rows[0] };
+      const fallback = [];
+      if (!students.rows.length) fallback.push('No active students are registered yet.');
+      if (subjects.rows.length) {
+        const lowest=subjects.rows[0];
+        if (Number(lowest.average_percent)<50) fallback.push(lowest.subject+' has the lowest recorded average ('+lowest.average_percent+'%); review the results and plan targeted support.');
+        else fallback.push('The lowest subject average is '+lowest.subject+' at '+lowest.average_percent+'%; review subject-level results for learners needing support.');
+      } else fallback.push('No academic results are available for analysis yet.');
+      const a=metrics.attendance;
+      if(Number(a.total)>0) fallback.push('Attendance marks: '+a.present+' present, '+a.late+' late and '+a.absent+' absent out of '+a.total+' recorded marks.');
+      else fallback.push('No attendance marks have been recorded yet.');
+      fallback.push('Outstanding fees total GHS '+Number(metrics.fees.outstanding).toFixed(2)+'. Reconcile this with the bursar records before taking action.');
+      let insight=fallback.join(' ');
+      let source='rules';
+      if(process.env.OPENAI_API_KEY && typeof globalThis.fetch==='function') {
+        try {
+          const response=await globalThis.fetch('https://api.openai.com/v1/responses',{
+            method:'POST',
+            headers:{Authorization:'Bearer '+process.env.OPENAI_API_KEY,'Content-Type':'application/json'},
+            body:JSON.stringify({
+              model:process.env.OPENAI_MODEL||'gpt-5.6-luna',
+              max_output_tokens:500,
+              input:[
+                {role:'system',content:'You are DataPulse AI, an assistant for school leadership. Analyze only the aggregate metrics supplied. Do not infer individual student details, invent causes, or present correlation as causation. Give concise findings, risks, and practical next steps. Clearly state when data is limited. Financial figures are in Ghana cedis (GHS).'},
+                {role:'user',content:'Prepare an academic and operations snapshot using these aggregate metrics only: '+JSON.stringify(metrics)}
+              ]
+            })
+          });
+          if(response.ok) {
+            const data=await response.json();
+            if(typeof data.output_text==='string'&&data.output_text.trim()){insight=data.output_text.trim();source='ai';}
+          }
+        } catch(e) { /* Use safe rules-based summary if AI is unavailable. */ }
+      }
+      return res.json({metrics,insight,source});
+    } catch(e) { return res.status(503).json({error:'Could not generate school insights. Check the academic database schema.'}); }
+  });
+
   app.get('/api/school/overview', ...secure, async (_req,res) => {
     try{
       const r=await getPool().query("SELECT (SELECT COUNT(*)::int FROM academic_students WHERE status='active') AS active_students,(SELECT COUNT(*)::int FROM academic_students WHERE status='active' AND school_section='KG') AS kg_students,(SELECT COUNT(*)::int FROM academic_students WHERE status='active' AND school_section='Primary') AS primary_students,(SELECT COUNT(*)::int FROM academic_students WHERE status='active' AND school_section='JHS') AS jhs_students,(SELECT COUNT(*)::int FROM academic_results) AS result_records,(SELECT COUNT(*)::int FROM attendance_sessions WHERE session_date=CURRENT_DATE) AS attendance_sessions_today,(SELECT COALESCE(SUM(i.amount-COALESCE(p.paid,0)),0)::numeric(12,2) FROM fee_invoices i LEFT JOIN (SELECT invoice_id,SUM(amount) paid FROM fee_payments GROUP BY invoice_id) p ON p.invoice_id=i.id) AS outstanding_fees");
