@@ -170,4 +170,4 @@ function registerAcademicRoutes(app, { authRequired, adminIpAllowed, schoolStaff
   });
 }
 
-module.exports = { parseCsv, validateRows, registerAcademicRoutes };
+module.exports = { parseCsv, validateRows, registerAcademicRoutes, getPool };
