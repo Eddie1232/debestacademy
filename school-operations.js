@@ -10,9 +10,9 @@ const dateOK = v => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) && !N
 function registerSchoolOperationsRoutes(app, deps) {
   const secure = [deps.authRequired,deps.adminIpAllowed,deps.schoolStaffRequired];
   const record = deps.roleRequired('Secretary','Manager','Headmaster');
-  const manage = deps.roleRequired('Manager','Headmaster');
+  const manage = deps.roleRequired('Manager','Headmaster','Bursar');
 
-  app.get('/api/school/students', ...secure, async (req,res) => {
+  app.get('/api/school/students', ...secure, record, async (req,res) => {
     const q=text(req.query.q,100), section=text(req.query.section,20), status=text(req.query.status,20);
     if(section && !SECTIONS.includes(section)) return res.status(400).json({error:'Invalid section.'});
     if(status && !['active','inactive','graduated','transferred'].includes(status)) return res.status(400).json({error:'Invalid status.'});
@@ -43,7 +43,7 @@ function registerSchoolOperationsRoutes(app, deps) {
     }catch(e){return res.status(503).json({error:'Could not update student.'});}
   });
 
-  app.get('/api/school/attendance', ...secure, async (req,res) => {
+  app.get('/api/school/attendance', ...secure, record, async (req,res) => {
     const date=text(req.query.date,10), section=text(req.query.section,20), cls=text(req.query.className,80);
     if(!dateOK(date)||!SECTIONS.includes(section)||!cls)return res.status(400).json({error:'Provide date, section and class.'});
     try {
