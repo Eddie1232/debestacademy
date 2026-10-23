@@ -27,3 +27,18 @@ test('validation reports unsupported sections and scores above maximum', () => {
   assert.equal(result.valid.length, 0);
   assert.equal(result.errors.length, 1);
 });
+
+test('validation rejects duplicate student-subject rows in one import', () => {
+  const rows = parseCsv('student_id,student_name,subject,score\nS1,Ama,Science,72\nS1,Ama,Science,75');
+  const result = validateRows(rows, { section: 'JHS', academicYear: '2026/2027', term: 'Term 1' });
+  assert.equal(result.valid.length, 1);
+  assert.equal(result.errors.length, 1);
+  assert.match(result.errors[0].message, /Duplicate/);
+});
+
+test('validation rejects rows that do not match selected import period', () => {
+  const rows = parseCsv('student_id,student_name,subject,score,term\nS1,Ama,Science,72,Term 2');
+  const result = validateRows(rows, { section: 'JHS', academicYear: '2026/2027', term: 'Term 1' });
+  assert.equal(result.valid.length, 0);
+  assert.match(result.errors[0].message, /must match/);
+});
