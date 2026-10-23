@@ -185,9 +185,17 @@ The same feature branch also adds the staff workspace at `/admin/school-operatio
 
 The schema file now includes academic results, student profile extensions, attendance, invoices, and payments. From Ubuntu, after configuring `DATABASE_URL` and installing PostgreSQL:
 1. Run `npm install` to synchronize the new PostgreSQL dependency and lockfile.
-2. Run `npm run db:academic-schema`.
-3. Run `npm test`.
-4. Start with `npm start` and sign in with an authorized staff account.
+2. In Ubuntu, load the local environment variables into the shell (the server does not automatically read `.env`):
+
+   ```bash
+   set -a
+   source .env
+   set +a
+   ```
+
+3. Run `npm run db:academic-schema`.
+4. Run `npm test`.
+5. Start with `npm start` and sign in with an authorized staff account.
 
 The app currently stores existing website/admin workflow data in its original lowdb JSON store while academic, attendance, and finance data use PostgreSQL. These stores are separate; plan and test backups for both. Do not use real student data until schema setup, access permissions, and backups have been validated.
 
