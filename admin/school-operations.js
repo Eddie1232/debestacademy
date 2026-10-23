@@ -26,5 +26,5 @@ if(session.role==='Secretary'){document.querySelector('#invoiceForm button[type=
 
 async function generateInsights(){message('insights','Analyzing aggregate school metrics…',false);try{const d=await req('/api/school/insights');$('insights').textContent=(d.source==='ai'?'DataPulse AI analysis':'DataPulse rules-based analysis')+'\\n\\n'+d.insight;}catch(e){message('insights',e.message,true);}}
 $('generateInsights').addEventListener('click',generateInsights);
-if(session.role==='Bursar'){document.querySelectorAll('[data-role-access=records]').forEach(el=>el.style.display='none');const link=document.querySelector('a[href="/admin/academic-tools.html"]');if(link)link.style.display='none';}else{students();}feeStudents();fees();overview();
+if(session.role==='Bursar'){document.querySelectorAll('[data-role-access=records]').forEach(el=>el.style.display='none');const link=document.querySelector('a[href="/admin/academic-tools.html"]');if(link)link.style.display='none';}else{students();}if(session.role==='Secretary'){document.querySelectorAll('[data-role-access=finance]').forEach(el=>el.style.display='none');}else{feeStudents();fees();}overview();
 })();
