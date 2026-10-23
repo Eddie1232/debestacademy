@@ -22,5 +22,8 @@ $('paymentForm').addEventListener('submit',async e=>{e.preventDefault();if(sessi
 async function fees(){try{const d=await req('/api/school/fees');$('feesTable').innerHTML=d.invoices.length?'<table><thead><tr><th>Invoice ID</th><th>Invoice number</th><th>Student</th><th>Term</th><th>Description</th><th>Amount (GHS)</th><th>Paid</th><th>Balance</th></tr></thead><tbody>'+d.invoices.map(i=>'<tr><td>'+i.id+'</td><td>'+esc(i.invoice_number)+'</td><td>'+esc(i.student_id)+' · '+esc(i.full_name)+'</td><td>'+esc(i.academic_year)+' / '+esc(i.term)+'</td><td>'+esc(i.description)+'</td><td>'+Number(i.amount).toFixed(2)+'</td><td>'+Number(i.paid).toFixed(2)+'</td><td>'+Number(i.balance).toFixed(2)+'</td></tr>').join('')+'</tbody></table>':'<p>No invoices have been created.</p>';}catch(e){$('feesTable').textContent=e.message;}}
 $('loadFees').addEventListener('click',fees);$('logout').addEventListener('click',()=>api.logout());
 if(session.role==='Secretary'){document.querySelector('#invoiceForm button[type=submit]').disabled=true;document.querySelector('#paymentForm button[type=submit]').disabled=true;}
+
+async function generateInsights(){message('insights','Analyzing aggregate school metrics…',false);try{const d=await req('/api/school/insights');$('insights').textContent=(d.source==='ai'?'DataPulse AI analysis':'DataPulse rules-based analysis')+'\\n\\n'+d.insight;}catch(e){message('insights',e.message,true);}}
+$('generateInsights').addEventListener('click',generateInsights);
 students();fees();overview();
 })();
