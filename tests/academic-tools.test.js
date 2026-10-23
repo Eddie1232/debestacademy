@@ -47,3 +47,21 @@ test('XLSX parser rejects non-workbook data clearly', () => {
   const { parseXlsxBase64 } = require('../academic-tools');
   assert.throws(() => parseXlsxBase64(Buffer.from('not an xlsx').toString('base64')), /Invalid XLSX workbook/);
 });
+
+test('registers academic preview, import, KPI, and report-card routes', () => {
+  const { registerAcademicRoutes } = require('../academic-tools');
+  const routes = [];
+  const app = {
+    get: (path, ...handlers) => routes.push('GET ' + path),
+    post: (path, ...handlers) => routes.push('POST ' + path),
+  };
+  const middleware = () => (_req, _res, next) => next();
+  registerAcademicRoutes(app, {
+    authRequired: middleware(), adminIpAllowed: middleware(), schoolStaffRequired: middleware(),
+    roleRequired: () => middleware(),
+  });
+  assert.ok(routes.includes('POST /api/academic/preview-import'));
+  assert.ok(routes.includes('POST /api/academic/import-csv'));
+  assert.ok(routes.includes('GET /api/academic/kpi-comparison'));
+  assert.ok(routes.includes('GET /api/academic/report-card'));
+});
