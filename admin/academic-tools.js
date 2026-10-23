@@ -16,7 +16,7 @@ async function request(path,opts={}){const res=await fetch(base+path,{...opts,he
 async function check(){try{const s=await request('/api/academic/status');note('connectionStatus',s.connected?'Academic API and PostgreSQL are connected.':'PostgreSQL is not connected.','success');}catch(e){note('connectionStatus',e.message,'error');}}
 async function uploadPayload(f){
  const common={fileName:f.name,section:$('section').value,academicYear:$('academicYear').value.trim(),term:$('term').value};
- if(/\\.xlsx$/i.test(f.name)){
+ if(/\.xlsx$/i.test(f.name)){
   const bytes=new Uint8Array(await f.arrayBuffer());let binary='';const chunk=0x8000;
   for(let i=0;i<bytes.length;i+=chunk)binary+=String.fromCharCode(...bytes.subarray(i,Math.min(i+chunk,bytes.length)));
   return {...common,fileType:'xlsx',xlsxBase64:btoa(binary)};
