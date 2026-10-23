@@ -45,6 +45,74 @@ function parseCsv(input) {
   });
 }
 
+
+function decodeXml(value) {
+  return String(value || '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'");
+}
+function xlsxEntries(buffer) {
+  const zlib = require('zlib');
+  const signature = Buffer.from([0x50,0x4b,0x05,0x06]);
+  const eocd = buffer.lastIndexOf(signature);
+  if (eocd < 0 || eocd + 22 > buffer.length) throw new Error('Invalid XLSX workbook.');
+  const count = buffer.readUInt16LE(eocd + 10);
+  let offset = buffer.readUInt32LE(eocd + 16);
+  const entries = {};
+  for (let i=0; i<count; i++) {
+    if (buffer.readUInt32LE(offset) !== 0x02014b50) throw new Error('Invalid XLSX directory.');
+    const method=buffer.readUInt16LE(offset+10), compressed=buffer.readUInt32LE(offset+20);
+    const nameLen=buffer.readUInt16LE(offset+28), extraLen=buffer.readUInt16LE(offset+30), commentLen=buffer.readUInt16LE(offset+32);
+    const localOffset=buffer.readUInt32LE(offset+42);
+    const name=buffer.toString('utf8',offset+46,offset+46+nameLen);
+    const localName=buffer.readUInt16LE(localOffset+26), localExtra=buffer.readUInt16LE(localOffset+28);
+    const dataStart=localOffset+30+localName+localExtra;
+    const compressedData=buffer.subarray(dataStart,dataStart+compressed);
+    if (method===0) entries[name]=Buffer.from(compressedData);
+    else if (method===8) entries[name]=zlib.inflateRawSync(compressedData);
+    else throw new Error('XLSX uses an unsupported compression method.');
+    offset += 46+nameLen+extraLen+commentLen;
+  }
+  return entries;
+}
+function parseXlsxBase64(encoded) {
+  if (typeof encoded!=='string' || !encoded || encoded.length>Math.ceil(MAX_CSV_BYTES*4/3)+16) throw new Error('XLSX file must be no larger than 2 MB.');
+  const buffer=Buffer.from(encoded,'base64');
+  if (buffer.length>MAX_CSV_BYTES) throw new Error('XLSX file must be no larger than 2 MB.');
+  const entries=xlsxEntries(buffer);
+  const sheet=entries['xl/worksheets/sheet1.xml'];
+  if (!sheet) throw new Error('Could not find the first worksheet in this Excel workbook.');
+  let shared=[];
+  if(entries['xl/sharedStrings.xml']) {
+    const xml=entries['xl/sharedStrings.xml'].toString('utf8');
+    shared=[...xml.matchAll(/<si(?:\s[^>]*)?>([\s\S]*?)<\/si>/g)].map(m=>[...m[1].matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map(t=>decodeXml(t[1])).join(''));
+  }
+  const xml=sheet.toString('utf8'), grid=[];
+  const colIndex=ref=>{const letters=(ref.match(/^[A-Z]+/)||['A'])[0];let n=0;for(const c of letters)n=n*26+c.charCodeAt(0)-64;return n-1;};
+  for(const rm of xml.matchAll(/<row(?:\s[^>]*)?>([\s\S]*?)<\/row>/g)) {
+    const row=[];
+    for(const cm of rm[1].matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)) {
+      const attrs=cm[1], body=cm[2], ref=(attrs.match(/\br="([^"]+)"/)||[])[1]||'A1';
+      const type=(attrs.match(/\bt="([^"]+)"/)||[])[1]||'';
+      const vm=(body.match(/<v(?:\s[^>]*)?>([\s\S]*?)<\/v>/)||[])[1];
+      let value='';
+      if(type==='s' && vm!==undefined) value=shared[Number(vm)]||'';
+      else if(type==='inlineStr') value=[...body.matchAll(/<t(?:\s[^>]*)?>([\s\S]*?)<\/t>/g)].map(t=>decodeXml(t[1])).join('');
+      else if(vm!==undefined) value=decodeXml(vm);
+      row[colIndex(ref)]=String(value);
+    }
+    grid.push(row.map(v=>v===undefined?'':v));
+  }
+  while(grid.length && grid[grid.length-1].every(v=>!String(v).trim())) grid.pop();
+  if(grid.length<2) throw new Error('Excel worksheet must contain a header and at least one data row.');
+  const csvEscape=v=>{const value=String(v??'');return /[",\r\n]/.test(value)?'"'+value.replace(/"/g,'""')+'"':value;};
+  return parseCsv(grid.map(row=>row.map(csvEscape).join(',')).join('\n'));
+}
+function uploadedRows(body) {
+  if (body.fileType==='xlsx') return parseXlsxBase64(body.xlsxBase64);
+  const csv=typeof body.csv==='string'?body.csv:'';
+  if(!csv || Buffer.byteLength(csv,'utf8')>MAX_CSV_BYTES) throw new Error('Provide a CSV file no larger than 2 MB.');
+  return parseCsv(csv);
+}
+
 function validateRows(rows, defaults) {
   const valid = []; const errors = []; const seen = new Set();
   for (const r of rows) {
@@ -87,11 +155,11 @@ function registerAcademicRoutes(app, { authRequired, adminIpAllowed, schoolStaff
   app.post('/api/academic/import-csv', ...secure, roleRequired('Manager', 'Headmaster'), async (req, res) => {
     const body = req.body || {};
     const csv = typeof body.csv === 'string' ? body.csv : '';
-    if (!csv || Buffer.byteLength(csv, 'utf8') > MAX_CSV_BYTES) return res.status(400).json({ error: 'Provide a CSV file no larger than 2 MB.' });
+    if (body.fileType !== 'xlsx' && (!csv || Buffer.byteLength(csv, 'utf8') > MAX_CSV_BYTES)) return res.status(400).json({ error: 'Provide a CSV file no larger than 2 MB.' });
     const defaults = { section: body.section, term: body.term, academicYear: body.academicYear };
     if (!SECTIONS.has(defaults.section) || !TERMS.has(defaults.term) || !defaults.academicYear) return res.status(400).json({ error: 'Select a valid section, term, and academic year.' });
     let rows;
-    try { rows = parseCsv(csv); } catch (e) { return res.status(400).json({ error: e.message }); }
+    try { rows = uploadedRows(body); } catch (e) { return res.status(400).json({ error: e.message }); }
     const { valid, errors } = validateRows(rows, defaults);
     if (errors.length) return res.status(422).json({ error: 'Validation failed; no records were imported.', errors, validRows: valid.length });
     let client;
@@ -196,4 +264,4 @@ function registerAcademicRoutes(app, { authRequired, adminIpAllowed, schoolStaff
   });
 }
 
-module.exports = { parseCsv, validateRows, registerAcademicRoutes, getPool };
+module.exports = { parseCsv, parseXlsxBase64, uploadedRows, validateRows, registerAcademicRoutes, getPool };
