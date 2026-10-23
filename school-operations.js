@@ -72,6 +72,15 @@ function registerSchoolOperationsRoutes(app, deps) {
     finally{client.release();}
   });
 
+
+  app.get('/api/school/fee-students', ...secure, manage, async (req,res) => {
+    const q=text(req.query.q,100);
+    try {
+      const r=await getPool().query("SELECT student_id,full_name,school_section,class_name FROM academic_students WHERE status='active' AND ($1='' OR student_id ILIKE '%'||$1||'%' OR full_name ILIKE '%'||$1||'%') ORDER BY full_name LIMIT 100",[q]);
+      return res.json({students:r.rows});
+    } catch(e) { return res.status(503).json({error:'Could not load fee student list.'}); }
+  });
+
   app.get('/api/school/fees', ...secure, async (req,res) => {
     const q=text(req.query.q,100);
     try {
