@@ -169,3 +169,26 @@ node --test tests/proposal-workflow.test.js
 ## Contributing
 
 Contributions are welcome. If you make changes, please keep the documentation updated and make sure any new behavior is covered by tests where possible.
+
+
+## DataPulse AI Academic Tools
+
+A protected staff page is available at `/admin/academic-tools.html` for CSV assessment imports and term-to-term KPI comparisons. Access is limited to authorized Manager and Headmaster roles.
+
+### Configure the academic database
+
+1. Set `DATABASE_URL` in your local `.env` file to a PostgreSQL database. Never commit real credentials.
+2. Install dependencies with `npm install` (this updates `package-lock.json` for the PostgreSQL driver).
+3. Apply the schema: `npm run db:academic-schema`.
+4. Start the app: `npm start`.
+5. Sign in as an authorized staff member and open `http://localhost:5501/admin/academic-tools.html`.
+
+The CSV must contain `student_id,student_name,subject,score`. Optional columns include `school_section,class_name,academic_year,term,max_score`. The maximum upload size is 2 MB. Imports are validated before writes and run in a PostgreSQL transaction. Existing results for the same student, year, term, and subject are updated.
+
+### KPI calculation
+
+The comparison reports subject average percentages, pass rates, and changes in percentage points for two selected terms. The current pass-rate threshold is 50% of the assessment maximum; confirm this policy with the school's approved grading scheme before using it for official reporting.
+
+### Safety before production
+
+Apply and test the schema in a staging database first. Back up PostgreSQL, run `npm test`, and test with synthetic student records before importing real learner data. These tools do not yet implement the separate attendance, fee accounting, or complete student-management stages; see `IMPLEMENTATION_ROADMAP.md`.
