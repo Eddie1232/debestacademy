@@ -152,6 +152,18 @@ function registerAcademicRoutes(app, { authRequired, adminIpAllowed, schoolStaff
     catch (e) { return res.status(503).json({ configured: Boolean(process.env.DATABASE_URL), connected: false, error: e.message }); }
   });
 
+
+  app.post('/api/academic/preview-import', ...secure, roleRequired('Manager', 'Headmaster'), async (req,res) => {
+    const body=req.body||{};
+    const defaults={section:body.section,term:body.term,academicYear:body.academicYear};
+    if(!SECTIONS.has(defaults.section)||!TERMS.has(defaults.term)||!defaults.academicYear) return res.status(400).json({error:'Select a valid section, term, and academic year.'});
+    try {
+      const rows=uploadedRows(body);
+      const checked=validateRows(rows,defaults);
+      return res.json({rowCount:rows.length,validRows:checked.valid.length,errors:checked.errors,preview:checked.valid.slice(0,10)});
+    } catch(e) { return res.status(400).json({error:e.message}); }
+  });
+
   app.post('/api/academic/import-csv', ...secure, roleRequired('Manager', 'Headmaster'), async (req, res) => {
     const body = req.body || {};
     const csv = typeof body.csv === 'string' ? body.csv : '';
