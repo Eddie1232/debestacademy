@@ -1528,7 +1528,7 @@ app.put(
     if (!MANAGED_ADMIN_ROLES.includes(admin.role)) {
       return res
         .status(403)
-        .json({ error: 'Only Secretary, Manager, and Headmaster credentials can be changed here' });
+        .json({ error: 'Only operational staff credentials can be changed here' });
     }
 
     const body = req.body || {};
