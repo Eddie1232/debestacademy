@@ -42,3 +42,8 @@ test('validation rejects rows that do not match selected import period', () => {
   assert.equal(result.valid.length, 0);
   assert.match(result.errors[0].message, /must match/);
 });
+
+test('XLSX parser rejects non-workbook data clearly', () => {
+  const { parseXlsxBase64 } = require('../academic-tools');
+  assert.throws(() => parseXlsxBase64(Buffer.from('not an xlsx').toString('base64')), /Invalid XLSX workbook/);
+});
