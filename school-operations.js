@@ -120,7 +120,7 @@ function registerSchoolOperationsRoutes(app, deps) {
   });
 
 
-  app.get('/api/school/insights', ...secure, async (_req,res) => {
+  app.get('/api/school/insights', ...secure, deps.roleRequired('Secretary','Manager','Headmaster'), async (_req,res) => {
     try {
       const p = getPool();
       const [students, subjects, attendance, fees] = await Promise.all([
