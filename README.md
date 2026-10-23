@@ -179,7 +179,7 @@ The same feature branch also adds the staff workspace at `/admin/school-operatio
 - Daily class attendance marks (present, absent, late, excused) with transactional saves.
 - Fee invoices, partial payments, receipt numbers, and outstanding-balance calculations.
 - An aggregate insights endpoint. If `OPENAI_API_KEY` is configured, DataPulse AI generates a summary from aggregate school metrics only; otherwise a rules-based summary is shown.
-- A dedicated Bursar login role. Set `BURSAR_USER` and a strong `BURSAR_PASS` in `.env` before use. The development fallback password is `Bursar123`; replace it immediately. Bursars can work with fee records but cannot access student guardian details or attendance pages.
+- A dedicated Bursar login role with finance-only access. Set `BURSAR_USER` and a strong `BURSAR_PASS` in `.env` before use. The development fallback password is `Bursar123`; replace it immediately. Bursars can work with fee records but cannot access student guardian details or attendance pages.
 
 ### Database and setup
 
@@ -202,7 +202,7 @@ The app currently stores existing website/admin workflow data in its original lo
 
 ## DataPulse AI Academic Tools
 
-A protected staff page is available at `/admin/academic-tools.html` for CSV assessment imports and term-to-term KPI comparisons. Access is limited to authorized Manager and Headmaster roles.
+A protected staff page is available at `/admin/academic-tools.html` for CSV and XLSX assessment imports, server-side preview/validation, individual printable report cards, and term-to-term KPI comparisons. Access is limited to authorized Manager and Headmaster roles.
 
 ### Configure the academic database
 
