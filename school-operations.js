@@ -82,7 +82,7 @@ function registerSchoolOperationsRoutes(app, deps) {
     } catch(e) { return res.status(503).json({error:'Could not load fee student list.'}); }
   });
 
-  app.get('/api/school/fees', ...secure, async (req,res) => {
+  app.get('/api/school/fees', ...secure, manage, async (req,res) => {
     const q=text(req.query.q,100);
     try {
       const r=await getPool().query("SELECT i.id,i.invoice_number,i.student_id,s.full_name,s.school_section,s.class_name,i.academic_year,i.term,i.description,i.amount,i.due_date,i.created_at,COALESCE(SUM(p.amount),0)::numeric(12,2) AS paid,GREATEST(i.amount-COALESCE(SUM(p.amount),0),0)::numeric(12,2) AS balance FROM fee_invoices i JOIN academic_students s ON s.student_id=i.student_id LEFT JOIN fee_payments p ON p.invoice_id=i.id WHERE ($1='' OR i.invoice_number ILIKE '%'||$1||'%' OR i.student_id ILIKE '%'||$1||'%' OR s.full_name ILIKE '%'||$1||'%') GROUP BY i.id,s.student_id ORDER BY i.created_at DESC LIMIT 500",[q]);
@@ -170,7 +170,9 @@ function registerSchoolOperationsRoutes(app, deps) {
   app.get('/api/school/overview', ...secure, async (_req,res) => {
     try{
       const r=await getPool().query("SELECT (SELECT COUNT(*)::int FROM academic_students WHERE status='active') AS active_students,(SELECT COUNT(*)::int FROM academic_students WHERE status='active' AND school_section='KG') AS kg_students,(SELECT COUNT(*)::int FROM academic_students WHERE status='active' AND school_section='Primary') AS primary_students,(SELECT COUNT(*)::int FROM academic_students WHERE status='active' AND school_section='JHS') AS jhs_students,(SELECT COUNT(*)::int FROM academic_results) AS result_records,(SELECT COUNT(*)::int FROM attendance_sessions WHERE session_date=CURRENT_DATE) AS attendance_sessions_today,(SELECT COALESCE(SUM(i.amount-COALESCE(p.paid,0)),0)::numeric(12,2) FROM fee_invoices i LEFT JOIN (SELECT invoice_id,SUM(amount) paid FROM fee_payments GROUP BY invoice_id) p ON p.invoice_id=i.id) AS outstanding_fees");
-      return res.json({overview:r.rows[0]});
+      const overview=r.rows[0];
+      if (!['Manager','Headmaster','Bursar'].includes(_req.user?.role)) delete overview.outstanding_fees;
+      return res.json({overview});
     }catch(e){return res.status(503).json({error:'Could not load school overview. Check database schema.'});}
   });
 }
