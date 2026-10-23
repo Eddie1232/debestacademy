@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bursar | Debest Academy</title></head>
+<body><p>Opening the finance workspace…</p>
+<script src="./admin-shared.js"></script>
+<script>
+(function(){
+  const api=window.DebestAdmin;
+  if(!api){window.location.replace('/admin/login.html');return;}
+  const session=api.getSession();
+  if(!session){window.location.replace('/admin/login.html');return;}
+  if(session.role==='Bursar'){window.location.replace('/admin/school-operations.html');return;}
+  window.location.replace(api.dashboardForRole(session.role));
+})();
+</script></body></html>

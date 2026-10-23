@@ -7,6 +7,7 @@
 
   const ROLE_DASHBOARD = {
     Secretary: '/admin/secretary.html',
+    Bursar: '/admin/bursar.html',
     Manager: '/admin/manager.html',
     Headmaster: '/admin/headmaster.html',
     SuperAdmin: '/admin/superadmin.html',

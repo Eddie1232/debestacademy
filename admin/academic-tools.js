@@ -1,0 +1,50 @@
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const api=window.DebestAdmin;
+if(!api){$('connectionStatus').textContent='Admin session helper failed to load.';return;}
+const session=api.getSession();
+if(!session){window.location.replace('/admin/login.html');return;}
+if(!['Secretary','Manager','Headmaster'].includes(session.role)){window.location.replace(api.dashboardForRole(session.role));return;}
+const token=session.token;
+const base=api.getApiBase();
+if(session.role==='Secretary'){const submit=document.querySelector('#importForm button[type=submit]');if(submit)submit.disabled=true;const previewButton=document.getElementById('previewBtn');if(previewButton)previewButton.disabled=true;const hint=document.createElement('p');hint.className='muted';hint.textContent='Secretary access is read-only for KPI comparisons; Manager or Headmaster must import results.';document.querySelector('#importForm').appendChild(hint);}
+function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function note(id,text,type){$(id).className='notice '+(type||'');$(id).textContent=text;}
+function fmt(v){return v===null||v===undefined?'—':Number(v).toFixed(2)+'%';}
+async function request(path,opts={}){const res=await fetch(base+path,{...opts,headers:{Authorization:'Bearer '+token,'Content-Type':'application/json',...(opts.headers||{})}});let data={};try{data=await res.json();}catch(_){}if(!res.ok)throw new Error(data.error||'Request failed ('+res.status+')');return data;}
+async function check(){try{const s=await request('/api/academic/status');note('connectionStatus',s.connected?'Academic API and PostgreSQL are connected.':'PostgreSQL is not connected.',s.connected?'success':'error');}catch(e){note('connectionStatus',e.message,'error');}}
+async function uploadPayload(f){
+ const common={fileName:f.name,section:$('section').value,academicYear:$('academicYear').value.trim(),term:$('term').value};
+ if(/\.xlsx$/i.test(f.name)){
+  const bytes=new Uint8Array(await f.arrayBuffer());let binary='';const chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk)binary+=String.fromCharCode(...bytes.subarray(i,Math.min(i+chunk,bytes.length)));
+  return {...common,fileType:'xlsx',xlsxBase64:btoa(binary)};
+ }
+ return {...common,fileType:'csv',csv:await f.text()};
+}
+$('previewBtn').addEventListener('click',async()=>{
+ const f=$('csvFile').files[0];if(!f){note('importMessage','Choose a CSV or XLSX file first.','error');return;}
+ if(f.size>2*1024*1024){note('importMessage','File exceeds 2 MB.','error');return;}
+ try{
+  const payload=await uploadPayload(f);const d=await request('/api/academic/preview-import',{method:'POST',body:JSON.stringify(payload)});
+  $('preview').classList.remove('hidden');
+  $('preview').innerHTML='<p>Rows found: '+d.rowCount+' · Valid: '+d.validRows+' · Errors: '+d.errors.length+'</p>'+
+   (d.preview.length?'<div class="table-wrap"><table><thead><tr><th>Student ID</th><th>Name</th><th>Section</th><th>Class</th><th>Subject</th><th>Score</th></tr></thead><tbody>'+d.preview.map(r=>'<tr><td>'+safe(r.studentId)+'</td><td>'+safe(r.studentName)+'</td><td>'+safe(r.section)+'</td><td>'+safe(r.className||'—')+'</td><td>'+safe(r.subject)+'</td><td>'+r.score+'/'+r.maxScore+'</td></tr>').join('')+'</tbody></table></div>':'<p>No valid rows to preview.</p>')+
+   (d.errors.length?'<p class="error">Validation errors (first 10):</p><ul>'+d.errors.slice(0,10).map(x=>'<li>Row '+x.row+': '+safe(x.message)+'</li>').join('')+'</ul>':'');
+  note('importMessage',d.errors.length?'Fix the validation errors before importing.':'Preview validated successfully. You can now import these records.','success');
+ }catch(e){note('importMessage',e.message,'error');}
+});
+$('importForm').addEventListener('submit',async e=>{
+ e.preventDefault();const f=$('csvFile').files[0];if(!f)return;
+ if(f.size>2*1024*1024){note('importMessage','File exceeds 2 MB.','error');return;}
+ try{const d=await request('/api/academic/import-csv',{method:'POST',body:JSON.stringify(await uploadPayload(f))});note('importMessage','Import complete. Rows processed: '+d.importedRows+'. Batch ID: '+d.batchId+'.','success');await history();}
+ catch(e){note('importMessage',e.message,'error');}
+});
+$('compareForm').addEventListener('submit',async e=>{e.preventDefault();if($('termA').value===$('termB').value){note('compareMessage','Choose two different terms.','error');return;}try{const q=new URLSearchParams({section:$('compareSection').value,academicYear:$('compareYear').value.trim(),termA:$('termA').value,termB:$('termB').value});const d=await request('/api/academic/kpi-comparison?'+q);note('compareMessage',d.section+' · '+d.academicYear+' · '+d.termA+' compared with '+d.termB,'success');const s=d.summary;$('kpiResults').innerHTML='<div class="kpi-cards">'+[['Earlier average',s.termAAverage],['Later average',s.termBAverage],['Average change',s.averageChange],['Pass-rate change',s.passRateChange]].map((x,i)=>'<div class="kpi-card"><span>'+x[0]+'</span><strong class="'+(i>1?(Number(x[1]||0)>=0?'trend-up':'trend-down'):'')+'">'+(i>1&&x[1]!==null&&x[1]!==undefined?(x[1]>0?'+':'')+Number(x[1]).toFixed(2)+' pp':fmt(x[1]))+'</strong></div>').join('')+'</div>'+(d.subjects.length?'<div class="table-wrap"><table><thead><tr><th>Subject</th><th>'+safe(d.termA)+' average</th><th>'+safe(d.termB)+' average</th><th>Average change</th><th>'+safe(d.termA)+' pass rate</th><th>'+safe(d.termB)+' pass rate</th></tr></thead><tbody>'+d.subjects.map(x=>'<tr><td>'+safe(x.subject)+'</td><td>'+fmt(x.termA&&x.termA.average)+'</td><td>'+fmt(x.termB&&x.termB.average)+'</td><td class="'+(Number(x.averageChange||0)>=0?'trend-up':'trend-down')+'">'+(x.averageChange===null?'—':(x.averageChange>0?'+':'')+x.averageChange.toFixed(2)+' pp')+'</td><td>'+fmt(x.termA&&x.termA.passRate)+'</td><td>'+fmt(x.termB&&x.termB.passRate)+'</td></tr>').join('')+'</tbody></table></div>':'<p>No results found for these terms. Import CSV results first.</p>');}catch(e){note('compareMessage',e.message,'error');}});
+
+$('reportCardForm').addEventListener('submit',async e=>{e.preventDefault();try{const q=new URLSearchParams({studentId:$('reportStudentId').value.trim(),academicYear:$('reportYear').value.trim(),term:$('reportTerm').value});const d=await request('/api/academic/report-card?'+q);const st=d.student;$('reportCardResult').innerHTML='<div id="printableReport"><h2>DEBEST Academy — Academic Report</h2><p><strong>Student:</strong> '+safe(st.full_name)+' ('+safe(st.student_id)+')</p><p><strong>Section / Class:</strong> '+safe(st.school_section)+' / '+safe(st.class_name||'—')+'</p><p><strong>Academic year / term:</strong> '+safe(d.academicYear)+' / '+safe(d.term)+'</p><div class="table-wrap"><table><thead><tr><th>Subject</th><th>Score</th><th>Maximum</th><th>Percentage</th></tr></thead><tbody>'+d.subjects.map(x=>'<tr><td>'+safe(x.subject)+'</td><td>'+Number(x.score).toFixed(2)+'</td><td>'+Number(x.max_score).toFixed(2)+'</td><td>'+Number(x.percentage).toFixed(2)+'%</td></tr>').join('')+'</tbody></table></div><p><strong>Average:</strong> '+(d.summary.averagePercent===null?'—':d.summary.averagePercent+'%')+' &nbsp; <strong>Provisional pass rate:</strong> '+(d.summary.passRate===null?'—':d.summary.passRate+'%')+'</p><p class="muted">'+safe(d.gradingNote)+'</p></div>';note('reportCardMessage',d.subjects.length?'Report generated. Review it before printing.':'Student found, but no results exist for this term.','success');$('printReport').disabled=!d.subjects.length;}catch(e){note('reportCardMessage',e.message,'error');$('reportCardResult').innerHTML='';$('printReport').disabled=true;}});
+$('printReport').addEventListener('click',()=>{const node=$('printableReport');if(!node)return;const w=window.open('','_blank','width=900,height=700');if(!w){note('reportCardMessage','Allow pop-ups to print the report.','error');return;}w.document.write('<!doctype html><html><head><title>Academic Report</title><style>body{font:14px Arial,sans-serif;padding:28px;color:#111}table{width:100%;border-collapse:collapse}td,th{padding:8px;border:1px solid #bbb;text-align:left}.muted{color:#555}</style></head><body>'+node.innerHTML+'</body></html>');w.document.close();w.focus();w.print();});
+\nasync function history(){try{const d=await request('/api/academic/import-history');$('historyTable').innerHTML=d.batches.length?'<table><thead><tr><th>Batch</th><th>Date</th><th>File</th><th>Section</th><th>Year / term</th><th>Rows</th><th>Status</th><th>Imported by</th></tr></thead><tbody>'+d.batches.map(b=>'<tr><td>'+b.id+'</td><td>'+safe(new Date(b.created_at).toLocaleString())+'</td><td>'+safe(b.file_name)+'</td><td>'+safe(b.school_section)+'</td><td>'+safe(b.academic_year)+' / '+safe(b.term)+'</td><td>'+Number(b.row_count)+'</td><td>'+safe(b.status)+'</td><td>'+safe(b.imported_by)+'</td></tr>').join('')+'</tbody></table>':'<p>No import batches yet.</p>';}catch(e){$('historyTable').textContent=e.message;}}
+$('refreshHistory').addEventListener('click',history);$('logoutBtn').addEventListener('click',()=>api.logout());check();history();
+})();

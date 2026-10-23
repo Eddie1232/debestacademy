@@ -169,3 +169,63 @@ node --test tests/proposal-workflow.test.js
 ## Contributing
 
 Contributions are welcome. If you make changes, please keep the documentation updated and make sure any new behavior is covered by tests where possible.
+
+
+
+## School Operations, Attendance, Fees, and DataPulse Insights
+
+The same feature branch also adds the staff workspace at `/admin/school-operations.html`. It provides:
+- Student register with search, school section, class, guardian contact, admission date, and status.
+- Daily class attendance marks (present, absent, late, excused) with transactional saves.
+- Fee invoices, partial payments, receipt numbers, and outstanding-balance calculations.
+- An aggregate insights endpoint. If `OPENAI_API_KEY` is configured, DataPulse AI generates a summary from aggregate school metrics only; otherwise a rules-based summary is shown.
+- A dedicated Bursar login role with finance-only access. Set `BURSAR_USER` and a strong `BURSAR_PASS` in `.env` before use. The development fallback password is `Bursar123`; replace it immediately. Bursars can work with fee records but cannot access student guardian details or attendance pages.
+
+### Database and setup
+
+The schema file now includes academic results, student profile extensions, attendance, invoices, and payments. From Ubuntu, after configuring `DATABASE_URL` and installing PostgreSQL:
+1. Run `npm install` to synchronize the new PostgreSQL dependency and lockfile.
+2. In Ubuntu, load the local environment variables into the shell (the server does not automatically read `.env`):
+
+   ```bash
+   set -a
+   source .env
+   set +a
+   ```
+
+3. Run `npm run db:academic-schema`.
+4. Run `npm test`.
+5. Start with `npm start` and sign in with an authorized staff account.
+
+The app currently stores existing website/admin workflow data in its original lowdb JSON store while academic, attendance, and finance data use PostgreSQL. These stores are separate; plan and test backups for both. Do not use real student data until schema setup, access permissions, and backups have been validated.
+
+### Security and operational boundaries
+
+- Academic CSV import is restricted to Manager and Headmaster; Secretary can view comparisons.
+- Student and attendance records are accessible to Secretary, Manager, and Headmaster.
+- Invoice creation and payment recording are restricted to Manager, Headmaster, and Bursar.
+- The current pass-rate KPI threshold is 50% of the assessment maximum and must be aligned with the school's official grading policy.
+- DataPulse AI uses aggregate metrics, not individual learner records. Its recommendations are advisory and should be reviewed by school leadership.
+- A bursar account is seeded for development. Configure a unique strong password before production and review all seeded admin credentials.
+
+## DataPulse AI Academic Tools
+
+A protected staff page is available at `/admin/academic-tools.html` for CSV and XLSX assessment imports, server-side preview/validation, individual printable report cards, and term-to-term KPI comparisons. Access is limited to authorized Manager and Headmaster roles.
+
+### Configure the academic database
+
+1. Set `DATABASE_URL` in your local `.env` file to a PostgreSQL database. Never commit real credentials.
+2. Install dependencies with `npm install` (this updates `package-lock.json` for the PostgreSQL driver).
+3. Apply the schema: `npm run db:academic-schema`.
+4. Start the app: `npm start`.
+5. Sign in as an authorized staff member and open `http://localhost:5501/admin/academic-tools.html`.
+
+The CSV must contain `student_id,student_name,subject,score`. Optional columns include `school_section,class_name,academic_year,term,max_score`. The maximum upload size is 2 MB. Imports are validated before writes and run in a PostgreSQL transaction. Existing results for the same student, year, term, and subject are updated.
+
+### KPI calculation
+
+The comparison reports subject average percentages, pass rates, and changes in percentage points for two selected terms. The current pass-rate threshold is 50% of the assessment maximum; confirm this policy with the school's approved grading scheme before using it for official reporting.
+
+### Safety before production
+
+Apply and test the schema in a staging database first. Back up PostgreSQL, run `npm test`, and test with synthetic student records before importing real learner data. These tools do not yet implement the separate attendance, fee accounting, or complete student-management stages; see `IMPLEMENTATION_ROADMAP.md`.

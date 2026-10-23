@@ -33,6 +33,8 @@ const {
   isValidApplicationEmail,
 } = require('./application-data');
 const { assistantRateLimit, handleAssistantChat, handleAdminAssistantChat } = require('./assistant-service');
+const { registerAcademicRoutes } = require('./academic-tools');
+const { registerSchoolOperationsRoutes } = require('./school-operations');
 
 const app = express();
 app.disable('x-powered-by');
@@ -87,7 +89,7 @@ app.use(
     exposedHeaders: ['Authorization'],
   })
 );
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '3mb' }));
 app.use(cookieParser());
 app.use('/api', apiRateLimit);
 
@@ -281,6 +283,7 @@ function apiRateLimit(req, res, next) {
 
 const ROLE_DASHBOARD = {
   Secretary: '/admin/secretary.html',
+  Bursar: '/admin/bursar.html',
   Manager: '/admin/manager.html',
   Headmaster: '/admin/headmaster.html',
   SuperAdmin: '/admin/superadmin.html',
@@ -288,10 +291,17 @@ const ROLE_DASHBOARD = {
 
 /** Operational school staff roles (not SuperAdmin / IT). */
 const SCHOOL_STAFF_ROLES = ['Secretary', 'Manager', 'Headmaster'];
-const MANAGED_ADMIN_ROLES = ['Secretary', 'Manager', 'Headmaster'];
+const MANAGED_ADMIN_ROLES = ['Secretary', 'Bursar', 'Manager', 'Headmaster'];
 
 function schoolStaffRequired(req, res, next) {
   if (!req.user || !SCHOOL_STAFF_ROLES.includes(req.user.role)) {
+    return res.status(403).json({ error: 'Not allowed for your role' });
+  }
+  return next();
+}
+
+function schoolOperationsStaffRequired(req, res, next) {
+  if (!req.user || !['Secretary', 'Bursar', 'Manager', 'Headmaster'].includes(req.user.role)) {
     return res.status(403).json({ error: 'Not allowed for your role' });
   }
   return next();
@@ -374,6 +384,12 @@ async function ensureDefaultAdmins() {
       username: 'Secretary',
       role: 'Secretary',
       password: process.env.SECRETARY_PASS || 'Secretary123',
+    },
+    {
+      id: 'bursar-1',
+      username: process.env.BURSAR_USER || 'Bursar',
+      role: 'Bursar',
+      password: process.env.BURSAR_PASS || 'Bursar123',
     },
     {
       id: 'mgr-1',
@@ -1512,7 +1528,7 @@ app.put(
     if (!MANAGED_ADMIN_ROLES.includes(admin.role)) {
       return res
         .status(403)
-        .json({ error: 'Only Secretary, Manager, and Headmaster credentials can be changed here' });
+        .json({ error: 'Only operational staff credentials can be changed here' });
     }
 
     const body = req.body || {};
@@ -1622,6 +1638,10 @@ app.get(
     return res.send(JSON.stringify(d.data || {}, null, 2));
   }
 );
+
+// ---- Academic CSV import and KPI comparison (PostgreSQL-backed) ----
+registerAcademicRoutes(app, { authRequired, adminIpAllowed, schoolStaffRequired, roleRequired });
+registerSchoolOperationsRoutes(app, { authRequired, adminIpAllowed, schoolStaffRequired: schoolOperationsStaffRequired, roleRequired });
 
 // ---- Static content (optional) ----
 app.use(express.static(__dirname));
