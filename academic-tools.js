@@ -55,11 +55,14 @@ function xlsxEntries(buffer) {
   const eocd = buffer.lastIndexOf(signature);
   if (eocd < 0 || eocd + 22 > buffer.length) throw new Error('Invalid XLSX workbook.');
   const count = buffer.readUInt16LE(eocd + 10);
+  if (count > 2000) throw new Error('Excel workbook contains too many files.');
   let offset = buffer.readUInt32LE(eocd + 16);
-  const entries = {};
+  const entries = {}; let expandedBytes = 0;
   for (let i=0; i<count; i++) {
     if (buffer.readUInt32LE(offset) !== 0x02014b50) throw new Error('Invalid XLSX directory.');
-    const method=buffer.readUInt16LE(offset+10), compressed=buffer.readUInt32LE(offset+20);
+    const method=buffer.readUInt16LE(offset+10), compressed=buffer.readUInt32LE(offset+20), uncompressed=buffer.readUInt32LE(offset+24);
+    expandedBytes += uncompressed;
+    if (expandedBytes > 10*1024*1024) throw new Error('Excel workbook expands beyond the 10 MB safety limit.');
     const nameLen=buffer.readUInt16LE(offset+28), extraLen=buffer.readUInt16LE(offset+30), commentLen=buffer.readUInt16LE(offset+32);
     const localOffset=buffer.readUInt32LE(offset+42);
     const name=buffer.toString('utf8',offset+46,offset+46+nameLen);
