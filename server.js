@@ -33,6 +33,7 @@ const {
   isValidApplicationEmail,
 } = require('./application-data');
 const { assistantRateLimit, handleAssistantChat, handleAdminAssistantChat } = require('./assistant-service');
+const { registerAcademicRoutes } = require('./academic-tools');
 
 const app = express();
 app.disable('x-powered-by');
@@ -87,7 +88,7 @@ app.use(
     exposedHeaders: ['Authorization'],
   })
 );
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '3mb' }));
 app.use(cookieParser());
 app.use('/api', apiRateLimit);
 
@@ -1622,6 +1623,9 @@ app.get(
     return res.send(JSON.stringify(d.data || {}, null, 2));
   }
 );
+
+// ---- Academic CSV import and KPI comparison (PostgreSQL-backed) ----
+registerAcademicRoutes(app, { authRequired, adminIpAllowed, schoolStaffRequired, roleRequired });
 
 // ---- Static content (optional) ----
 app.use(express.static(__dirname));
