@@ -5,7 +5,7 @@ const api=window.DebestAdmin;
 if(!api){$('connectionStatus').textContent='Admin session helper failed to load.';return;}
 const session=api.getSession();
 if(!session){window.location.replace('/admin/login.html');return;}
-if(!['Manager','Headmaster','SuperAdmin'].includes(session.role)){window.location.replace(api.dashboardForRole(session.role));return;}
+if(!['Secretary','Manager','Headmaster'].includes(session.role)){window.location.replace(api.dashboardForRole(session.role));return;}
 const token=session.token;
 const base=api.getApiBase();
 function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
