@@ -13,7 +13,7 @@ function safe(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&
 function note(id,text,type){$(id).className='notice '+(type||'');$(id).textContent=text;}
 function fmt(v){return v===null||v===undefined?'—':Number(v).toFixed(2)+'%';}
 async function request(path,opts={}){const res=await fetch(base+path,{...opts,headers:{Authorization:'Bearer '+token,'Content-Type':'application/json',...(opts.headers||{})}});let data={};try{data=await res.json();}catch(_){}if(!res.ok)throw new Error(data.error||'Request failed ('+res.status+')');return data;}
-async function check(){try{const s=await request('/api/academic/status');note('connectionStatus',s.connected?'Academic API and PostgreSQL are connected.':'PostgreSQL is not connected.','success');}catch(e){note('connectionStatus',e.message,'error');}}
+async function check(){try{const s=await request('/api/academic/status');note('connectionStatus',s.connected?'Academic API and PostgreSQL are connected.':'PostgreSQL is not connected.',s.connected?'success':'error');}catch(e){note('connectionStatus',e.message,'error');}}
 async function uploadPayload(f){
  const common={fileName:f.name,section:$('section').value,academicYear:$('academicYear').value.trim(),term:$('term').value};
  if(/\.xlsx$/i.test(f.name)){
