@@ -38,7 +38,7 @@ The project combines:
    docker compose up -d postgres
    ```
 
-4. Copy `.env.example` to `.env`, then set a secure `JWT_SECRET` and the PostgreSQL password.
+4. Copy `.env.example` to `.env`, then set strong admin credentials and a secure `JWT_SECRET`.
 
 5. Import the existing school data once (new installations can skip this):
 
@@ -66,11 +66,29 @@ npm run dev
 
 ## Website assistant
 
-Public pages include a floating **DEBEST Assistant** for admissions, hours, contact details, and other school questions.
+Public pages include a floating DEBEST Assistant for admissions, hours, contact details, and other school questions.
 
 - The widget posts to `/api/assistant`. The API key stays on the server.
-- Set `OPENAI_API_KEY` on the server to enable AI-generated answers through OpenAI. Optional: set `OPENAI_MODEL` to choose a model (default: `gpt-5.6-luna`).
+- Set `OPENAI_API_KEY` on the server to enable AI-generated answers through OpenAI. Optional: set `OPENAI_MODEL` to choose a model (default: `grok-4.5`).
 - If no key is set, or the model is unreachable, the assistant still answers from the school FAQ knowledge on this site.
+
+## Admin credentials and environment
+
+Do not use default or demo credentials in production. Configure strong, unique values in `.env` before starting the server.
+
+| Variable | Purpose |
+| --- | --- |
+| `SECRETARY_PASS` | Secretary account password |
+| `MANAGER_PASS` | Manager account password |
+| `HEADMASTER_PASS` | Headmaster account password |
+| `SUPERADMIN_USER` | SuperAdmin username |
+| `SUPERADMIN_PASS` | SuperAdmin password |
+| `ADMIN_USER` | Legacy admin username |
+| `ADMIN_PASS` | Legacy admin password |
+| `COMMA_PASS` | Legacy/alternate admin password |
+| `JWT_SECRET` | JWT signing secret |
+
+The server creates these admin accounts only if the relevant environment variables are set. Never commit real credentials to GitHub or store them in public files.
 
 ## Project Structure
 
@@ -121,18 +139,6 @@ Public pages include a floating **DEBEST Assistant** for admissions, hours, cont
 | Headmaster       | `/admin/headmaster.html` |
 | Super Admin (IT) | `/admin/superadmin.html` |
 
-### Demo login credentials
-
-| Username     | Password        | Role                                          |
-| ------------ | --------------- | --------------------------------------------- |
-| `Secretary`  | `Secretary123`  | Secretary                                     |
-| `Manager`    | `Manager123`    | Manager                                       |
-| `Headmaster` | `Headmaster123` | Headmaster                                    |
-| `SuperAdmin` | `SuperAdmin123` | SuperAdmin (IT — credentials + tech ops only) |
-| `admin`      | `Admin123`      | Headmaster (legacy)                           |
-
-Passwords are bcrypt-hashed in PostgreSQL (not stored in the frontend). See [README_ADMIN_LOGIN.md](README_ADMIN_LOGIN.md) for LAN setup and password resets.
-
 ### Admin API (summary)
 
 - `POST /api/admin/login` → `{ token, role, username, dashboard }`
@@ -140,7 +146,7 @@ Passwords are bcrypt-hashed in PostgreSQL (not stored in the frontend). See [REA
 - `GET/POST/PUT /api/proposals` — Secretary → Manager → Headmaster workflow
 - `GET/PUT /api/applications` — public submit; admin inbox
 - `GET /api/dashboard` — role summary cards
-- SuperAdmin: `GET/PUT /api/super/admins`, `GET /api/super/health`, `GET /api/super/backup`
+- SuperAdmin: `GET /api/super/admins`, `GET /api/super/health`, `GET /api/super/backup`
 
 ### School network checklist
 
