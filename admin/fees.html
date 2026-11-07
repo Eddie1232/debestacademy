@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DEBEST ADMIN - Fees &amp; payments</title>
+    <script src="./admin-shared.js"></script>
+    <style>
+      :root {
+        --ink: #341f4d;
+        --muted: #6d587a;
+        --accent: #5a3e72;
+        --soft: #f8f2fb;
+        --border: #e4d8ed;
+        --bg: #fff8f0;
+        --in: #11703f;
+        --in-soft: #e5f5ec;
+        --out: #a51e2a;
+        --out-soft: #fde8e9;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+      }
+      .shell {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 20px 16px 36px;
+      }
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        background: linear-gradient(135deg, #f7f0fb, #e9dff2);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 14px 16px;
+        box-shadow: 0 8px 28px rgba(90, 62, 114, 0.1);
+      }
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+      h1 {
+        margin-bottom: 3px;
+        font-size: 1.28rem;
+      }
+      h2 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+      }
+      .sub,
+      .hint {
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 0;
+      }
+      .identity {
+        color: var(--accent);
+        font-weight: 800;
+        font-size: 0.88rem;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+      }
+      .btn {
+        border: 0;
+        border-radius: 9px;
+        padding: 9px 13px;
+        font-weight: 800;
+        background: var(--accent);
+        color: #fff8f0;
+      }
+      .btn:hover {
+        background: #7e628f;
+      }
+      .btn.secondary {
+        background: #fff;
+        border: 1.5px solid #d4c2e0;
+        color: var(--accent);
+      }
+      .btn.small {
+        padding: 5px 9px;
+        font-size: 0.8rem;
+      }
+      .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      .card {
+        min-width: 0;
+        background: #fffdfd;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: 0 4px 16px rgba(90, 62, 114, 0.06);
+        padding: 16px;
+      }
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .kpi .label {
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+      .kpi .value {
+        font-size: 1.25rem;
+        font-weight: 900;
+        margin-top: 4px;
+        font-variant-numeric: tabular-nums;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 360px minmax(0, 1fr);
+        gap: 14px;
+        margin-top: 14px;
+        align-items: start;
+      }
+      .seg {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: var(--soft);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 3px;
+        margin-bottom: 12px;
+      }
+      .seg button {
+        border: 0;
+        background: transparent;
+        border-radius: 8px;
+        padding: 8px;
+        font-weight: 800;
+        color: var(--muted);
+      }
+      .seg button[aria-pressed='true'] {
+        background: #fff;
+        color: var(--ink);
+        box-shadow: 0 1px 4px rgba(90, 62, 114, 0.12);
+      }
+      label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 800;
+        margin: 10px 0 4px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        font: inherit;
+        padding: 9px 10px;
+        border: 1.5px solid #d9c7e6;
+        border-radius: 9px;
+        background: #fff;
+        color: var(--ink);
+      }
+      textarea {
+        min-height: 64px;
+        resize: vertical;
+      }
+      .row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .row2 label {
+        margin-top: 10px;
+      }
+      .status {
+        min-height: 1.3em;
+        margin: 10px 0 0;
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: var(--muted);
+      }
+      .status.error {
+        color: var(--out);
+      }
+      .status.ok {
+        color: var(--in);
+      }
+      .filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .filters input {
+        flex: 1 1 200px;
+        width: auto;
+      }
+      .filters select {
+        width: auto;
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        min-width: 640px;
+      }
+      th {
+        text-align: left;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 800;
+        padding: 8px 6px;
+        border-bottom: 1px solid var(--border);
+      }
+      td {
+        padding: 9px 6px;
+        border-bottom: 1px solid #f0e8f4;
+        vertical-align: top;
+      }
+      td.amount,
+      th.amount {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .amount.in {
+        color: var(--in);
+        font-weight: 800;
+      }
+      .amount.out {
+        color: var(--out);
+        font-weight: 800;
+      }
+      tr.voided td {
+        color: #9a8aa6;
+      }
+      tr.voided td.amount {
+        text-decoration: line-through;
+      }
+      .small-muted {
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 600;
+      }
+      .tag {
+        display: inline-block;
+        border-radius: 99px;
+        padding: 2px 7px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        background: #ede4f3;
+        color: var(--accent);
+      }
+      .tag.void {
+        background: var(--out-soft);
+        color: var(--out);
+      }
+      .tracker {
+        font-size: 0.8rem;
+        font-weight: 700;
+        border-radius: 99px;
+        padding: 4px 10px;
+        background: #ede4f3;
+        color: var(--muted);
+      }
+      .tracker.on {
+        background: var(--in-soft);
+        color: var(--in);
+      }
+      .empty {
+        color: var(--muted);
+        font-weight: 600;
+        text-align: center;
+        padding: 40px 16px;
+      }
+      dialog {
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px;
+        max-width: 420px;
+        width: calc(100% - 32px);
+        color: var(--ink);
+      }
+      dialog::backdrop {
+        background: rgba(52, 31, 77, 0.35);
+      }
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .kpis {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 480px) {
+        .row2 {
+          grid-template-columns: 1fr;
+        }
+        .kpi .value {
+          font-size: 1.05rem;
+        }
+      }
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="./admin.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <h1>Fees &amp; payments</h1>
+          <p class="sub">Record school fees received and expenses paid. Every entry gets a receipt number.</p>
+        </div>
+        <div class="actions">
+          <span class="tracker" id="trackerPill" title="Business Pulse connection">Tracker: checking…</span>
+          <span class="identity" id="identity">Signed in</span>
+          <button class="btn secondary" type="button" id="backBtn">← Dashboard</button>
+          <button class="btn secondary" type="button" id="logoutBtn">Log out</button>
+        </div>
+      </header>
+
+      <section class="kpis" aria-label="This month">
+        <div class="card kpi"><div class="label">Received this month</div><div class="value" id="kpiIn">—</div></div>
+        <div class="card kpi"><div class="label">Spent this month</div><div class="value" id="kpiOut">—</div></div>
+        <div class="card kpi"><div class="label">Net this month</div><div class="value" id="kpiNet">—</div></div>
+        <div class="card kpi"><div class="label">Received today</div><div class="value" id="kpiToday">—</div></div>
+      </section>
+
+      <div class="layout">
+        <section class="card" aria-labelledby="formTitle">
+          <h2 id="formTitle">New entry</h2>
+          <div class="seg" role="group" aria-label="Entry type">
+            <button type="button" id="dirIn" aria-pressed="true">Fee received</button>
+            <button type="button" id="dirOut" aria-pressed="false">Expense paid</button>
+          </div>
+          <form id="entryForm" novalidate>
+            <label for="purpose">What is it for?</label>
+            <select id="purpose" required></select>
+            <div class="row2">
+              <div>
+                <label for="amount">Amount (GH₵)</label>
+                <input id="amount" inputmode="decimal" autocomplete="off" placeholder="0.00" required />
+              </div>
+              <div>
+                <label for="date">Date</label>
+                <input id="date" type="date" required />
+              </div>
+            </div>
+            <label for="party" id="partyLabel">Paid by (parent / guardian)</label>
+            <input id="party" maxlength="120" autocomplete="off" required />
+            <div class="row2" id="studentFields">
+              <div>
+                <label for="studentName">Student name</label>
+                <input id="studentName" maxlength="120" autocomplete="off" />
+              </div>
+              <div>
+                <label for="className">Class</label>
+                <input id="className" maxlength="40" autocomplete="off" placeholder="e.g. JHS 1" />
+              </div>
+            </div>
+            <div class="row2">
+              <div>
+                <label for="method">Method</label>
+                <select id="method"></select>
+              </div>
+              <div>
+                <label for="reference">MoMo / bank ref</label>
+                <input id="reference" maxlength="60" autocomplete="off" />
+              </div>
+            </div>
+            <label for="notes">Notes <span class="small-muted">(optional)</span></label>
+            <textarea id="notes" maxlength="300"></textarea>
+            <button class="btn" type="submit" id="saveBtn" style="width: 100%; margin-top: 12px">Save entry</button>
+            <p class="status" id="status" aria-live="polite"></p>
+          </form>
+        </section>
+
+        <section class="card" aria-labelledby="listTitle">
+          <div class="actions" style="justify-content: space-between; margin-bottom: 8px">
+            <h2 id="listTitle" style="margin: 0">Entries</h2>
+            <div class="actions no-print">
+              <button class="btn secondary small" type="button" id="csvBtn">Download CSV</button>
+              <button class="btn secondary small" type="button" id="refreshBtn">Refresh</button>
+            </div>
+          </div>
+          <div class="filters no-print">
+            <input id="search" type="search" placeholder="Search name, student, receipt…" />
+            <select id="filterDir" aria-label="Type">
+              <option value="all">All</option>
+              <option value="in">Fees received</option>
+              <option value="out">Expenses</option>
+            </select>
+            <select id="filterMonth" aria-label="Month"></select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Receipt</th>
+                  <th>Details</th>
+                  <th>Method</th>
+                  <th class="amount">Amount</th>
+                  <th class="no-print"></th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="empty" hidden>No entries yet.</div>
+          <p class="small-muted" id="totals" style="margin-top: 10px"></p>
+        </section>
+      </div>
+    </main>
+
+    <dialog id="voidDialog">
+      <form method="dialog" id="voidForm">
+        <h2>Void entry <span id="voidReceipt"></span></h2>
+        <p class="hint">The entry stays on record, crossed out. A reversing entry is sent to the tracker.</p>
+        <label for="voidReason">Reason</label>
+        <input id="voidReason" maxlength="200" required />
+        <p class="status" id="voidStatus" aria-live="polite"></p>
+        <div class="actions" style="justify-content: flex-end; margin-top: 8px">
+          <button class="btn secondary" value="cancel" type="button" id="voidCancel">Cancel</button>
+          <button class="btn" type="submit" id="voidConfirm" style="background: var(--out)">Void entry</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script>
+      (() => {
+        const session = window.DebestAdmin && DebestAdmin.getSession();
+        if (!session) {
+          window.location.replace('./login.html');
+          return;
+        }
+        const api = DebestAdmin.getApiBase();
+        const auth = { Authorization: 'Bearer ' + session.token, 'Content-Type': 'application/json' };
+        const $ = (id) => document.getElementById(id);
+        const METHOD_LABELS = { cash: 'Cash', momo: 'Mobile Money', bank: 'Bank', card: 'Card / POS', cheque: 'Cheque', other: 'Other' };
+        const state = { direction: 'in', options: null, entries: [], voidId: '' };
+        const escapeHtml = (v) =>
+          String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const cedi = (n) =>
+          'GH₵' + Number(n || 0).toLocaleString('en-GH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const localToday = () => {
+          const d = new Date();
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        };
+        const fmtDate = (ds) => {
+          const [y, m, d] = String(ds).split('-').map(Number);
+          return new Date(y, m - 1, d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        };
+        function setStatus(text, kind) {
+          const el = $('status');
+          el.textContent = text || '';
+          el.className = 'status' + (kind ? ' ' + kind : '');
+        }
+        async function request(path, opts = {}) {
+          const res = await fetch(api + path, { ...opts, headers: auth });
+          const data = await res.json().catch(() => ({}));
+          if (res.status === 401) {
+            DebestAdmin.logout();
+            throw new Error('Your session has ended. Please log in again.');
+          }
+          if (!res.ok) throw new Error(data.error || 'Request failed');
+          return data;
+        }
+
+        function setDirection(dir) {
+          state.direction = dir;
+          $('dirIn').setAttribute('aria-pressed', String(dir === 'in'));
+          $('dirOut').setAttribute('aria-pressed', String(dir === 'out'));
+          $('partyLabel').textContent = dir === 'in' ? 'Paid by (parent / guardian)' : 'Paid to (supplier / staff)';
+          $('studentFields').hidden = dir !== 'in';
+          $('saveBtn').textContent = dir === 'in' ? 'Save fee payment' : 'Save expense';
+          const list = state.options ? (dir === 'in' ? state.options.feePurposes : state.options.expensePurposes) : [];
+          $('purpose').innerHTML = list.map((p) => `<option>${escapeHtml(p)}</option>`).join('');
+        }
+
+        function renderTracker() {
+          const t = state.options && state.options.tracker;
+          const pill = $('trackerPill');
+          if (!t || !t.enabled) {
+            pill.textContent = 'Tracker: not connected';
+            pill.className = 'tracker';
+            pill.title = 'Set BUSINESS_PULSE_URL and BUSINESS_PULSE_KEY on the server to send entries to Business Pulse.';
+            return;
+          }
+          pill.className = 'tracker on';
+          pill.textContent = t.queued ? `Tracker: ${t.queued} waiting to send` : 'Tracker: connected';
+          pill.title = t.lastError ? `Last error: ${t.lastError}` : 'Entries are sent to Business Pulse automatically.';
+        }
+
+        function months() {
+          const set = new Set(state.entries.map((e) => String(e.date).slice(0, 7)));
+          set.add(localToday().slice(0, 7));
+          return Array.from(set).sort().reverse();
+        }
+
+        function filtered() {
+          const q = $('search').value.trim().toLowerCase();
+          const dir = $('filterDir').value;
+          const month = $('filterMonth').value;
+          return state.entries.filter(
+            (e) =>
+              (dir === 'all' || e.direction === dir) &&
+              (month === 'all' || String(e.date).startsWith(month)) &&
+              (!q ||
+                [e.party, e.studentName, e.className, e.receiptNo, e.reference, e.purpose, e.notes]
+                  .join(' ')
+                  .toLowerCase()
+                  .includes(q))
+          );
+        }
+
+        function render() {
+          const current = $('filterMonth').value || localToday().slice(0, 7);
+          $('filterMonth').innerHTML =
+            '<option value="all">All months</option>' +
+            months()
+              .map((m) => {
+                const [y, mo] = m.split('-').map(Number);
+                const label = new Date(y, mo - 1, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+                return `<option value="${m}">${label}</option>`;
+              })
+              .join('');
+          $('filterMonth').value = current;
+
+          const live = state.entries.filter((e) => !e.voided);
+          const thisMonth = localToday().slice(0, 7);
+          const sum = (list, dir) => list.filter((e) => e.direction === dir).reduce((s, e) => s + Number(e.amount), 0);
+          const monthList = live.filter((e) => String(e.date).startsWith(thisMonth));
+          const mIn = sum(monthList, 'in');
+          const mOut = sum(monthList, 'out');
+          $('kpiIn').textContent = cedi(mIn);
+          $('kpiOut').textContent = cedi(mOut);
+          $('kpiNet').textContent = (mIn - mOut < 0 ? '−' : '') + cedi(Math.abs(mIn - mOut));
+          $('kpiToday').textContent = cedi(sum(live.filter((e) => e.date === localToday()), 'in'));
+
+          const list = filtered();
+          const canVoid = state.options && state.options.canVoid;
+          $('rows').innerHTML = list
+            .map((e) => {
+              const who = e.direction === 'in'
+                ? `${escapeHtml(e.party)}${e.studentName ? `<div class="small-muted">for ${escapeHtml(e.studentName)}${e.className ? ` · ${escapeHtml(e.className)}` : ''}</div>` : ''}`
+                : escapeHtml(e.party);
+              return `<tr class="${e.voided ? 'voided' : ''}">
+                <td>${fmtDate(e.date)}</td>
+                <td><span class="tag">${escapeHtml(e.receiptNo)}</span>${e.voided ? ` <span class="tag void" title="${escapeHtml(e.voidReason)}">Void</span>` : ''}</td>
+                <td><strong>${escapeHtml(e.purpose)}</strong><div>${who}</div>${e.notes ? `<div class="small-muted">${escapeHtml(e.notes)}</div>` : ''}${e.voided ? `<div class="small-muted">Voided: ${escapeHtml(e.voidReason)}</div>` : ''}</td>
+                <td>${escapeHtml(METHOD_LABELS[e.method] || e.method)}${e.reference ? `<div class="small-muted">${escapeHtml(e.reference)}</div>` : ''}</td>
+                <td class="amount ${e.direction}">${e.direction === 'in' ? '+' : '−'}${cedi(e.amount)}</td>
+                <td class="no-print">${canVoid && !e.voided ? `<button class="btn secondary small" type="button" data-void="${escapeHtml(e.id)}">Void</button>` : ''}</td>
+              </tr>`;
+            })
+            .join('');
+          $('empty').hidden = list.length > 0;
+          $('empty').textContent = state.entries.length ? 'No entries match these filters.' : 'No entries yet. Use the New entry form to record the first fee payment.';
+          const liveList = list.filter((e) => !e.voided);
+          $('totals').textContent = list.length
+            ? `${list.length} entr${list.length === 1 ? 'y' : 'ies'} · received ${cedi(sum(liveList, 'in'))} · spent ${cedi(sum(liveList, 'out'))}`
+            : '';
+        }
+
+        async function load() {
+          const [options, ledger] = await Promise.all([request('/api/ledger/options'), request('/api/ledger')]);
+          state.options = options;
+          state.entries = ledger.entries || [];
+          $('method').innerHTML = options.methods
+            .map((m) => `<option value="${m}">${escapeHtml(METHOD_LABELS[m] || m)}</option>`)
+            .join('');
+          setDirection(state.direction);
+          renderTracker();
+          render();
+        }
+
+        $('dirIn').addEventListener('click', () => setDirection('in'));
+        $('dirOut').addEventListener('click', () => setDirection('out'));
+        ['search', 'filterDir', 'filterMonth'].forEach((id) => $(id).addEventListener('input', render));
+
+        $('entryForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const amount = Number(String($('amount').value).replace(/[^0-9.]/g, ''));
+          if (!(amount > 0)) return setStatus('Enter an amount above zero.', 'error');
+          if (!$('party').value.trim()) return setStatus(state.direction === 'in' ? 'Enter who paid.' : 'Enter who was paid.', 'error');
+          $('saveBtn').disabled = true;
+          setStatus('Saving…');
+          try {
+            const { entry } = await request('/api/ledger', {
+              method: 'POST',
+              body: JSON.stringify({
+                direction: state.direction,
+                purpose: $('purpose').value,
+                amount: $('amount').value,
+                date: $('date').value,
+                party: $('party').value,
+                studentName: $('studentName').value,
+                className: $('className').value,
+                method: $('method').value,
+                reference: $('reference').value,
+                notes: $('notes').value,
+              }),
+            });
+            state.entries.unshift(entry);
+            ['amount', 'party', 'studentName', 'className', 'reference', 'notes'].forEach((id) => ($(id).value = ''));
+            render();
+            setStatus(`Saved. Receipt ${entry.receiptNo}.`, 'ok');
+            request('/api/ledger/options').then((o) => { state.options = o; renderTracker(); }).catch(() => {});
+          } catch (err) {
+            setStatus(err.message, 'error');
+          } finally {
+            $('saveBtn').disabled = false;
+          }
+        });
+
+        $('rows').addEventListener('click', (e) => {
+          const btn = e.target.closest('[data-void]');
+          if (!btn) return;
+          const entry = state.entries.find((x) => x.id === btn.dataset.void);
+          if (!entry) return;
+          state.voidId = entry.id;
+          $('voidReceipt').textContent = entry.receiptNo;
+          $('voidReason').value = '';
+          $('voidStatus').textContent = '';
+          $('voidDialog').showModal();
+          $('voidReason').focus();
+        });
+        $('voidCancel').addEventListener('click', () => $('voidDialog').close());
+        $('voidForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const reason = $('voidReason').value.trim();
+          if (!reason) {
+            $('voidStatus').textContent = 'Give a reason.';
+            $('voidStatus').className = 'status error';
+            return;
+          }
+          $('voidConfirm').disabled = true;
+          try {
+            const { entry } = await request(`/api/ledger/${encodeURIComponent(state.voidId)}/void`, {
+              method: 'POST',
+              body: JSON.stringify({ reason }),
+            });
+            state.entries = state.entries.map((x) => (x.id === entry.id ? entry : x));
+            $('voidDialog').close();
+            render();
+            setStatus(`Entry ${entry.receiptNo} voided.`, 'ok');
+          } catch (err) {
+            $('voidStatus').textContent = err.message;
+            $('voidStatus').className = 'status error';
+          } finally {
+            $('voidConfirm').disabled = false;
+          }
+        });
+
+        $('csvBtn').addEventListener('click', () => {
+          const cols = ['date', 'receiptNo', 'direction', 'purpose', 'amount', 'party', 'studentName', 'className', 'method', 'reference', 'notes', 'recordedBy', 'voided', 'voidReason'];
+          const esc = (v) => {
+            let s = String(v ?? '');
+            if (/^[=+\-@]/.test(s)) s = "'" + s; // keep spreadsheet formulas from running
+            return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+          };
+          const csv = [cols.join(','), ...filtered().map((e) => cols.map((c) => esc(e[c])).join(','))].join('\r\n');
+          const url = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' }));
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `debest-fees-${localToday()}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        });
+        $('refreshBtn').addEventListener('click', () => load().catch((err) => setStatus(err.message, 'error')));
+
+        $('date').value = localToday();
+        $('date').max = localToday();
+        $('identity').textContent = session.username === session.role ? session.role : `${session.username} · ${session.role}`;
+        $('backBtn').addEventListener('click', () => (window.location.href = DebestAdmin.dashboardForRole(session.role)));
+        $('logoutBtn').addEventListener('click', () => DebestAdmin.logout());
+        if (!['Secretary', 'Manager', 'Headmaster'].includes(session.role)) {
+          setStatus('Fees & payments are available to the Secretary, Manager and Headmaster.', 'error');
+          $('saveBtn').disabled = true;
+          return;
+        }
+        load().catch((err) => setStatus(err.message, 'error'));
+      })();
+    </script>
+  </body>
+</html>

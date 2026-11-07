@@ -150,14 +150,57 @@ Passwords are bcrypt-hashed in PostgreSQL (not stored in the frontend). See [REA
 4. From each admin PC: `http://HOST_IP:5501/admin/login.html`
 5. Optional: set `JWT_SECRET` and `ADMIN_IP_ALLOWLIST` (see `.env.example`).
 
+## Fees & payments and the Business Pulse tracker
+
+Staff (Secretary, Manager, Headmaster) can open **Fees & payments** from the dashboard
+(`/admin/fees.html`) to record fees received and expenses paid.
+
+- Every entry gets a receipt number: `RCT-YYYYMMDD-NNN` for fees, `EXP-YYYYMMDD-NNN` for expenses.
+- Entries are never deleted. A Manager or Headmaster can **void** an entry with a reason;
+  the original stays visible and is excluded from totals.
+- Search, filter by month or type, and download a CSV (safe to open in Excel).
+- Entries are stored in the `ledger` list inside `data.json`. Back this file up regularly.
+
+### Connecting the tracker
+
+Set two environment variables before starting the server (Node does not read `.env`
+automatically; use `node --env-file=.env server.js` or set them in your host's settings):
+
+```bash
+BUSINESS_PULSE_URL=https://<your-published-tracker>/api/ingest
+BUSINESS_PULSE_KEY=<Website API key from the tracker's Connect page>
+```
+
+What is sent to the tracker:
+
+| Website action | Sent as |
+| --- | --- |
+| Fee recorded | Money in, category = purpose, customer = payer, notes = student + class |
+| Expense recorded | Money out, category = purpose, supplier = payee |
+| Entry voided | An opposite movement tagged `void` (the tracker keeps both, so the books stay auditable) |
+| Application submitted | Activity event with applicant name and class/position only |
+| Application status change | Activity event with the new status and staff role |
+
+No dates of birth, phone numbers, emails, addresses or health details leave the school server.
+Each item carries a stable `eventId`, so retries never create duplicates. If the tracker is
+offline, items wait in memory and are retried (5s, 30s, 2m, then every 10m). Items still
+waiting when the server restarts are lost from the tracker but remain in `data.json`.
+The fees page shows whether the tracker is connected.
+
+### Private files
+
+The server serves the project folder for the public pages, so `private-files.js` blocks
+browsers from downloading `data.json`, backend `.js` files, `package.json`, `tests/`,
+`node_modules/`, dotfiles and Markdown docs. If you add a new server-only file, list it there.
+
 ## Testing
 
 The proposal workflow logic is covered by Node's built-in test runner.
 
-Run the tests with:
+Run all tests with:
 
 ```bash
-node --test tests/proposal-workflow.test.js
+npm test
 ```
 
 ## Notes

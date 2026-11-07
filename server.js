@@ -33,6 +33,21 @@ const {
   isValidApplicationEmail,
 } = require('./application-data');
 const { assistantRateLimit, handleAssistantChat, handleAdminAssistantChat } = require('./assistant-service');
+const { blockPrivateFiles } = require('./private-files');
+const {
+  createBusinessPulse,
+  applicationSubmittedEvent,
+  applicationStatusEvent,
+  ledgerEntryMovement,
+  ledgerEntryVoidMovement,
+  normalizeLedgerInput,
+  FEE_PURPOSES,
+  EXPENSE_PURPOSES,
+  PAYMENT_METHODS,
+} = require('./business-pulse');
+
+// Sends school activity to the Business Pulse tracker (no-op until configured).
+const businessPulse = createBusinessPulse();
 
 const app = express();
 app.disable('x-powered-by');
@@ -145,6 +160,7 @@ const DEFAULT_DB_DATA = {
   computerHealth: {},
   loginHistory: [],
   knownOfficeDevices: {},
+  ledger: [],
 };
 
 const dbFile = path.join(__dirname, 'data.json');
@@ -179,6 +195,7 @@ async function getDB() {
   if (!db.data.proposals) db.data.proposals = [];
   if (!Array.isArray(db.data.applications)) db.data.applications = [];
   if (!Array.isArray(db.data.messages)) db.data.messages = [];
+  if (!Array.isArray(db.data.ledger)) db.data.ledger = [];
 
   if (Array.isArray(db.data.proposals)) {
     db.data.proposals.forEach((proposal) => normalizeProposal(proposal));
@@ -1131,6 +1148,7 @@ app.post('/api/applications', optionalAuth, async (req, res) => {
   d.data.applications = Array.isArray(d.data.applications) ? d.data.applications : [];
   d.data.applications.push(application);
   await d.write();
+  businessPulse.send(applicationSubmittedEvent(application));
 
   return res.status(201).json({
     ok: true,
@@ -1198,6 +1216,7 @@ app.put(
     if (!application) return res.status(404).json({ error: 'Application not found' });
     normalizeStoredApplication(application);
 
+    const pulseEvents = [];
     const nextStatus = req.body?.status;
     if (nextStatus) {
       const type = application.type || 'student';
@@ -1235,6 +1254,11 @@ app.put(
         application.registrationStartedAt = application.reviewedAt;
         application.registrationStartedBy = actor;
       }
+      if (result.status !== currentStatus) {
+        pulseEvents.push(
+          applicationStatusEvent(application, statusLabel(currentStatus), result.status, role, statusLabel(result.status))
+        );
+      }
     }
 
     if (typeof req.body?.notes === 'string') {
@@ -1250,7 +1274,81 @@ app.put(
     }
 
     await d.write();
+    businessPulse.send(pulseEvents);
     return res.json({ application });
+  }
+);
+
+// ---- School ledger: fee payments received and expenses paid ----
+// Office staff record money here; each entry gets a receipt number and is sent
+// to the Business Pulse tracker. Entries are never deleted, only voided.
+const LEDGER_VOID_ROLES = ['Manager', 'Headmaster'];
+
+function nextReceiptNo(ledger, direction, date) {
+  const prefix = `${direction === 'in' ? 'RCT' : 'EXP'}-${date.replace(/-/g, '')}-`;
+  const used = ledger
+    .filter((e) => typeof e.receiptNo === 'string' && e.receiptNo.startsWith(prefix))
+    .map((e) => Number(e.receiptNo.slice(prefix.length)) || 0);
+  const n = (used.length ? Math.max(...used) : 0) + 1;
+  return `${prefix}${String(n).padStart(3, '0')}`;
+}
+
+app.get('/api/ledger/options', authRequired, adminIpAllowed, schoolStaffRequired, (req, res) => {
+  res.json({
+    feePurposes: FEE_PURPOSES,
+    expensePurposes: EXPENSE_PURPOSES,
+    methods: PAYMENT_METHODS,
+    canVoid: LEDGER_VOID_ROLES.includes(req.user?.role),
+    tracker: businessPulse.status(),
+  });
+});
+
+app.get('/api/ledger', authRequired, adminIpAllowed, schoolStaffRequired, async (req, res) => {
+  const d = await getDB();
+  const entries = [...d.data.ledger].sort((a, b) =>
+    `${b.date}${b.recordedAt}`.localeCompare(`${a.date}${a.recordedAt}`)
+  );
+  res.json({ entries });
+});
+
+app.post('/api/ledger', authRequired, adminIpAllowed, schoolStaffRequired, async (req, res) => {
+  const parsed = normalizeLedgerInput(req.body);
+  if (!parsed.ok) return res.status(400).json({ error: parsed.error });
+  const d = await getDB();
+  const entry = {
+    id: `led-${crypto.randomUUID()}`,
+    ...parsed.entry,
+    receiptNo: nextReceiptNo(d.data.ledger, parsed.entry.direction, parsed.entry.date),
+    recordedAt: new Date().toISOString(),
+    recordedBy: req.user?.username || '',
+    recordedRole: req.user?.role || '',
+    voided: false,
+  };
+  d.data.ledger.push(entry);
+  await d.write();
+  businessPulse.send(ledgerEntryMovement(entry));
+  return res.status(201).json({ entry });
+});
+
+app.post(
+  '/api/ledger/:id/void',
+  authRequired,
+  adminIpAllowed,
+  roleRequired(...LEDGER_VOID_ROLES),
+  async (req, res) => {
+    const reason = `${req.body?.reason || ''}`.replace(/\s+/g, ' ').trim().slice(0, 200);
+    if (!reason) return res.status(400).json({ error: 'Give a reason for voiding this entry' });
+    const d = await getDB();
+    const entry = d.data.ledger.find((e) => e.id === req.params.id);
+    if (!entry) return res.status(404).json({ error: 'Entry not found' });
+    if (entry.voided) return res.status(409).json({ error: 'This entry is already voided' });
+    entry.voided = true;
+    entry.voidReason = reason;
+    entry.voidedAt = new Date().toISOString();
+    entry.voidedBy = req.user?.username || '';
+    await d.write();
+    businessPulse.send(ledgerEntryVoidMovement(entry, req.user?.role));
+    return res.json({ entry });
   }
 );
 
@@ -1624,6 +1722,8 @@ app.get(
 );
 
 // ---- Static content (optional) ----
+// Never serve the database, backend source, tests or dependencies as static files.
+app.use(blockPrivateFiles((req, res) => res.status(404).sendFile(path.join(__dirname, '404.html'))));
 app.use(express.static(__dirname));
 
 // Keep API misses machine-readable while giving browser navigation a branded page.
